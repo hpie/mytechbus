@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS `vehicle_operators` (
   `row_id` bigint(20) NOT NULL,
-  `operator_name` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is Bus Operator Name eg HRTC',
+  `operator_name` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is Unique Bus Operator Name eg HRTC',
   `operator_address1` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `operator_address2` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `operator_city` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `vehicle_operators` (
   `operator_phone` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `operator_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `operator_helpline` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `operator_status` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'ACTIVE, INACTIVE, DELETED',
   `created_by` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `created_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_by` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -27,7 +28,8 @@ CREATE TABLE IF NOT EXISTS `vehicle_operators` (
 -- Indexes for table `vehicle_operators`
 --
 ALTER TABLE `vehicle_operators`
-  ADD PRIMARY KEY (`row_id`);
+  ADD PRIMARY KEY (`row_id`),
+  ADD UNIQUE KEY `operator_name_uk`(`operator_name`);
 
 --
 -- AUTO_INCREMENT for dumped tables
