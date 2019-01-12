@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `vehicle_types` (
   `vehicle_type` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is Bus type Ordinary, Semi-Delux, Delux',
   `vehicle_desc` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `vehicle_basefare` int NOT NULL COMMENT 'Minimum fare fixed',
+  `vehicle_type_status` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'ACTIVE, INACTIVE, DELETED',
   `created_by` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `created_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_by` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
