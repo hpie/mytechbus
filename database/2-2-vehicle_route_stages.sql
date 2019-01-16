@@ -1,7 +1,7 @@
 --
 -- Table structure for table `route_stages`
 --
-`route_matrix_count` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+
 CREATE TABLE IF NOT EXISTS `route_stages` (
   `row_id` bigint(20) NOT NULL,
   `stage_code` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is Unique Stage Code',

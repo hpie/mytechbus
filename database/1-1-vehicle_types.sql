@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `vehicle_types` (
 --
 -- table data
 --
-INSERT INTO `mytechbus`.`vehicle_types` (`vehicle_type`, `vehicle_desc`, `vehicle_basefare`, `created_by`,) VALUES 
+INSERT INTO `vehicle_types` (`vehicle_type`, `vehicle_desc`, `vehicle_basefare`, `created_by`) VALUES 
 ('ORDINARY', 'ORDINARY', '5', 'SYSTEM'), 
 ('SEMI-DELUX', 'SEMI-DELUX', '7', 'SYSTEM'), 
 ('DELUX', 'DELUX', '7', 'SYSTEM'), 
