@@ -94,7 +94,7 @@ function watchPosition() {
    }
 	
 	//commneted to stop geolation call on localhost
-   //var watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+   var watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
 
    function onSuccess(position) {
 	 
