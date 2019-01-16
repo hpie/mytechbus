@@ -1,0 +1,74 @@
+<template>
+<div class="page">
+  <div class="navbar">
+    <div class="navbar-inner sliding">
+      <div class="right">
+          <a href="#" class="link" @click="logout()">
+            <i class="f7-icons">logout</i>
+          </a>
+        </div>
+      <div class="title">Dashboard</div>
+    </div>
+  </div>
+  <div class="page-content">
+          <div class="block-title">Location</div>
+          <div class="block" id="geolocation">
+            <!-- <p>This is a left side panel. You can close it by clicking outsite or on this link: <a href="#" class="panel-close">close me</a>. You can put here anything, even another isolated view like in <a href="#" data-panel="right" class="panel-open">Right Panel</a></p> -->
+          </div>
+          <div class="block-title">Main View Navigation</div>
+          <div class="list links-list">
+            <ul>
+              <li>
+                <a href="/initial-setup/" class="panel-close">Initial Setup</a>
+              </li>
+              <li>
+                <a href="/book-tickets/" class="panel-close">Book Tickets</a>
+              </li>
+              <li>
+                <a href="/route-details/" class="panel-close">Route Details</a>
+              </li>
+              <li>
+                <a href="/booking-list/" class="panel-close">Ticket Booking List</a>
+              </li>
+              <li>
+                <a href="/others/" class="panel-close">Others</a>
+              </li>
+            </ul>
+          </div>
+          
+  </div>
+</div>
+</template>
+<script>
+  return {
+    methods: {
+      setGaugeValue: function(value) {
+        var self = this;
+        self.demoGauge.update({
+          value: value / 100,
+          valueText: value + '%',
+        });
+      },
+	  logout: function() {
+		var $ = this.$;
+        var app = this.$app;
+        localStorage.setItem('user-token', '');
+		location.reload();
+      },
+    },
+    on: {
+      pageInit: function (e, page) {
+        var self = this;
+        var app = self.$app;
+		
+		//alert('in init');
+		watchPosition();
+		//navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        
+      },
+      pageBeforeRemove: function (e, page) {
+        if (this.demoGauge) this.demoGauge.destroy();
+      },
+    }
+  }
+</script>

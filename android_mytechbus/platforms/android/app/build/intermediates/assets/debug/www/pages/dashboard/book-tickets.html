@@ -1,0 +1,300 @@
+<template>
+<div class="page">
+  <div class="navbar">
+    <div class="navbar-inner sliding">
+      <div class="left">
+        <a href="#" class="link back">
+          <i class="icon icon-back"></i>
+          <span class="ios-only">Back</span>
+        </a>
+      </div>
+      <div class="title">Booking</div>
+    </div>
+  </div>
+  <div class="page-content">
+    
+	<!-- ---------------------------------------------------- -->
+	<form class="list" id="my-form">
+	<input type="hidden" name="booking_reference" id="booking_reference" value="{{booking_reference}}">
+  <ul>
+	<li>
+      <div class="item-content item-input">
+        <div class="item-inner">
+          <div class="item-title item-label">From</div>
+          <div class="item-input-wrap">
+            <select name="from_stage" id="from_stage">
+              <!-- <option value="male" selected>Male</option>
+              <option value="female">Female</option> -->
+			  {{from_stages_select}}
+            </select>
+          </div>
+        </div>
+      </div>
+    </li>
+	<li>
+      <div class="item-content item-input">
+        <div class="item-inner">
+          <div class="item-title item-label">To</div>
+          <div class="item-input-wrap">
+            <select name="to_stage" id="to_stage">
+            </select>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="item-content item-input">
+        <div class="item-inner">
+          <div class="item-title item-label">Fare Full <span id="fare_full_cost"></span></div>
+          <div class="item-input-wrap">
+            <input type="text" class="calculate-total" name="fare_full" id="fare_full" value="0" placeholder="Passenger Number" autocomplete="off">
+          </div>
+        </div>
+      </div>
+    </li>
+	<!-- <li class="item-content">
+	            <div class="item-inner">
+	              <div class="item-title">Apples: <span id="apples-count"></span></div>
+	              <div class="item-after">
+	                <div class="stepper stepper-init stepper-small stepper-raised" data-value-el="#apples-count">
+	                  <div class="stepper-button-minus"></div>
+	                  <div class="stepper-button-plus"></div>
+	                </div>
+	              </div>
+	            </div>
+	          </li> -->
+    <li>
+      <div class="item-content item-input">
+        <div class="item-inner">
+          <div class="item-title item-label">Fare Half <span id="fare_half_cost"></div>
+          <div class="item-input-wrap">
+            <input type="text" class="calculate-total" name="fare_half" id="fare_half" value="0" placeholder="Passenger Number" autocomplete="off">
+          </div>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="item-content">
+        <div class="item-inner">
+          <div class="item-title">Fare Luggage <span id="fare_luggage_cost"></div>
+          <div class="item-after">
+            <label class="toggle toggle-init">
+              <input class="calculate-luggage" type="checkbox" name="fare_luggage" id="fare_luggage" value="Yes"><i class="toggle-icon"></i>
+            </label>
+          </div>
+        </div>
+      </div>
+    </li>
+	<li>
+      <div class="item-content item-input">
+        <div class="item-inner">
+          <div class="item-title item-label">Fare Total</div>
+          <div class="item-input-wrap">
+            <input type="text" name="fare_total" id="fare_total" value="0" readonly>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</form>
+<div class="block block-strong row">
+  <div class="col"><a href="#" class="item-link list-button" @click="print">Print</a></div>
+</div>
+	<!-- ---------------------------------------------------- -->
+  </div>
+</div>
+</template>
+<script>
+	var fare_full_cost		= 0;
+	var fare_half_cost		= 0;
+	var fare_luggage_cost	= 0;
+	var selected_start =  "";
+	var selected_end = "";
+
+	$$(document).on('keyup', '.calculate-total', function(e) {
+			
+	 var toggle = app.toggle.get('.toggle');
+	
+	var fare_luggage = 0;
+
+	if (toggle.checked) {
+	  var fare_luggage = 1;
+	}
+
+		 //console.log('======= : ' + $$('#fare_luggage').val());
+		var total_fare = ($$('#fare_full').val() * fare_full_cost) + ($$('#fare_half').val() * fare_half_cost) + (fare_luggage * fare_luggage_cost);
+	  $$('#fare_total').val(total_fare);
+	  //alert($$(this).val());
+	});
+
+	$$(document).on('change', '.calculate-luggage', function(e) {
+		var toggle = app.toggle.get('.toggle');
+		
+		var fare_luggage = 0;
+
+		if (toggle.checked) {
+		  var fare_luggage = 1;
+		}
+		
+		 //var fare_luggage = ($$('#fare_luggage').val() == 'Yes') ? 1 : 0;
+
+		//console.log('======= : ' + $$('#fare_luggage').val());
+		var total_fare = ($$('#fare_full').val() * fare_full_cost) + ($$('#fare_half').val() * fare_half_cost) + (fare_luggage * fare_luggage_cost);
+	  $$('#fare_total').val(total_fare);
+	  //alert($$(this).val());
+	});
+
+	$$(document).on('change', '#from_stage', function(e){
+	  selected_start = $$(this).val();
+
+	  if(selected_start != '') {
+
+		var end_stages = localStorage.getItem('end_stages');
+
+		//console.log("already set end_stages : " + end_stages);
+		var to_stages_select = "<option value='' disabled selected>Select End Stage</option>";
+		if(end_stages != '') {
+			var end_stages_obj = JSON.parse(end_stages);
+
+			var current_end_stages = end_stages_obj[selected_start];
+			for (var key in current_end_stages) {
+				//console.log("==== : " + current_end_stages[key]);
+
+				to_stages_select += '<option value="' + current_end_stages[key] + '">' + current_end_stages[key] + '</option>';
+
+			}
+
+			$$('#to_stage').html(to_stages_select);
+		}
+	  }
+	  //alert($$(this).val());
+	});
+
+	$$(document).on('change', '#to_stage', function(e){
+	  selected_start = $$('#from_stage').val();
+	  selected_end = $$('#to_stage').val();
+
+	  if(selected_start != '' && selected_end != '') {
+
+		var fare_full_obj		= JSON.parse(localStorage.getItem('fare_full'));
+		var fare_half_obj		= JSON.parse(localStorage.getItem('fare_half'));
+		var fare_luggage_obj	= JSON.parse(localStorage.getItem('fare_luggage'));
+
+		//.fare_full[selected_start][selected_end]
+
+		//console.log("already set fare_full : " + JSON.stringify(fare_full[selected_start][selected_end]));
+		//console.log("already set fare_half : " + fare_half);
+		//console.log("already set fare_luggage : " + fare_luggage);
+
+		fare_full_cost		= fare_full_obj[selected_start][selected_end];
+		fare_half_cost		= fare_half_obj[selected_start][selected_end];
+		fare_luggage_cost	= fare_luggage_obj[selected_start][selected_end];
+
+		$$('#fare_full_cost').html(fare_full_cost);
+		$$('#fare_half_cost').html(fare_half_cost);
+		$$('#fare_luggage_cost').html(fare_luggage_cost);
+		
+		//if(end_stages != '') {		}
+	  }
+	  //alert($$(this).val());
+	});
+
+  return {
+    methods: {
+      print: function () {
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        var toggle = app.toggle.get('.toggle');
+		
+		var fare_luggage = 0;
+
+		if (toggle.checked) {
+		  var fare_luggage = 1;
+		}
+
+		
+		var total_fare = ($$('#fare_full').val() * fare_full_cost) + ($$('#fare_half').val() * fare_half_cost) + (fare_luggage * fare_luggage_cost);
+		//$$('#fare_total').val(total_fare);
+
+		 if(total_fare > 0 && selected_start != "" && selected_end != '') {
+			var url = api_url+'book_ticket';
+			var postdata = {};
+			
+			var booking_reference = $$('#booking_reference').val();
+
+			postdata.booking_reference = booking_reference;
+			postdata.route_code = 'R001';
+
+			postdata.start_stage = selected_start;			
+			postdata.end_stage = selected_end;
+			
+			postdata.fare_full_cost = fare_full_cost;		
+			postdata.fare_half_cost = fare_half_cost;	
+			postdata.fare_luggage_cost = fare_luggage_cost;
+
+			postdata.fare_full_passengers = $$('#fare_full').val();		
+			postdata.fare_half_passengers = $$('#fare_half').val();	
+			postdata.fare_luggage = fare_luggage;
+			
+			//postdata.booking_time = (Date.now()).toString();	
+			var d = new Date();
+
+			var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
+			d.getHours() + ":" + d.getMinutes();
+
+			postdata.booking_time = datestring;	
+			postdata.total_fare = total_fare;	
+			postdata.created_by = 1;
+			
+			// Update record in database
+			app.request({
+				url: url,
+				data:postdata,
+				type:'POST',
+				beforeSend:function(){
+				//app.showPreloader('Please Wait');
+				},
+				success:function(data) {
+					//myApp.hidePreloader();
+					//console.log(data);
+					var result = JSON.parse(data);
+					//alert("===== : " + result.status);
+					if(result.status =='1')
+					{
+						localStorage.setItem('user-token', result.token);
+						//logged = true;
+						 // Alert username and password
+						//location.reload();
+					} else {
+						alert('Wrong username or password');
+					}
+
+					app.dialog.alert('Ticket created successfully');
+
+					//$$('#booking_reference').val(new Date().valueOf());
+
+					//$$('#fare_full').val(0);
+					//$$('#fare_half').val();
+					
+					// /*
+					var formData = {
+						'booking_reference': new Date().valueOf(),
+						'fare_full': 0,
+						'fare_half': 0,
+						'fare_total': 0,
+						'fare_luggage': [''],
+					  }
+					  app.form.fillFromData('#my-form', formData);
+
+					 // */
+				}
+			});
+
+		 } else {
+			app.dialog.alert('please enter required fields');
+		}        
+      }
+    }
+  }
+</script>
