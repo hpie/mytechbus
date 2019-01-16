@@ -98,21 +98,21 @@ function watchPosition() {
 
    function onSuccess(position) {
 	 
-		var url = 'http://mytechbus.hpie.in/position_log';
+		var url = api_url + 'position_log';
 			var postdata = {};
 
-			postdata.vehicle_code	= position.coords.vehicle_code;
-			postdata.route_code		= position.coords.route_code;
-			postdata.conductor_code = position.coords.conductor_code;
+			postdata.vehicle_code		= '';
+			postdata.route_code			= 'R001';
+			postdata.conductor_code		= '';
 
-			postdata.latitude = position.coords.latitude;
-			postdata.longitude = position.coords.longitude;
-			postdata.altitude = position.coords.altitude;
-			postdata.accuracy = position.coords.accuracy;
-			postdata.altitudeAccuracy = position.coords.altitudeAccuracy;
-			postdata.heading = position.coords.heading;
-			postdata.speed = position.coords.speed;
-			postdata.timestamp = position.coords.timestamp;
+			postdata.latitude			= position.coords.latitude;
+			postdata.longitude			= position.coords.longitude;
+			postdata.altitude			= position.coords.altitude;
+			postdata.accuracy			= position.coords.accuracy;
+			postdata.altitudeAccuracy	= position.coords.altitudeAccuracy;
+			postdata.heading			= position.coords.heading;
+			postdata.speed				= position.coords.speed;
+			postdata.timestamp			= position.coords.timestamp;
 
 	  app.request({
 		url: url,
