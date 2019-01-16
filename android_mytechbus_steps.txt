@@ -1,0 +1,11 @@
+1. Browse folder android_mytechbus - using command line
+2. connaect android mobile with developer option enabled, debugging on and allow app install from unknown sources
+3. run command - to build android
+	cordova build android
+4. run command
+	cordova run android
+
+notes :-
+	currently fixed user and password is used for login
+		username - hpie@hpie.in
+		password - 123456
