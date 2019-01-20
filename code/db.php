@@ -9,7 +9,8 @@ $dbname		= "s7hpiein_mytechbus";
 $servername = "localhost";
 $username	= "root";
 $password	= "";
-$dbname		= "mytechbus2";
+//$dbname		= "mytechbus2";
+$dbname		= "mytechbus3";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);

@@ -1,0 +1,7 @@
+18-01-2019
+
+ALTER TABLE `ticket_bookings` CHANGE `fare_luggage` `fare_luggage` INT(11) NULL;
+
+ALTER TABLE `ticket_bookings` ADD `mobile` VARCHAR(100) NULL AFTER `total_fare`;
+
+ALTER TABLE `ticket_bookings` ADD UNIQUE (`booking_reference`)
