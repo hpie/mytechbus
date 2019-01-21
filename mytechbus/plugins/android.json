@@ -1,0 +1,27 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.hpie.mytechbus"
+    },
+    "cordova-plugin-geolocation": {
+      "PACKAGE_NAME": "com.hpie.mytechbus"
+    },
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.hpie.mytechbus"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "com.hpie.mytechbus"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.hpie.mytechbus"
+    }
+  },
+  "dependent_plugins": {}
+}

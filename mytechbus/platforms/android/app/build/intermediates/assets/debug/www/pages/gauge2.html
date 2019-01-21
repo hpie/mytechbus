@@ -1,0 +1,69 @@
+<template>
+  <div class="page">
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="right">
+          <a href="#" class="link" @click="logout()">
+            <i class="f7-icons">logout</i>
+          </a>
+        </div>
+        <div class="title">DASHBOARD</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="block block-strong">
+        <p id="geolocation">Framework7 comes with Gauge component. It produces nice looking fully responsive SVG gauges.</p>
+      </div>
+      <div class="block block-strong text-align-center">
+        <div class="gauge demo-gauge"></div>
+        <p class="segmented segmented-raised">
+          <a href="#" class="button" @click="setGaugeValue(0)">0%</a>
+          <a href="#" class="button" @click="setGaugeValue(25)">25%</a>
+          <a href="#" class="button" @click="setGaugeValue(50)">50%</a>
+          <a href="#" class="button" @click="setGaugeValue(75)">75%</a>
+          <a href="#" class="button" @click="setGaugeValue(100)">100%</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    methods: {
+      setGaugeValue: function(value) {
+        var self = this;
+        self.demoGauge.update({
+          value: value / 100,
+          valueText: value + '%',
+        });
+      },
+	  logout: function() {
+		var $ = this.$;
+        var app = this.$app;
+        localStorage.setItem('user-token', '');
+		location.reload();
+      },
+    },
+    on: {
+      pageInit: function (e, page) {
+        var self = this;
+        var app = self.$app;
+        self.demoGauge = app.gauge.create({
+          el: '.demo-gauge',
+          type: 'circle',
+          value: 0.5,
+          size: 250,
+          borderColor: '#2196f3',
+          borderWidth: 10,
+          valueText: '50%',
+          valueFontSize: 41,
+          valueTextColor: '#2196f3',
+          labelText: 'amount of something',
+        });
+      },
+      pageBeforeRemove: function (e, page) {
+        if (this.demoGauge) this.demoGauge.destroy();
+      },
+    }
+  }
+</script>

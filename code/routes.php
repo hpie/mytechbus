@@ -49,7 +49,7 @@ $app->get('/list_positions', function() {
 });
 
 // List all booking for device
-$app->get('/list_booking', function() {
+$app->post('/list_booking', function() {
 
 	require_once('db.php');
 
@@ -108,18 +108,18 @@ $app->post('/login', function() {
 			}
 			
 			// Get initial login attempt count from database
-			$login_attempts = ($user_data['device_login_attempts']) ?: 0;
+			$login_attempts = ($user_data['device_login_attempts']) ?: 1;
 
 			$todays_date = date('Y-m-d'); 
 			
 			//remove time from date
-			$last_login_date  = date('Y-m-d', strtotime($user_data['device_last_login'])); 
+			$last_login_attempt  = date('Y-m-d', strtotime($user_data['modified_dt'])); 
 			
 			// Check if it is not first login attempt
 			if($user_data['device_login_attempts'] > 0) {
 
 				// Check if login attempt is from same day
-				if(strtotime($todays_date) == strtotime($last_login_date)) {
+				if(strtotime($todays_date) == strtotime($last_login_attempt)) {
 					$login_attempts++;
 				} else {
 					$login_attempts = 1;
@@ -128,7 +128,13 @@ $app->post('/login', function() {
 		}
 		
 		//Update login details
-		$sql = "UPDATE `vehicle_device_access` SET `latitude` = '".$_POST['latitude']."', `longitude` = '".$_POST['longitude']."', `altitude` = '".$_POST['altitude']."', `altutude_accuracy` = '".$_POST['altitudeAccuracy']."', `device_login_attempts` = '".$login_attempts."' WHERE `device_imie` = '".$_POST['uuid']."'";
+		$sql = "UPDATE `vehicle_device_access` SET `latitude` = '".$_POST['latitude']."',"; 
+		
+		if($data['success'] == '1') {
+		$sql .= "`device_last_login` = '".date('Y-m-d h:i:s')."',";	
+		$login_attempts = 0;
+		}
+		$sql .= "`longitude` = '".$_POST['longitude']."', `altitude` = '".$_POST['altitude']."', `altutude_accuracy` = '".$_POST['altitudeAccuracy']."', `device_login_attempts` = '".$login_attempts."' WHERE `device_imie` = '".$_POST['uuid']."'";
 
 		$conn->query($sql);
 	} else {

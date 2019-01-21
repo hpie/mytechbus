@@ -1,0 +1,124 @@
+<template>
+  <div class="page no-toolbar no-navbar no-swipeback">
+    <div class="page-content login-screen-content">
+      <div class="login-screen-title">Login</div>
+      <form>
+        <div class="list">
+          <ul>
+            <li class="item-content item-input item-input-with-value">
+              <div class="item-inner">
+                <div class="item-title item-label">Username</div>
+                <div class="item-input-wrap">
+                  <input type="text" placeholder="Your username" id="demo-username-2" class="input-with-value">
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Password</div>
+                <div class="item-input-wrap">
+                  <input type="password" placeholder="Your password" id="demo-password-2" class="">
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="list">
+          <ul>
+            <li><a href="#" class="item-link list-button" @click="signIn">Sign In</a></li>
+          </ul>
+          <!-- <div class="block-footer">Some text about login information.<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div> -->
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    methods: {
+      signIn: function () {
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        var username = $('input#demo-username-2').val();
+        var password = $('input#demo-password-2').val();
+
+		 if(username != '' && password != '') {
+			//var url = 'http://localhost/techbus/techbus/mytechbus/code/login';
+			//var url = 'http://mytechbus.hpie.in/login';
+
+			//app.dialog.alert(api_url + 'login');
+			var url = api_url + 'login';
+			var postdata = {};
+
+			postdata.password = password;
+			postdata.username = username;
+			//postdata.uuid = localStorage.getItem('uuid');
+
+			postdata.uuid = 'e082317ec532818';
+
+			postdata.latitude			= 11;
+				postdata.longitude			= 12;
+				postdata.altitude			= 13;
+				postdata.accuracy			= 14;
+				postdata.altitudeAccuracy	= 15;
+			
+			// Get location while login
+			navigator.geolocation.getCurrentPosition(onSuccess, onError);
+
+			function onSuccess(position) {
+				postdata.latitude			= position.coords.latitude;
+				postdata.longitude			= position.coords.longitude;
+				postdata.altitude			= position.coords.altitude;
+				postdata.accuracy			= position.coords.accuracy;
+				postdata.altitudeAccuracy	= position.coords.altitudeAccuracy;
+				postdata.heading			= position.coords.heading;
+				postdata.speed				= position.coords.speed;
+				postdata.timestamp			= position.coords.timestamp;				
+		   };
+
+		   function onError(error) {
+			  alert('code: '    + error.code    + '\n' +'message: ' + error.message + '\n');
+		   }
+		   // Location while login
+
+			
+			///*
+			app.request({
+				url: url,
+				data:postdata,
+				type:'POST',
+				beforeSend:function(){
+					//app.dialog.alert("===== : reuest sent : " + JSON.stringify(postdata));
+				},
+				success:function(data) {
+					//myApp.hidePreloader();
+					console.log(data);
+					var result = JSON.parse(data);
+					//app.dialog.alert("===== : " + result.success);
+					if(result.success =='1') {
+						localStorage.setItem('user-token', '1');
+						localStorage.setItem('route_code', result.route_code);
+						localStorage.setItem('todays_date', result.todays_date);
+						logged = true;
+						
+						// on successful login redirect to homepage
+						location.reload();
+					} else {
+						app.dialog.alert(result.message);
+					}
+				},
+				error: function(xhr, status, error) {
+				  var err = eval("(" + xhr.responseText + ")");
+				  app.dialog.alert(err.Message);
+				}
+			});
+			
+		} else {
+			app.dialog.alert('please enter required fields');
+		}        
+      }
+    }
+  }
+</script>
