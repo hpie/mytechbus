@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context="mytechbus.hpie.com.mytechbus.DashboardActivity">
+
+    <TextView
+        android:id="@+id/textBook"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:text="@string/sign_up"
+        android:textAllCaps="true"
+        android:textColor="@android:color/black"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        tools:text="Route" />
+
+    <Spinner
+        android:id="@+id/startStage"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_margin="5dp"
+        android:inputType="textPersonName" />
+
+    <Spinner
+        android:id="@+id/endStage"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_margin="5dp"
+        android:inputType="textPersonName" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/fullLabel"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Full"
+            android:textSize="26sp" />
+        <TextView
+            android:id="@+id/fullRate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:textSize="26sp"
+            android:layout_weight="1"
+            android:text="Full" />
+        <EditText
+            android:id="@+id/etFullPassengers"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="@android:color/white"
+            android:hint="@string/full_passangers"
+            android:inputType="number"
+            android:padding="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/halfLabel"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Half"
+            android:textSize="26sp" />
+        <TextView
+            android:id="@+id/halfRate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:textSize="26sp"
+            android:layout_weight="1"
+            android:text="Half" />
+        <EditText
+            android:id="@+id/etHalfPassengers"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="@android:color/white"
+            android:hint="@string/half_passangers"
+            android:inputType="number"
+            android:padding="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/luggageLabel"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Luggage"
+            android:textSize="26sp" />
+        <TextView
+            android:id="@+id/luggageRate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:textSize="26sp"
+            android:layout_weight="1"
+            android:text="Luggage" />
+        <EditText
+            android:id="@+id/etLuggage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="@android:color/white"
+            android:hint="@string/luggage"
+            android:inputType="number"
+            android:padding="10dp" />
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/etTotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@android:color/white"
+        android:hint="@string/total"
+        android:inputType="textPersonName"
+        android:padding="10dp" />
+
+    <EditText
+        android:id="@+id/etMobile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@android:color/white"
+        android:hint="@string/mobile"
+        android:inputType="number"
+        android:padding="10dp" />
+
+    <Button
+        android:id="@+id/btnBook"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#f05924"
+        android:text="@string/book"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#aaa"
+        android:text="@string/back"
+        android:textColor="@android:color/white" />
+
+
+</LinearLayout>
