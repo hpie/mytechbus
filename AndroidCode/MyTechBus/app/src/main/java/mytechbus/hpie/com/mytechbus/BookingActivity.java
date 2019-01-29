@@ -1,6 +1,7 @@
 package mytechbus.hpie.com.mytechbus;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.security.PrivateKey;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,31 +43,21 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BookingActivity extends AppCompatActivity {
+public class BookingActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SessionHandler session;
     private ProgressDialog pDialog;
-    private String route_stages_url = "http://mytechbus.hpie.in/routes_stages";
-    private String book_ticket_url = "http://mytechbus.hpie.in/book_ticket";
-    private static final String KEY_ROUTE = "route_code";
-    private static final String KEY_EMPTY = "";
+    private FIleOperations fIleOperations;
 
-    private JSONObject end_stages;
-    private JSONObject fare_km;
-    private JSONObject fare_full;
-    private JSONObject fare_half;
-    private JSONObject fare_luggage;
+    private JSONObject end_stages, fare_km, fare_full, fare_half, fare_luggage;
 
+    private TextView fullRate, halfRate, luggageRate;
 
-    private TextView fullRate;
-    private TextView halfRate;
-    private TextView luggageRate;
+    private EditText etFullPassengers, etHalfPassengers, etLuggage, etTotal, etMobile;
 
-    private EditText etFullPassengers;
-    private EditText etHalfPassengers;
-    private EditText etLuggage;
-    private EditText etTotal;
-    private EditText etMobile;
+    private Button fullplus, fullminus, halfplus, halfminus, luggageplus, luggageminus;
+
+    private String ticket_total;
 
     // Start and end stage variables to get fare from fare object
     private String start_stage = "";
@@ -66,25 +66,39 @@ public class BookingActivity extends AppCompatActivity {
     private Float half_rate = 0.0f;
     private Float luggage_rate = 0.0f;
 
-
+    String fileName;
 
     Spinner spinner, endspinner;
     ArrayList<String> StartStage, EndStage;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         session = new SessionHandler(getApplicationContext());
+        fIleOperations = new FIleOperations();
 
         setContentView(R.layout.activity_booking);
-
         TextView etTxtBook = findViewById(R.id.textBook);
+        Button book = findViewById(R.id.btnBook);
 
         etTxtBook.setText(session.GetRoute());
 
-        Button book = findViewById(R.id.btnBook);
+        // plus minus buttons for adding
+        fullplus = (Button) findViewById(R.id.fullPlus);
+        fullplus.setOnClickListener(this);
+        fullminus = (Button) findViewById(R.id.fullMinus);
+        fullminus.setOnClickListener(this);
+
+        halfplus = (Button) findViewById(R.id.halfPlus);
+        halfplus.setOnClickListener(this);
+        halfminus = (Button) findViewById(R.id.halfMinus);
+        halfminus.setOnClickListener(this);
+
+        luggageplus = (Button) findViewById(R.id.luggagePlus);
+        luggageplus.setOnClickListener(this);
+        luggageminus = (Button) findViewById(R.id.luggageMinus);
+        luggageminus.setOnClickListener(this);
 
         //------------
 
@@ -184,12 +198,15 @@ public class BookingActivity extends AppCompatActivity {
 
         //----------------
 
-
-
         book.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                book_ticket();
+
+                ticket_total = etTotal.getText().toString().toLowerCase().trim();
+
+                if (validateInputs()) {
+                    book_ticket();
+                }
             }
         });
 
@@ -215,10 +232,11 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     private void clear_fields() {
-        etFullPassengers.setText("");
-        etHalfPassengers.setText("");
-        etLuggage.setText("");
+        etFullPassengers.setText("0");
+        etHalfPassengers.setText("0");
+        etLuggage.setText("0");
         etTotal.setText("");
+        etMobile.setText("");
     }
 
     private void add_data() {
@@ -296,7 +314,7 @@ public class BookingActivity extends AppCompatActivity {
     private void route_stages() {
         displayLoader();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, route_stages_url,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.route_stages_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -340,7 +358,7 @@ public class BookingActivity extends AppCompatActivity {
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
-                params.put(KEY_ROUTE,session.GetRoute());
+                params.put(Constants.KEY_ROUTE,session.GetRoute());
 
                 return params;
             }
@@ -355,7 +373,94 @@ public class BookingActivity extends AppCompatActivity {
     private void book_ticket() {
         displayLoader();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, book_ticket_url,
+        //Create JSON Object
+
+        JSONObject file_data_store = new JSONObject();
+        try {
+           // file_data_store.put("id", "3");
+
+            String full_text    = etFullPassengers.getText().toString();
+            String half_text    = etHalfPassengers.getText().toString();
+            String luggage_text = etLuggage.getText().toString();
+
+           // Toast.makeText(getApplicationContext(),full_text + " " +half_text + " " +luggage_text, Toast.LENGTH_LONG).show();
+
+            DateFormat booking_reference_df = new SimpleDateFormat("yyMMddHHmmssZ");
+            String booking_reference = booking_reference_df.format(Calendar.getInstance().getTime());
+
+            file_data_store.put("booking_reference", session.getIMEI() + "_" + booking_reference);
+            file_data_store.put("route_code",session.GetRoute());
+            file_data_store.put("start_stage",start_stage);
+            file_data_store.put("end_stage",end_stage);
+            file_data_store.put("fare_full_cost", String.valueOf(full_rate));
+            file_data_store.put("fare_half_cost", String.valueOf(half_rate));
+            file_data_store.put("fare_luggage_cost", String.valueOf(luggage_rate));
+            file_data_store.put("fare_full_passengers",full_text);
+            file_data_store.put("fare_half_passengers",half_text);
+            file_data_store.put("fare_luggage",luggage_text);
+            file_data_store.put("mobile",etMobile.getText().toString());
+
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = df.format(Calendar.getInstance().getTime());
+
+            file_data_store.put("booking_time",date);
+            file_data_store.put("total_fare",etTotal.getText().toString());
+            file_data_store.put("created_by","1");
+
+            Log.d("Ticket Booked : ", String.valueOf(file_data_store));
+
+            //------------------------------------------------------------------------------
+            DateFormat file_dt = new SimpleDateFormat("yyyy_MM_dd");
+            String file_date = file_dt.format(Calendar.getInstance().getTime());
+
+            fileName = session.getIMEI() + "_" + file_date.toString() + ".txt";
+
+            // Add ticket details in local log daily file
+            fIleOperations.writeToFile(fileName, file_data_store.toString(), this, "1");
+
+            // Add ticket details server upload waiting queue file
+            fIleOperations.writeToFile("ticket_wait_queue.txt", file_data_store.toString(), this, "1");
+
+            //------------------------------------------------------------------------------
+
+            Toast.makeText(getApplicationContext(),"Ticket Booked successfully", Toast.LENGTH_LONG).show();
+            clear_fields();
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+
+            Toast.makeText(getApplicationContext(),"Ticket not booked. Please try again!", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
+
+
+        String file_contents = fIleOperations.readFromFile(fileName, this);
+
+        Log.d("File data : ", file_contents);
+
+        /*
+        String content = file_data_store.toString();
+
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+            outputStream.write(content.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Log.d("File data : ", getStringFromFile(fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+        pDialog.dismiss();
+
+
+        /*
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.book_ticket_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -400,10 +505,7 @@ public class BookingActivity extends AppCompatActivity {
                 DateFormat booking_reference_df = new SimpleDateFormat("yyMMddHHmmssZ");
                 String booking_reference = booking_reference_df.format(Calendar.getInstance().getTime());
 
-
-
-
-                params.put("booking_reference", session.GetRoute() + "_" + booking_reference);
+                params.put("booking_reference", session.getIMEI() + "_" + booking_reference);
                 params.put("route_code",session.GetRoute());
                 params.put("start_stage",start_stage);
                 params.put("end_stage",end_stage);
@@ -429,5 +531,78 @@ public class BookingActivity extends AppCompatActivity {
 
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+        */
+    }
+
+
+
+    /**
+     * Validates inputs and shows error if any
+     * @return
+     */
+    private boolean validateInputs() {
+        if(Constants.KEY_EMPTY.equals(ticket_total)){
+            //etTotal.setError("Please add passangers or luggage");
+
+            Toast.makeText(getApplicationContext(),"Please addd fare details.",Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+            Double validate_total = Double.valueOf(ticket_total);
+
+            if(validate_total <= 0) {
+                Toast.makeText(getApplicationContext(),"Please addd fare details.",Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.fullPlus:
+                updateNumber("plus", etFullPassengers);
+                break;
+
+            case R.id.fullMinus:
+                updateNumber("minus", etFullPassengers);
+                break;
+
+            case R.id.halfPlus:
+                updateNumber("plus", etHalfPassengers);
+                break;
+
+            case R.id.halfMinus:
+                updateNumber("minus", etHalfPassengers);
+                break;
+
+            case R.id.luggagePlus:
+                updateNumber("plus", etLuggage);
+                break;
+
+            case R.id.luggageMinus:
+                updateNumber("minus", etLuggage);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void updateNumber(String type, EditText editText) {
+
+        String quantity = editText.getText().toString().trim();
+
+        if(type == "plus") {
+            quantity = String.valueOf(1 + Integer.valueOf(quantity));
+        } else if(type == "minus") {
+
+            if(!quantity.equals("0")) {
+                quantity = String.valueOf(Integer.valueOf(quantity) - 1);
+            }
+        }
+
+        editText.setText(quantity);
     }
 }

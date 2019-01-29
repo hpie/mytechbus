@@ -16,6 +16,14 @@
         android:layout_marginBottom="20dp"
         android:src="@drawable/ic_lock_outline_white" />
 
+    <!--<TextView-->
+        <!--android:id="@+id/txtLocation"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Location"-->
+        <!--android:textSize="40dp"-->
+        <!--/>-->
+
     <EditText
         android:id="@+id/etLoginUsername"
         android:layout_width="match_parent"

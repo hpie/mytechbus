@@ -34,4 +34,6 @@
     <string name="total">Total</string>
     <string name="back">Back</string>
     <string name="mobile">Mobile (optional)</string>
+    <string name="permission_read_phone_state_rationale">Permission required to continue furthur</string>
+    <string name="permissions_not_granted_read_phone_state">Permission Rejected</string>
 </resources>

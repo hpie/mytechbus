@@ -14,12 +14,44 @@ $app->get('/', function() {
 
 });
 
+// Get ticket booking listing
+$app->get('/bookings', function() {
+
+	require_once('db.php');
+
+	$query = "select * from `ticket_bookings`";
+
+	$result = $conn->query($query);
+
+	while ($row = $result->fetch_assoc()){
+		$data[] = $row;
+	}
+
+	echo json_encode($data);
+});
+
 // Get request for vehicletypes
 $app->get('/types', function() {
 
 	require_once('db.php');
 
 	$query = "select * from vehicle_types order by vehicle_type";
+
+	$result = $conn->query($query);
+
+	while ($row = $result->fetch_assoc()){
+		$data[] = $row;
+	}
+
+	echo json_encode($data);
+});
+
+// Get request for vehicletypes
+$app->get('/device_access', function() {
+
+	require_once('db.php');
+
+	$query = "select * from `vehicle_device_access` order by row_id";
 
 	$result = $conn->query($query);
 
@@ -37,7 +69,7 @@ $app->get('/list_positions', function() {
 
 	require_once('db.php');
 
-	$query = "select * from `location_log` order by row_id DESC";
+	echo $query = "select * from `location_log` order by row_id DESC";
 
 	$result = $conn->query($query);
 
@@ -49,7 +81,7 @@ $app->get('/list_positions', function() {
 });
 
 // List all booking for device
-$app->post('/list_booking', function() {
+$app->get('/list_booking', function() {
 
 	require_once('db.php');
 
@@ -70,16 +102,16 @@ $app->post('/login', function() {
 	require_once('db.php');
 
 	//Check if device is registered
-	$deive_query = "select * from `vehicle_device_access` WHERE device_imie = '".$_POST['uuid']."'";
+	$deive_query = "select * from `vehicle_device_access` WHERE device_imie = '".$_POST['imei']."'";
 
 	$device_result = $conn->query($deive_query);
 	
 	// Initially success parameter set to zero
-	$data['success'] = 0;
+	$data['status'] = '0';
 
 	if($device_result->num_rows > 0) {
 		
-		$query = "select * from `vehicle_device_access` WHERE loginid = '".$_POST['username']."' AND PASSWORD = '".$_POST['password']."' AND device_imie = '".$_POST['uuid']."'";
+		$query = "select * from `vehicle_device_access` WHERE loginid = '".$_POST['username']."' AND PASSWORD = '".$_POST['password']."' AND device_imie = '".$_POST['imei']."'";
 
 		$result = $conn->query($query);
 
@@ -98,7 +130,7 @@ $app->post('/login', function() {
 			$data['todays_date']	= date('Y-m-d');
 
 
-			$data['success']		= '1';
+			$data['status']		= '1';
 			$data['message']		= 'Login Successfull';
 		} else {
 			$data['message'] = 'Wrong username or password';
@@ -130,16 +162,25 @@ $app->post('/login', function() {
 		//Update login details
 		$sql = "UPDATE `vehicle_device_access` SET `latitude` = '".$_POST['latitude']."',"; 
 		
-		if($data['success'] == '1') {
+		if($data['status'] == '1') {
 		$sql .= "`device_last_login` = '".date('Y-m-d h:i:s')."',";	
 		$login_attempts = 0;
 		}
-		$sql .= "`longitude` = '".$_POST['longitude']."', `altitude` = '".$_POST['altitude']."', `altutude_accuracy` = '".$_POST['altitudeAccuracy']."', `device_login_attempts` = '".$login_attempts."' WHERE `device_imie` = '".$_POST['uuid']."'";
+		$sql .= "`longitude` = '".$_POST['longitude']."', `altitude` = '".$_POST['altitude']."', `altutude_accuracy` = '".$_POST['altitudeAccuracy']."', `device_login_attempts` = '".$login_attempts."' WHERE `device_imie` = '".$_POST['imei']."'";
 
 		$conn->query($sql);
 	} else {
 		$data['message'] = 'Device does not exist on system. Please contact Operator!';
 	}
+
+
+
+	// Insert login attempts log
+	$sql = "INSERT INTO `login_attempts` (`username`, `password`, `imei`, `latitude`, `longitude`, `status`) VALUES ('".$_POST['username']."', '".$_POST['password']."', '".$_POST['imei']."', '".$_POST['latitude']."', '".$_POST['longitude']."', '".$data['status']."')";
+
+	$conn->query($sql);
+
+	$data['sql'] = $sql;
  
  echo json_encode($data);
  
@@ -198,10 +239,24 @@ $app->post('/routes_stages', function() {
 
 		$data['success'] = 1;
 		$data['route_code'] = 'R001';
-
+		
+		$i = 0;
 		while ($row = $result->fetch_assoc()) {
-
+			/*
 			$data['start_stages'][$row['start_stage_code']] = $row['start_stage_code'];
+			$data['end_stages'][$row['start_stage_code']][] = $row['end_stage_code'];
+
+			//$data['end_stages'][$row['start_stage_code']][$row['end_stage_code']]['name'] = $row['end_stage_code'];
+			$data['fare_km'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_km'];
+			$data['fare_full'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_full'];
+			$data['fare_half'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_half'];
+			$data['fare_luggage'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_luggage'];
+			*/
+			
+			if(!in_array($row['start_stage_code'], $data['start_stages'])) {
+			$data['start_stages'][$i] = $row['start_stage_code'];
+			$i++;
+			}
 			$data['end_stages'][$row['start_stage_code']][] = $row['end_stage_code'];
 
 			//$data['end_stages'][$row['start_stage_code']][$row['end_stage_code']]['name'] = $row['end_stage_code'];
@@ -211,6 +266,8 @@ $app->post('/routes_stages', function() {
 			$data['fare_luggage'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_luggage'];
 
 			//$data['start_stages'][$row['start_stage_code']]['position'] = $i;
+
+			
 		}
 	}
 
@@ -247,15 +304,20 @@ $app->post('/book_ticket_call', function() {
 	$is_first = 0;
 
 	$sql = "INSERT IGNORE INTO `ticket_bookings` (`booking_reference`, `route_code`, `start_stage`, `end_stage`, `fare_full_passengers`, `fare_full_cost`, `fare_half_passengers`, `fare_half_cost`, `fare_luggage`, `fare_luggage_cost`, `total_fare`, `mobile`, `booking_time`, `created_by`) VALUES ";
+	
+	$tickets = json_decode('['.$_POST['ticket_data'].']', true);
 
-	foreach($_POST['ticket_data'] as $ticket) {
-		//echo "=====>>>>>>> <pre>"; print_r(json_decode($ticket, true));
+	foreach($tickets as $ticket) {
+		//echo "=====>>>>>>> <pre>"; print_r();
 
-		$ticket_data = json_decode($ticket, true);
+		//$ticket_data = json_decode($ticket, true);
 
 		$sql .= ($is_first++ == 0) ? '': ', ';
-		$sql .= "('".$ticket_data['booking_reference']."', '".$ticket_data['route_code']."', '".$ticket_data['start_stage']."', '".$ticket_data['end_stage']."', '".$ticket_data['fare_full_passengers']."', '".$ticket_data['fare_full_cost']."', '".$ticket_data['fare_half_passengers']."', '".$ticket_data['fare_half_cost']."', '".$ticket_data['fare_luggage']."', '".$ticket_data['fare_luggage_cost']."', '".$ticket_data['total_fare']."', '".$ticket_data['mobile']."', '".date('Y-m-d h:i:s', strtotime($ticket_data['booking_time']))."', '".$ticket_data['created_by']."')";
+		$sql .= "('".$ticket['booking_reference']."', '".$ticket['route_code']."', '".$ticket['start_stage']."', '".$ticket['end_stage']."', '".$ticket['fare_full_passengers']."', '".$ticket['fare_full_cost']."', '".$ticket['fare_half_passengers']."', '".$ticket['fare_half_cost']."', '".$ticket['fare_luggage']."', '".$ticket['fare_luggage_cost']."', '".$ticket['total_fare']."', '".$ticket['mobile']."', '".date('Y-m-d h:i:s', strtotime($ticket['booking_time']))."', '".$ticket['created_by']."')";
 	}
+	
+	//$data['sql'] = $sql;
+	//$data['ticket_data'] = tickets;
 
 	if ($conn->query($sql) === TRUE) {
 		$data['status'] = '1';
@@ -267,7 +329,20 @@ $app->post('/book_ticket_call', function() {
 		$data['message'] = "Error: " . $sql . "<br>" . $conn->error;
 	}
 	
-	$data['sql'] = $sql;
+	
+	
+	echo json_encode($data);
+
+});
+
+
+//Book ticket called after time inverval and inserts muliple records
+$app->post('/book_ticket_call1', function() {
+
+	require_once('db.php');
+	
+	$data['status'] = '1';
+	$data['message'] = $_POST;
 	
 	echo json_encode($data);
 

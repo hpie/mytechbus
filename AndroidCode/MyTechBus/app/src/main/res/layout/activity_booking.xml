@@ -20,23 +20,33 @@
         android:textStyle="bold"
         tools:text="Route" />
 
-    <Spinner
-        android:id="@+id/startStage"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="42dp"
-        android:layout_margin="5dp"
-        android:inputType="textPersonName" />
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
 
-    <Spinner
-        android:id="@+id/endStage"
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_margin="5dp"
-        android:inputType="textPersonName" />
+        <Spinner
+            android:id="@+id/startStage"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:inputType="textPersonName" />
+
+        <Spinner
+            android:id="@+id/endStage"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:inputType="textPersonName" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="42dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -53,21 +63,39 @@
             android:textSize="26sp"
             android:layout_weight="1"
             android:text="Full" />
-        <EditText
-            android:id="@+id/etFullPassengers"
+        <Button
+            android:id="@+id/fullMinus"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="#aaa"
+            android:text="-"
+            android:textColor="@android:color/white" />
+        <EditText
+            android:id="@+id/etFullPassengers"
+            android:text="0"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
             android:layout_margin="5dp"
             android:background="@android:color/white"
-            android:hint="@string/full_passangers"
-            android:inputType="number"
+            android:inputType="none"
+            android:textIsSelectable="true"
+            android:focusable="false"
             android:padding="10dp" />
+        <Button
+            android:id="@+id/fullPlus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="#aaa"
+            android:text="+"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="42dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -84,21 +112,41 @@
             android:textSize="26sp"
             android:layout_weight="1"
             android:text="Half" />
-        <EditText
-            android:id="@+id/etHalfPassengers"
+        <Button
+            android:id="@+id/halfMinus"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="#aaa"
+            android:text="-"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+        <EditText
+            android:id="@+id/etHalfPassengers"
+            android:text="0"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
             android:layout_margin="5dp"
             android:background="@android:color/white"
-            android:hint="@string/half_passangers"
-            android:inputType="number"
+            android:inputType="none"
+            android:textIsSelectable="true"
+            android:focusable="false"
             android:padding="10dp" />
+        <Button
+            android:id="@+id/halfPlus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="#aaa"
+            android:text="+"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="42dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -115,34 +163,51 @@
             android:textSize="26sp"
             android:layout_weight="1"
             android:text="Luggage" />
-        <EditText
-            android:id="@+id/etLuggage"
+
+        <Button
+            android:id="@+id/luggageMinus"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="#aaa"
+            android:text="-"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/etLuggage"
+            android:text="0"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
             android:layout_margin="5dp"
             android:background="@android:color/white"
-            android:hint="@string/luggage"
-            android:inputType="number"
-            android:padding="10dp" />
+            android:inputType="none"
+            android:textIsSelectable="true"
+            android:focusable="false"
+            android:padding="10dp"  />
+
+        <Button
+            android:id="@+id/luggagePlus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="#aaa"
+            android:text="+"
+            android:textColor="@android:color/white" />
     </LinearLayout>
-
-
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number" />
 
     <EditText
         android:id="@+id/etTotal"
+        android:text="0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:background="@android:color/white"
         android:hint="@string/total"
-        android:inputType="textPersonName"
+        android:inputType="none"
+        android:textIsSelectable="true"
+        android:focusable="false"
         android:padding="10dp" />
 
     <EditText
