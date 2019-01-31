@@ -29,7 +29,6 @@ public class FetchLocation implements LocationListener {
     public FetchLocation(Context mContext, Activity mActivity) {
         mcontext = mContext;
         activity = mActivity;
-        //locationtext = locationText;
 
         getDeviceLocation();
     }
@@ -51,8 +50,6 @@ public class FetchLocation implements LocationListener {
         }
     }
 
-
-
     @Override
     public void onLocationChanged(Location location) {
 
@@ -67,8 +64,7 @@ public class FetchLocation implements LocationListener {
             longitude = location.getLongitude();
 
             //locationtext.setText(location_data);
-        }catch(Exception e)
-        {
+        } catch(Exception e) {
 
         }
     }

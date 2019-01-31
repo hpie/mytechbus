@@ -29,8 +29,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BookingActivity" />
-        <activity android:name=".DashboardActivity" />
+
+        <activity android:name="mytechbus.hpie.com.mytechbus.DashboardActivity"
+            android:label="@string/title_dashboard" />
+        <activity android:name=".BookingActivity"
+            android:label="@string/title_booking"
+            android:parentActivityName="mytechbus.hpie.com.mytechbus.DashboardActivity"  />
+
         <service android:name=".LocationMonitoringService" />
     </application>
 

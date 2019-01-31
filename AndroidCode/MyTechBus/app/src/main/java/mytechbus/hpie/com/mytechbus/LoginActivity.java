@@ -33,8 +33,10 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,6 +58,9 @@ public class LoginActivity extends AppCompatActivity {
     private boolean mAlreadyStartedService = false;
     private static String DEVICE_IMEI = "";
 
+    String wait_queue_contents = "";
+    String upload_queue_contents = "";
+
     FetchLocation fetchLocation;
 
     @Override
@@ -64,10 +69,11 @@ public class LoginActivity extends AppCompatActivity {
         session = new SessionHandler(getApplicationContext());
         fIleOperations = new FIleOperations();
 
-
-
         if(session.isLoggedIn()){
+            // Start periodic location logging
             startStep3();
+
+            // Redirect dashboard if session exists
             loadDashboard();
         }
         setContentView(R.layout.activity_login);
@@ -103,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                 TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 @SuppressLint("MissingPermission") String IMEINumber = tm.getDeviceId();
 
-                //Toast.makeText(getApplicationContext(), "In permission granted stuff : " + IMEINumber,Toast.LENGTH_LONG).show();
 
                 DEVICE_IMEI = IMEINumber;
                 session.setIMEI(IMEINumber);
@@ -124,12 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                         current_latitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LATITUDE).trim();
                         current_longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE).trim();
 
-                        //if (current_latitude != null && current_longitude != null && !(current_latitude.equals(latitude) && current_longitude.equals(longitude))) {
-                        if (current_latitude != null && current_longitude != null) {
-
-                            Log.d("Suresh12345 : if", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
-
-                            //mMsgView.setText(getString(R.string.msg_location_service_started) + "\n Latitude : " + latitude + "\n Longitude: " + longitude);
+                         if (current_latitude != null && current_longitude != null) {
                             latitude = current_latitude;
                             longitude = current_longitude;
                             //------------------------------------------------------------------------------------------------------------
@@ -168,24 +168,34 @@ public class LoginActivity extends AppCompatActivity {
                             //------------------------------------------------------------------------------------------------------------
 
                         } else {
-                            //Toast.makeText(getApplicationContext(), "Lat same " +  current_latitude.equals(latitude) + " || Long same :  " + current_longitude.equals(longitude),Toast.LENGTH_LONG).show();
                             Log.d("Suresh12345 : els", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
                         }
                     }
                 }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST)
         );
 
-        //String file_contents = fIleOperations.readFromFile("ticket_wait_queue.txt", LoginActivity.this);
-        //Log.d("Suresh12345 : els", file_contents);
-
         //------------------------------------------------------------
+        /**
+         * A periodic timer to update ticket booking data to server from local files
+         */
         Timer t = new Timer();
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                String wait_queue_contents = fIleOperations.readFromFile("ticket_wait_queue.txt", LoginActivity.this);
+                /*
+                File wait_file = new File("ticket_wait_queue.txt");
+                if(wait_file.exists()) {
+                    wait_queue_contents = fIleOperations.readFromFile("ticket_wait_queue.txt", LoginActivity.this);
+                }
 
-                String upload_queue_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", LoginActivity.this);
+                File uplad_file = new File("ticket_upload_queue.txt");
+                if(uplad_file.exists()) {
+                    upload_queue_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", LoginActivity.this);
+                }
+                */
+
+                wait_queue_contents = fIleOperations.readFromFile("ticket_wait_queue.txt", LoginActivity.this);
+                upload_queue_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", LoginActivity.this);
 
                 if(!wait_queue_contents.equals("") || !upload_queue_contents.equals("")) {
                 fIleOperations.writeToFile("ticket_wait_queue.txt", "", LoginActivity.this, "0");
@@ -231,7 +241,9 @@ public class LoginActivity extends AppCompatActivity {
                     // Access the RequestQueue through your singleton class.
                     mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
                     //------------------------------------------------------------------------------------------------------------
-            }
+            } else {
+                Log.d("Queue_fiels_do_not :", "wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
+                }
             };
         };
         t.scheduleAtFixedRate(tt,new Date(),120000);
@@ -240,8 +252,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
         String permissions[], int[] grantResults) {
-
-        Toast.makeText(getApplicationContext(),String.valueOf(requestCode),Toast.LENGTH_LONG).show();
         fetchLocation = new FetchLocation(LoginActivity.this,LoginActivity.this);
     }
 
@@ -257,7 +267,6 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Display Progress bar while Logging in
      */
-
     private void displayLoader() {
         pDialog = new ProgressDialog(LoginActivity.this);
         pDialog.setMessage("Logging In.. Please wait...");
@@ -267,37 +276,29 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-
-        //Toast.makeText(getApplicationContext(),DEVICE_IMEI,Toast.LENGTH_LONG).show();
         displayLoader();
+
+        fIleOperations.writeToFile("route_stages.txt", "", LoginActivity.this, "0");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.login_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         pDialog.dismiss();
-                        //Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
-
-                        //Log.d("Suresh12345 : response", response);
-                        //Log.d("Suresh12345 : login_url", Constants.login_url);
 
                         try {
+                            Log.d("Login Response : ", response);
                             //Check if user got logged in successfully
                             JSONObject login_response = new JSONObject(response);
 
-                            //Log.d("Suresh12345 : status", login_response.getString(Constants.KEY_STATUS));
-
                             if (login_response.getInt(Constants.KEY_STATUS) == 1) {
-                                //Log.d("Suresh12345 : username", login_response.getString(Constants.KEY_FULL_NAME));
                                 session.loginUser(username,login_response.getString(Constants.KEY_FULL_NAME), login_response.getString(Constants.KEY_ROUTE_CODE));
                                 loadDashboard();
 
                             }else{
-                                //Log.d("Suresh12345 : error", response);
-                                //Toast.makeText(getApplicationContext(), login_response.getString(Constants.KEY_MESSAGE), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),login_response.getString(Constants.KEY_MESSAGE),Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
-                            //Log.d("Suresh12345 : error", "Error occured");
                             e.printStackTrace();
                         }
                     }
@@ -311,6 +312,7 @@ public class LoginActivity extends AppCompatActivity {
                 }){
             @Override
             protected Map<String,String> getParams(){
+
                 Map<String,String> params = new HashMap<String, String>();
                 params.put(Constants.KEY_USERNAME,username);
                 params.put(Constants.KEY_PASSWORD,password);
@@ -373,8 +375,6 @@ public class LoginActivity extends AppCompatActivity {
 
         if (!mAlreadyStartedService) {
 
-            //mMsgView.setText(R.string.msg_location_service_started);
-
             //Start location sharing service to app server.........
             Intent intent = new Intent(this, LocationMonitoringService.class);
             startService(intent);
@@ -384,22 +384,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onDestroy() {
 
         //Stop location sharing service to app server.........
-
         stopService(new Intent(this, LocationMonitoringService.class));
         mAlreadyStartedService = false;
         //Ends................................................
 
         super.onDestroy();
     }
-
-
-
-
-
-
 }

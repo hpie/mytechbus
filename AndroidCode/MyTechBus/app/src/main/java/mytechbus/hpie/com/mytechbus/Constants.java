@@ -1,6 +1,7 @@
 package mytechbus.hpie.com.mytechbus;
 
 public class Constants {
+    //Api server url
     public static final String base_url = "http://mytechbus.hpie.in/";
 
     public static final int LOCATION_INTERVAL = 120000;
@@ -23,12 +24,7 @@ public class Constants {
     public static final String PREF_NAME = "UserSession";
     public static final String KEY_EXPIRES = "expires";
 
-
-    //public static final String login_url = "http://mytechbus.hpie.in/login";
     public static final String login_url = base_url+"login";
-    //public static final String route_stages_url = "http://mytechbus.hpie.in/routes_stages";
-    //public static final String book_ticket_url = "http://mytechbus.hpie.in/book_ticket";
-
     public static final String route_stages_url = base_url+"routes_stages";
     public static final String book_ticket_url = base_url+"book_ticket";
     public static final String position_log_url = base_url+"position_log";

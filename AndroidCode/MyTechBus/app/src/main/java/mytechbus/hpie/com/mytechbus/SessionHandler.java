@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class SessionHandler {
@@ -37,48 +40,6 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_IMEI, Constants.KEY_EMPTY);
     }
 
-    public void setTicketBookWaitQueue( String ticket_data) {
-
-        String queue_data = mPreferences.getString("ticket_wait_queue", Constants.KEY_EMPTY);
-
-        if(queue_data.equals(Constants.KEY_EMPTY)) {
-            queue_data = ticket_data;
-        } else {
-            queue_data = queue_data + "," + ticket_data;
-        }
-
-        Log.d("Ticket_Wait Queue : ", queue_data);
-
-        mEditor.putString("ticket_wait_queue", queue_data);
-
-        //Toast.makeText(mContext, "In Set session : " + imei,Toast.LENGTH_LONG).show();
-    }
-
-    public String getTicketBookWaitQueue( String ticket_data) {
-        //Toast.makeText(mContext, "In get session : " + mPreferences.getString(KEY_IMEI, KEY_EMPTY),Toast.LENGTH_LONG).show();
-        return mPreferences.getString("ticket_wait_queue", Constants.KEY_EMPTY);
-    }
-
-
-    public void setTicketBookUploadQueue(String ticket_data) {
-        String queue_data = mPreferences.getString("ticket_upload_queue", Constants.KEY_EMPTY);
-
-        if(queue_data.equals(Constants.KEY_EMPTY)) {
-            queue_data = ticket_data;
-        } else {
-            queue_data = queue_data + "," + ticket_data;
-        }
-
-        Log.d("Ticket upload Queue : ", queue_data);
-
-        mEditor.putString("ticket_upload_queue", queue_data);
-    }
-
-    public String getTicketBookUploadQueue() {
-        //Toast.makeText(mContext, "In get session : " + mPreferences.getString(KEY_IMEI, KEY_EMPTY),Toast.LENGTH_LONG).show();
-        return mPreferences.getString("ticket_upload_queue", Constants.KEY_EMPTY);
-    }
-
     /**
      * Logs in the user by saving user details and setting session
      *
@@ -86,6 +47,7 @@ public class SessionHandler {
      * @param fullName
      * @param routecode
      */
+    /*
     public void loginUser(String username, String fullName, String routecode) {
         mEditor.putString(Constants.KEY_USERNAME, username);
         mEditor.putString(Constants.KEY_FULL_NAME, fullName);
@@ -97,12 +59,56 @@ public class SessionHandler {
         mEditor.putLong(Constants.KEY_EXPIRES, millis);
         mEditor.commit();
     }
+    */
+    public void loginUser(String username, String fullName, String routecode) {
+        mEditor.putString(Constants.KEY_USERNAME, username);
+        mEditor.putString(Constants.KEY_FULL_NAME, fullName);
+        mEditor.putString(Constants.KEY_ROUTE_CODE, routecode);
+        Date date = new Date();
+
+        //Set user session for next 7 days
+        long millis = date.getTime() + (7 * 24 * 60 * 60 * 1000);
+        mEditor.putLong(Constants.KEY_EXPIRES, millis);
+
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String expire_date = df.format(Calendar.getInstance().getTime());
+
+        mEditor.putString("expire_date", expire_date);
+
+        mEditor.commit();
+    }
 
     /**
      * Checks whether user is logged in
      *
      * @return
      */
+    public boolean isLoggedIn() {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String expire_date = df.format(Calendar.getInstance().getTime());
+
+        String initial_date = mPreferences.getString("expire_date", "");
+
+        /* If shared preferences does not have a value
+         then user is not logged in
+         */
+        if (initial_date.equals("")) {
+            return false;
+        }
+
+        Log.d("IsLoggedIn", "initial_date : " + initial_date + " ||||| expire_date : " + expire_date);
+
+        /* Check if session is expired by comparing
+        current date and Session expiry date
+        */
+        return initial_date.equals(expire_date);
+    }
+    /**
+     * Checks whether user is logged in
+     *
+     * @return
+     */
+    /*
     public boolean isLoggedIn() {
         Date currentDate = new Date();
 
@@ -111,6 +117,7 @@ public class SessionHandler {
         /* If shared preferences does not have a value
          then user is not logged in
          */
+    /*
         if (millis == 0) {
             return false;
         }
@@ -119,8 +126,10 @@ public class SessionHandler {
         /* Check if session is expired by comparing
         current date and Session expiry date
         */
+    /*
         return currentDate.before(expiryDate);
     }
+    */
 
     /**
      * Fetches and returns user details

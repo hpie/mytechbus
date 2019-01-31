@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -65,6 +66,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private Float full_rate = 0.0f;
     private Float half_rate = 0.0f;
     private Float luggage_rate = 0.0f;
+    String route_stages_data = "";
 
     String fileName;
 
@@ -79,6 +81,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         fIleOperations = new FIleOperations();
 
         setContentView(R.layout.activity_booking);
+
         TextView etTxtBook = findViewById(R.id.textBook);
         Button book = findViewById(R.id.btnBook);
 
@@ -116,6 +119,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         spinner = (Spinner)findViewById(R.id.startStage);
         endspinner = (Spinner)findViewById(R.id.endStage);
+
+        // Initialize the dropdown with values
         route_stages();
 
         // Start stage change event
@@ -286,7 +291,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             luggageRate.setText(fare_luggage_rates.getString(end));
 
         } catch (JSONException e) {
-            Log.d("Suresh12345 : error", "Error occured");
             e.printStackTrace();
         }
     }
@@ -312,6 +316,28 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     // Get route details
     private void route_stages() {
+        /*
+        File route_stages_file = new File("route_stages.txt");
+        if(route_stages_file.exists()) {
+            route_stages_data = fIleOperations.readFromFile("route_stages.txt", this);
+            Log.d("Hiiiiii 1: ", "File exists " + route_stages_data);
+        } else {
+            Log.d("Hiiiiii 2: ", "File do not exist");
+        }
+        */
+        route_stages_data = fIleOperations.readFromFile("route_stages.txt", this);
+        if(!route_stages_data.equals("")) {
+            update_routes_spinner(route_stages_data);
+            Toast.makeText(getApplicationContext(),"Data exists",Toast.LENGTH_LONG).show();
+            Log.d("Hiiiiii if: ", route_stages_data);
+            return;
+        } else  {
+            Toast.makeText(getApplicationContext(),"No Data exists",Toast.LENGTH_LONG).show();
+
+            Log.d("Hiiielseiii : ", route_stages_data);
+           // return;
+        }
+
         displayLoader();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.route_stages_url,
@@ -323,17 +349,21 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                         Log.d("Suresh12345 : response", response);
 
+                        fIleOperations.writeToFile("route_stages.txt", response, BookingActivity.this, "0");
+
+                        update_routes_spinner(response);
+                        /*
                         try {
                             //Check if user got logged in successfully
                             JSONObject route_response = new JSONObject(response);
 
                             JSONArray jsonArray=route_response.getJSONArray("start_stages");
 
-                            end_stages =route_response.getJSONObject("end_stages");
-                            fare_km =route_response.getJSONObject("fare_km");
-                            fare_full =route_response.getJSONObject("fare_full");
-                            fare_half =route_response.getJSONObject("fare_half");
-                            fare_luggage =route_response.getJSONObject("fare_luggage");
+                            end_stages      = route_response.getJSONObject("end_stages");
+                            fare_km         = route_response.getJSONObject("fare_km");
+                            fare_full       = route_response.getJSONObject("fare_full");
+                            fare_half       = route_response.getJSONObject("fare_half");
+                            fare_luggage    = route_response.getJSONObject("fare_luggage");
 
                             for(int i=0;i<jsonArray.length();i++){
                                 String start=jsonArray.getString(i);
@@ -346,6 +376,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             Log.d("Suresh12345 : error", "Error occured");
                             e.printStackTrace();
                         }
+                        */
                     }
                 },
                 new Response.ErrorListener() {
@@ -367,6 +398,30 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
+    public void update_routes_spinner(String response) {
+        try {
+            JSONObject route_response = new JSONObject(response);
+
+            JSONArray jsonArray=route_response.getJSONArray("start_stages");
+
+            end_stages      = route_response.getJSONObject("end_stages");
+            fare_km         = route_response.getJSONObject("fare_km");
+            fare_full       = route_response.getJSONObject("fare_full");
+            fare_half       = route_response.getJSONObject("fare_half");
+            fare_luggage    = route_response.getJSONObject("fare_luggage");
+
+            for(int i=0;i<jsonArray.length();i++){
+                String start=jsonArray.getString(i);
+                StartStage.add(start);
+            }
+            spinner.setAdapter(new ArrayAdapter<String>(BookingActivity.this, android.R.layout.simple_spinner_dropdown_item, StartStage));
+
+        } catch (JSONException e) {
+            Log.d("Suresh12345 : error", "Error occured");
+            e.printStackTrace();
+        }
     }
 
     // Book ticket
@@ -421,6 +476,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             // Add ticket details server upload waiting queue file
             fIleOperations.writeToFile("ticket_wait_queue.txt", file_data_store.toString(), this, "1");
 
+            // Add Last ticket details in local file
+            file_data_store.put("duplicate_ticket","1");
+            fIleOperations.writeToFile("ticket_wait_queue.txt", file_data_store.toString(), this, "0");
+
             //------------------------------------------------------------------------------
 
             Toast.makeText(getApplicationContext(),"Ticket Booked successfully", Toast.LENGTH_LONG).show();
@@ -432,109 +491,12 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             e.printStackTrace();
         }
 
-
-
         String file_contents = fIleOperations.readFromFile(fileName, this);
 
         Log.d("File data : ", file_contents);
 
-        /*
-        String content = file_data_store.toString();
-
-        FileOutputStream outputStream = null;
-        try {
-            outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
-            outputStream.write(content.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Log.d("File data : ", getStringFromFile(fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
         pDialog.dismiss();
-
-
-        /*
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.book_ticket_url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        pDialog.dismiss();
-                        //Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
-
-                        Log.d("Suresh12345 : response", response);
-
-                        try {
-                            //Check if user got logged in successfully
-                            JSONObject booking_response = new JSONObject(response);
-
-                            if (booking_response.getInt("status") == 1) {
-                                Toast.makeText(getApplicationContext(),"Ticket Booked",Toast.LENGTH_LONG).show();
-                            }else{
-                                Log.d("Suresh12345 : error", response);
-                                Toast.makeText(getApplicationContext(),
-                                        booking_response.getString("message"), Toast.LENGTH_LONG).show();
-                            }
-
-                        } catch (JSONException e) {
-                            Log.d("Suresh12345 : error", "Error occured");
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        pDialog.dismiss();
-                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
-                    }
-                }){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-
-                String full_text = (!etFullPassengers.getText().toString().trim().equals("")) ? etFullPassengers.getText().toString(): "0" ;
-                String half_text = (!etHalfPassengers.getText().toString().trim().equals("")) ? etHalfPassengers.getText().toString(): "0" ;
-                String luggage_text = (!etLuggage.getText().toString().trim().equals("")) ? etLuggage.getText().toString(): "0" ;
-
-                DateFormat booking_reference_df = new SimpleDateFormat("yyMMddHHmmssZ");
-                String booking_reference = booking_reference_df.format(Calendar.getInstance().getTime());
-
-                params.put("booking_reference", session.getIMEI() + "_" + booking_reference);
-                params.put("route_code",session.GetRoute());
-                params.put("start_stage",start_stage);
-                params.put("end_stage",end_stage);
-                params.put("fare_full_cost", String.valueOf(full_rate));
-                params.put("fare_half_cost", String.valueOf(half_rate));
-                params.put("fare_luggage_cost", String.valueOf(luggage_rate));
-                params.put("fare_full_passengers",full_text);
-                params.put("fare_half_passengers",half_text);
-                params.put("fare_luggage",luggage_text);
-                params.put("mobile",etMobile.getText().toString());
-
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String date = df.format(Calendar.getInstance().getTime());
-
-                params.put("booking_time",date);
-                params.put("total_fare",etTotal.getText().toString());
-                params.put("created_by","1");
-
-                return params;
-            }
-
-        };
-
-        // Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
-        */
     }
-
-
 
     /**
      * Validates inputs and shows error if any
