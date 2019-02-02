@@ -58,7 +58,7 @@ public class FetchLocation implements LocationListener {
 
             String location_data = "Latitude : " + location.getLatitude() + " AND Longitude : " + location.getLongitude();
 
-            Toast.makeText(mcontext, location_data, Toast.LENGTH_LONG).show();
+            //Toast.makeText(mcontext, location_data, Toast.LENGTH_LONG).show();
 
             latitude = location.getLatitude();
             longitude = location.getLongitude();

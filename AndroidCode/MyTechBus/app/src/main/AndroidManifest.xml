@@ -33,8 +33,7 @@
         <activity android:name="mytechbus.hpie.com.mytechbus.DashboardActivity"
             android:label="@string/title_dashboard" />
         <activity android:name=".BookingActivity"
-            android:label="@string/title_booking"
-            android:parentActivityName="mytechbus.hpie.com.mytechbus.DashboardActivity"  />
+            android:label="@string/title_booking"  />
 
         <service android:name=".LocationMonitoringService" />
     </application>

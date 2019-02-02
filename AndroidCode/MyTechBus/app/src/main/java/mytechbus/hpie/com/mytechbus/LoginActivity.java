@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -51,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private String username;
     private String password;
-    private String latitude, current_latitude;
+    private String latitude = "", current_latitude = "";
     private String longitude, current_longitude;
     private ProgressDialog pDialog;
     private SessionHandler session;
@@ -68,6 +70,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         session = new SessionHandler(getApplicationContext());
         fIleOperations = new FIleOperations();
+
+        //session.loginUser("hpie@hpie.in","hpie@hpie.in", "R-001");
 
         if(session.isLoggedIn()){
             // Start periodic location logging
@@ -109,14 +113,18 @@ public class LoginActivity extends AppCompatActivity {
                 TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 @SuppressLint("MissingPermission") String IMEINumber = tm.getDeviceId();
 
-
                 DEVICE_IMEI = IMEINumber;
                 session.setIMEI(IMEINumber);
 
                 startStep3();
                 //---------------------------------------------------------------------
                 if (validateInputs()) {
-                    login();
+                    if(isNetworkAvailable()) {
+                        login();
+                    } else {
+                        //Toast.makeText(getApplicationContext(), "Network not available.",Toast.LENGTH_LONG).show();
+                        showDialog("Network not available.");
+                    }
                 }
             }
         });
@@ -129,47 +137,52 @@ public class LoginActivity extends AppCompatActivity {
                         current_latitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LATITUDE).trim();
                         current_longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE).trim();
 
-                         if (current_latitude != null && current_longitude != null) {
-                            latitude = current_latitude;
-                            longitude = current_longitude;
-                            //------------------------------------------------------------------------------------------------------------
-                            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.position_log_url,
-                                    new Response.Listener<String>() {
-                                        @Override
-                                        public void onResponse(String response) {
+                        Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
-                                        }
-                                    },
-                                    new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            //Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
-                                        }
-                                    }){
-                                @Override
-                                protected Map<String,String> getParams(){
-                                    Map<String,String> params = new HashMap<String, String>();
 
-                                    params.put("latitude", ""+ latitude);
-                                    params.put("longitude",""+ longitude);
-                                    params.put("route_code",""+ session.GetRoute());
-                                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                    String date = df.format(Calendar.getInstance().getTime());
+                        if (current_latitude != null && current_longitude != null) {
+                             if(!latitude.equals(current_latitude) || !longitude.equals(current_longitude)) {
+                             latitude = current_latitude;
+                             longitude = current_longitude;
+                             //------------------------------------------------------------------------------------------------------------
+                             StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.position_log_url,
+                                     new Response.Listener<String>() {
+                                         @Override
+                                         public void onResponse(String response) {
 
-                                    params.put("timestamp",date);
+                                         }
+                                     },
+                                     new Response.ErrorListener() {
+                                         @Override
+                                         public void onErrorResponse(VolleyError error) {
+                                             //Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+                                         }
+                                     }) {
+                                 @Override
+                                 protected Map<String, String> getParams() {
+                                     Map<String, String> params = new HashMap<String, String>();
 
-                                    //params.put(KEY_EMAIL, email);
-                                    return params;
-                                }
-                            };
+                                     params.put("latitude", "" + latitude);
+                                     params.put("longitude", "" + longitude);
+                                     params.put("route_code", "" + session.GetRoute());
+                                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                     String date = df.format(Calendar.getInstance().getTime());
 
-                            // Access the RequestQueue through your singleton class.
-                            mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
-                            //------------------------------------------------------------------------------------------------------------
+                                     params.put("timestamp", date);
 
-                        } else {
-                            Log.d("Suresh12345 : els", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
-                        }
+                                     //params.put(KEY_EMAIL, email);
+                                     return params;
+                                 }
+                             };
+
+                             // Access the RequestQueue through your singleton class.
+                             mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
+                             //------------------------------------------------------------------------------------------------------------
+                         }
+                         }
+
+                        Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+
                     }
                 }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST)
         );
@@ -182,17 +195,6 @@ public class LoginActivity extends AppCompatActivity {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                /*
-                File wait_file = new File("ticket_wait_queue.txt");
-                if(wait_file.exists()) {
-                    wait_queue_contents = fIleOperations.readFromFile("ticket_wait_queue.txt", LoginActivity.this);
-                }
-
-                File uplad_file = new File("ticket_upload_queue.txt");
-                if(uplad_file.exists()) {
-                    upload_queue_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", LoginActivity.this);
-                }
-                */
 
                 wait_queue_contents = fIleOperations.readFromFile("ticket_wait_queue.txt", LoginActivity.this);
                 upload_queue_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", LoginActivity.this);
@@ -241,8 +243,10 @@ public class LoginActivity extends AppCompatActivity {
                     // Access the RequestQueue through your singleton class.
                     mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
                     //------------------------------------------------------------------------------------------------------------
-            } else {
-                Log.d("Queue_fiels_do_not :", "wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
+                    Log.d("myLogs", " Book Ticket If : current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+
+                } else {
+                Log.d("myLogs", " Book Ticket else : wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
                 }
             };
         };
@@ -253,6 +257,30 @@ public class LoginActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
         String permissions[], int[] grantResults) {
         fetchLocation = new FetchLocation(LoginActivity.this,LoginActivity.this);
+    }
+
+    private void showDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(message)
+                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+    }
+
+    /**
+     *  Check network status
+     * @return
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     /**
@@ -287,13 +315,20 @@ public class LoginActivity extends AppCompatActivity {
                         pDialog.dismiss();
 
                         try {
-                            Log.d("Login Response : ", response);
+                            Log.d("myLogs : Login : ", response);
                             //Check if user got logged in successfully
                             JSONObject login_response = new JSONObject(response);
 
                             if (login_response.getInt(Constants.KEY_STATUS) == 1) {
                                 session.loginUser(username,login_response.getString(Constants.KEY_FULL_NAME), login_response.getString(Constants.KEY_ROUTE_CODE));
-                                loadDashboard();
+                                //loadDashboard();
+
+                                if(isNetworkAvailable()) {
+                                    loadDashboard();
+                                } else {
+                                    //Toast.makeText(getApplicationContext(), "Network not available.",Toast.LENGTH_LONG).show();
+                                    showDialog("Network not available.");
+                                }
 
                             }else{
                                 Toast.makeText(getApplicationContext(),login_response.getString(Constants.KEY_MESSAGE),Toast.LENGTH_LONG).show();
@@ -313,11 +348,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             protected Map<String,String> getParams(){
 
+                //username = "hrtc@hpie.in";
+                //password = "55555";
+                //DEVICE_IMEI = "911436258233786";
+
                 Map<String,String> params = new HashMap<String, String>();
                 params.put(Constants.KEY_USERNAME,username);
                 params.put(Constants.KEY_PASSWORD,password);
-                params.put(Constants.KEY_UUID,"e082317ec532818");
                 params.put(Constants.KEY_IMEI,DEVICE_IMEI);
+
 
                 params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.latitude);
                 params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.longitude);

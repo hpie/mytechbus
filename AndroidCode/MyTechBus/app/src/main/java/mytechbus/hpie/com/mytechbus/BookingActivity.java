@@ -2,12 +2,15 @@ package mytechbus.hpie.com.mytechbus;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -210,7 +213,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 ticket_total = etTotal.getText().toString().toLowerCase().trim();
 
                 if (validateInputs()) {
-                    book_ticket();
+                    //book_ticket();
+                    confirmDialog();
                 }
             }
         });
@@ -225,6 +229,67 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
             }
         });
+    }
+
+    private void confirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Get the layout inflater
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View promptTicketView = inflater.inflate(R.layout.dialog_ticket,null);
+
+        final TextView proptFullRate =(TextView)promptTicketView.findViewById(R.id.proptFullRate);
+        final TextView proptFullPassengers =(TextView)promptTicketView.findViewById(R.id.proptFullPassengers);
+        final TextView proptFullTotal =(TextView)promptTicketView.findViewById(R.id.proptFullTotal);
+
+        final TextView proptHalfRate =(TextView)promptTicketView.findViewById(R.id.proptHalfRate);
+        final TextView proptHalfPassengers =(TextView)promptTicketView.findViewById(R.id.proptHalfPassengers);
+        final TextView proptHalfTotal =(TextView)promptTicketView.findViewById(R.id.proptHalfTotal);
+
+        final TextView proptLuggageRate =(TextView)promptTicketView.findViewById(R.id.proptLuggageRate);
+        final TextView proptLugguage=(TextView)promptTicketView.findViewById(R.id.proptLuggage);
+        final TextView proptLuggageTotal =(TextView)promptTicketView.findViewById(R.id.proptLuggageTotal);
+
+        final TextView proptTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptTicketTotal);
+
+         //------------------------------------------
+
+        proptFullRate.setText(String.valueOf(full_rate));
+        proptFullPassengers.setText(etFullPassengers.getText().toString());
+        Double fulltotal = Double.valueOf(etFullPassengers.getText().toString()) * full_rate;
+        proptFullTotal.setText(String.valueOf(fulltotal));
+
+        proptHalfRate.setText(String.valueOf(half_rate));
+        proptHalfPassengers.setText(etHalfPassengers.getText().toString());
+        Double halftotal = Double.valueOf(etHalfPassengers.getText().toString()) * half_rate;
+        proptHalfTotal.setText(String.valueOf(halftotal));
+
+        proptLuggageRate.setText(String.valueOf(luggage_rate));
+        proptLugguage.setText(etLuggage.getText().toString());
+        Double luggagetotal = Double.valueOf(etLuggage.getText().toString()) * luggage_rate;
+        proptLuggageTotal.setText(String.valueOf(luggagetotal));
+
+        proptTicketTotal.setText(etTotal.getText().toString());
+
+        builder
+                .setMessage("Confirm Ticket details.")
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                .setView(promptTicketView)
+                .setPositiveButton("Yes",  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        book_ticket();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
     }
 
     private void displayLoader() {
@@ -316,26 +381,16 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     // Get route details
     private void route_stages() {
-        /*
-        File route_stages_file = new File("route_stages.txt");
-        if(route_stages_file.exists()) {
-            route_stages_data = fIleOperations.readFromFile("route_stages.txt", this);
-            Log.d("Hiiiiii 1: ", "File exists " + route_stages_data);
-        } else {
-            Log.d("Hiiiiii 2: ", "File do not exist");
-        }
-        */
         route_stages_data = fIleOperations.readFromFile("route_stages.txt", this);
         if(!route_stages_data.equals("")) {
             update_routes_spinner(route_stages_data);
-            Toast.makeText(getApplicationContext(),"Data exists",Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"Data exists",Toast.LENGTH_LONG).show();
             Log.d("Hiiiiii if: ", route_stages_data);
             return;
         } else  {
-            Toast.makeText(getApplicationContext(),"No Data exists",Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"No Data exists",Toast.LENGTH_LONG).show();
 
             Log.d("Hiiielseiii : ", route_stages_data);
-           // return;
         }
 
         displayLoader();
@@ -347,36 +402,23 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         pDialog.dismiss();
                         //Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
 
-                        Log.d("Suresh12345 : response", response);
+                        Log.d("Route stages response", response);
 
-                        fIleOperations.writeToFile("route_stages.txt", response, BookingActivity.this, "0");
-
-                        update_routes_spinner(response);
-                        /*
                         try {
-                            //Check if user got logged in successfully
                             JSONObject route_response = new JSONObject(response);
 
-                            JSONArray jsonArray=route_response.getJSONArray("start_stages");
+                            if (route_response.getInt(Constants.KEY_STATUS) == 1) {
+                                fIleOperations.writeToFile("route_stages.txt", response, BookingActivity.this, "0");
 
-                            end_stages      = route_response.getJSONObject("end_stages");
-                            fare_km         = route_response.getJSONObject("fare_km");
-                            fare_full       = route_response.getJSONObject("fare_full");
-                            fare_half       = route_response.getJSONObject("fare_half");
-                            fare_luggage    = route_response.getJSONObject("fare_luggage");
+                                update_routes_spinner(response);
 
-                            for(int i=0;i<jsonArray.length();i++){
-                                String start=jsonArray.getString(i);
-
-                                StartStage.add(start);
+                            }else{
+                                //Toast.makeText(getApplicationContext(),route_response.getString(Constants.KEY_MESSAGE),Toast.LENGTH_LONG).show();
+                                loadDashboard(route_response.getString(Constants.KEY_MESSAGE));
                             }
-                            spinner.setAdapter(new ArrayAdapter<String>(BookingActivity.this, android.R.layout.simple_spinner_dropdown_item, StartStage));
-
                         } catch (JSONException e) {
-                            Log.d("Suresh12345 : error", "Error occured");
                             e.printStackTrace();
                         }
-                        */
                     }
                 },
                 new Response.ErrorListener() {
@@ -398,6 +440,25 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
+    /**
+     * Launch Dashboard Activity if no route data found
+     */
+    private void loadDashboard(String message) {
+        Intent i = new Intent(getApplicationContext(), DashboardActivity.class);
+
+        //Create the bundle
+        Bundle bundle = new Bundle();
+
+        //Add your data to bundle
+        bundle.putString(Constants.KEY_MESSAGE, message);
+
+        //Add the bundle to the intent
+        i.putExtras(bundle);
+
+        startActivity(i);
+        finish();
     }
 
     public void update_routes_spinner(String response) {
@@ -478,7 +539,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             // Add Last ticket details in local file
             file_data_store.put("duplicate_ticket","1");
-            fIleOperations.writeToFile("ticket_wait_queue.txt", file_data_store.toString(), this, "0");
+            fIleOperations.writeToFile("last_ticket.txt", file_data_store.toString(), this, "0");
 
             //------------------------------------------------------------------------------
 
@@ -493,7 +554,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         String file_contents = fIleOperations.readFromFile(fileName, this);
 
-        Log.d("File data : ", file_contents);
+        Log.d("myLogs", "Ticket Booking Data : " + file_contents);
 
         pDialog.dismiss();
     }
