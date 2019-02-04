@@ -35,7 +35,10 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -251,7 +254,58 @@ public class LoginActivity extends AppCompatActivity {
             };
         };
         t.scheduleAtFixedRate(tt,new Date(),120000);
-}
+
+        // Sets the default uncaught exception handler. This handler is invoked
+        // in case any Thread dies due to an unhandled exception.
+        Thread.setDefaultUncaughtExceptionHandler(new CustomizedExceptionHandler( this));
+
+        getCrashReports();
+    }
+
+    /**
+     *  Check if carash report file exsits
+     * @return
+     */
+    private String[] GetErrorFileList() {
+        File mydir = this.getDir("crashReports", this.MODE_PRIVATE);
+        //File dir = new File( FilePath + "/");
+        // Try to create the files folder if it doesn't exist
+        //dir.mkdir();
+        // Filter for ".stacktrace" files
+        FilenameFilter filter = new FilenameFilter() {
+            public boolean accept(File mydir, String name) {
+                return name.endsWith(".stacktrace");
+            }
+        };
+        return mydir.list(filter);
+    }
+    private boolean bIsThereAnyErrorFile() {
+        return GetErrorFileList().length > 0;
+    }
+
+    public void getCrashReports() {
+        Log.d("myLogs", "Crash report called : ");
+        if ( bIsThereAnyErrorFile() ) {
+            String[] ErrorFileList = GetErrorFileList();
+            String WholeErrorText = "";
+            int curIndex = 0;
+            // We limit the number of crash reports to send ( in order not to be too slow )
+            final int MaxSendMail = 5;
+            for ( String curString : ErrorFileList ) {
+                if ( curIndex++ <= MaxSendMail ) {
+                    WholeErrorText+="New Trace collected :\n";
+                    WholeErrorText+="=====================\n ";
+                    WholeErrorText+= curString;
+                }
+
+                // DELETE FILES !!!!
+                //File curFile = new File( FilePath + "/" + curString );
+                //curFile.delete();
+            }
+
+            Log.d("myLogs", "Crash report files : " + WholeErrorText);
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,

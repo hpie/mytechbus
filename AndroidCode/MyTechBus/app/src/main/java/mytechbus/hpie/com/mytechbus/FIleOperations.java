@@ -4,7 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,6 +39,25 @@ public class FIleOperations {
         }
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    public void writeErrorToFile(String filename, String data,Context context, String mode, String... foldername) {
+        File mydir = context.getDir("crashReports", context.MODE_PRIVATE); //Creating an internal dir;
+        File fileWithinMyDir = new File(mydir, filename); //Getting a file within the dir.
+        try {
+            FileOutputStream out = new FileOutputStream(fileWithinMyDir); //Use the stream as usual to write into the file.
+
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(out);
+
+            myOutWriter.write(data);
+            myOutWriter.close();
+
+            //out.write(data);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

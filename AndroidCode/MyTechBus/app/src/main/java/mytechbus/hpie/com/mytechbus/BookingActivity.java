@@ -214,7 +214,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                 if (validateInputs()) {
                     //book_ticket();
-                    confirmDialog();
+                   confirmDialog();
+
+                   // throw new RuntimeException("Test runtime exception");
                 }
             }
         });
