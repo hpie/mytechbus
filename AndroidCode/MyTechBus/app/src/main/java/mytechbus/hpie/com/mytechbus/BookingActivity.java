@@ -742,7 +742,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 /*Bill*/
                 StringBuilder sb = new StringBuilder("");
                 sb.append("------------------------").append("\n");
-                sb.append("TYPE     ").append("QTY").append("  FARE").append("    AMT").append("\n");
+                sb.append("TYPE ").append("QTY").append("  FARE").append("    AMT").append("\n");
                 sb.append("------------------------").append("\n");
                 /*
                 sb.append("Full    x").append(" 10").append("  120").append("    1200").append("\n");
@@ -751,13 +751,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 sb.append("Disc    %").append("  5").append("  120").append("     100").append("\n");
                 */
 
-                sb.append("Full    x").append(" 10").append("  "+full_rate).append("    1200").append("\n");
-                sb.append("Half    x").append(" 10").append("  "+half_rate).append("     600").append("\n");
-                sb.append("Lugg    x").append("  2").append("  "+luggage_rate).append("     200").append("\n");
-                sb.append("Disc    %").append("  5").append("  120").append("     100").append("\n");
+                sb.append("Full :").append(" 10").append("x "+full_rate).append("    1200").append("\n");
+                sb.append("Half :").append(" 10").append("x "+half_rate).append("     600").append("\n");
+                sb.append("Lugg :").append("  2").append("x "+luggage_rate).append("     200").append("\n");
+                sb.append("Disc :").append("100").append("% 1200").append("   10000").append("\n");
 
                 sb.append("------------------------").append("\n");
-                sb.append("Total              1900").append("\n");
+                sb.append("Total :       ").append("     1900").append("\n");
                 //sb.append("GST (5%)            85").append("\n");
                 sb.append("------------------------");
                 msg = sb.toString() + "\n";

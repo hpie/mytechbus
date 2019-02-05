@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `vehicle_operator_devices` (
   `device_network` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is device network provider AIRTEL, VODAFONE, JIO etc.',
   `device_number` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is device calling number',
   `device_status` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'ACTIVE, INACTIVE, DELETED',
-  `operator_id` bigint(20) NOT NULL COMMENT 'The operator to whom this device is attached to',
+  `operator_id` bigint(20) NOT NULL COMMENT 'This is row_id from vehicle_operators, The operator to whom this device is attached to',
   `created_by` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `created_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_by` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,

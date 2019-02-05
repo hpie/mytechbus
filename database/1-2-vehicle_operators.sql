@@ -1,5 +1,6 @@
 --
 -- Table structure for table `vehicle_operators`
+-- There are operator reg details who run business
 --
 
 CREATE TABLE IF NOT EXISTS `vehicle_operators` (

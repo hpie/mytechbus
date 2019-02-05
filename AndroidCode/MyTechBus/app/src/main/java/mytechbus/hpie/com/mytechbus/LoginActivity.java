@@ -194,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         /**
          * A periodic timer to update ticket booking data to server from local files
          */
+
         Timer t = new Timer();
         TimerTask tt = new TimerTask() {
             @Override
@@ -246,7 +247,7 @@ public class LoginActivity extends AppCompatActivity {
                     // Access the RequestQueue through your singleton class.
                     mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
                     //------------------------------------------------------------------------------------------------------------
-                    Log.d("myLogs", " Book Ticket If : current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+                    //Log.d("myLogs", " Book Ticket If : current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
                 } else {
                 Log.d("myLogs", " Book Ticket else : wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
@@ -469,9 +470,9 @@ public class LoginActivity extends AppCompatActivity {
         if (!mAlreadyStartedService) {
 
             //Start location sharing service to app server.........
-            Intent intent = new Intent(this, LocationMonitoringService.class);
-            startService(intent);
-
+            //Intent intent = new Intent(this, LocationMonitoringService.class);
+            //startService(intent);
+            Log.d("myLogs", "Start Step 3 for Location ");
             mAlreadyStartedService = true;
             //Ends................................................
         }

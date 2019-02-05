@@ -6,10 +6,11 @@ CREATE TABLE IF NOT EXISTS `route_stages` (
   `row_id` bigint(20) NOT NULL,
   `stage_code` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is Unique Stage Code',
   `stage_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `stage_km` varchar(50) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is KM from route_start_stage.',
-  `stage_no` varchar(50) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is Stage Sequence from route_start_stage. Matrix will always be calculated from max to min',
+  `stage_km` int NOT NULL COMMENT 'This is KM from route_start_stage.',
+  `stage_no` int NOT NULL COMMENT 'This is Stage Sequence from route_start_stage. Matrix will always be calculated from max to min',
   `route_code` varchar(50) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Which route_code this stage belongs to',
   `stage_status` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'ACTIVE, INACTIVE, DELETED',
+  `operator_id` bigint(20) NOT NULL COMMENT 'This is row_id from vehicle_operators, The operator to whom this route stages are attached to',
   `created_by` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `created_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_by` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `route_stages` (
 --
 ALTER TABLE `route_stages`
   ADD PRIMARY KEY (`row_id`),
-  ADD UNIQUE KEY `stage_code_uk`(`stage_code`);
+  ADD UNIQUE KEY `route_stage_no_uk`(`route_code`,`stage_code`,`stage_no`);
 
 --
 -- AUTO_INCREMENT for dumped tables

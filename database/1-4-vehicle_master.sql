@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS `vehicle_master` (
   `vehicle_capacity` int NOT NULL COMMENT 'Passenger Capacity, number of seats',
   `vehicle_type` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'vehicle_type  from vehicle_types table',
   `vehicle_status` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'ACTIVE, INACTIVE, DELETED',
+  `operator_id` bigint(20) NOT NULL COMMENT 'This is row_id from vehicle_operators, The operator to whom this vehicle is attached to',
   `created_by` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-  `operator_id` bigint(20) NOT NULL COMMENT 'The operator to whom this vehicle is attached to',
   `created_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_by` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
   `modified_dt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
