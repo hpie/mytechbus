@@ -1,5 +1,10 @@
 package mytechbus.hpie.com.mytechbus;
 
+import android.bluetooth.BluetoothSocket;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class Constants {
     //Api server url
     public static final String base_url = "http://mytechbus.hpie.in/";
@@ -29,4 +34,9 @@ public class Constants {
     public static final String book_ticket_url = base_url+"book_ticket";
     public static final String position_log_url = base_url+"position_log";
     public static final String book_offline_ticket_url = base_url+"book_ticket_call";
+    public static final String upload_file_url = base_url+"upload_file";
+
+    public static BluetoothSocket mmSocket;
+    public static OutputStream mmOutputStream;
+    public static InputStream mmInputStream;
 }

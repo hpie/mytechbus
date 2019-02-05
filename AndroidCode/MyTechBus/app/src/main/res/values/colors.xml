@@ -4,4 +4,27 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#d81b60</color>
     <color name="dialogAccept">#78f212</color>
+
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <color name="text_color">#000000</color>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="blue900">#01579b</color>
+    <color name="blue800">#1565c0</color>
+    <color name="blue700">#1976d2</color>
+    <color name="blue600">#1e88e5</color>
+    <color name="blue500">#2196f3</color>
+    <color name="blue400">#42a5f5</color>
+
+    <color name="blackblr">#d40b2c61</color>
+
+    <color name="green200">#002200</color>
+    <color name="green300">#003300</color>
+    <color name="green400">#004400</color>
+    <color name="green500">#005500</color>
+    <color name="green600">#006600</color>
+    <color name="green700">#007700</color>
 </resources>

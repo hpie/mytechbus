@@ -1,9 +1,15 @@
 package mytechbus.hpie.com.mytechbus;
 
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.usb.UsbConstants;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,16 +44,28 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.security.PrivateKey;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BookingActivity extends AppCompatActivity implements View.OnClickListener {
+
+    BluetoothAdapter mBluetoothAdapter;
+    BluetoothSocket mmSocket;
+    BluetoothDevice mmDevice;
+
+    OutputStream mmOutputStream;
+    InputStream mmInputStream;
 
     private SessionHandler session;
     private ProgressDialog pDialog;
@@ -75,6 +93,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     Spinner spinner, endspinner;
     ArrayList<String> StartStage, EndStage;
+
+    //---------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,16 +281,20 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         proptFullRate.setText(String.valueOf(full_rate));
         proptFullPassengers.setText(etFullPassengers.getText().toString());
-        Double fulltotal = Double.valueOf(etFullPassengers.getText().toString()) * full_rate;
-        proptFullTotal.setText(String.valueOf(fulltotal));
 
         proptHalfRate.setText(String.valueOf(half_rate));
         proptHalfPassengers.setText(etHalfPassengers.getText().toString());
-        Double halftotal = Double.valueOf(etHalfPassengers.getText().toString()) * half_rate;
-        proptHalfTotal.setText(String.valueOf(halftotal));
 
         proptLuggageRate.setText(String.valueOf(luggage_rate));
         proptLugguage.setText(etLuggage.getText().toString());
+
+
+        Double fulltotal = Double.valueOf(etFullPassengers.getText().toString()) * full_rate;
+        proptFullTotal.setText(String.valueOf(fulltotal));
+
+        Double halftotal = Double.valueOf(etHalfPassengers.getText().toString()) * half_rate;
+        proptHalfTotal.setText(String.valueOf(halftotal));
+
         Double luggagetotal = Double.valueOf(etLuggage.getText().toString()) * luggage_rate;
         proptLuggageTotal.setText(String.valueOf(luggagetotal));
 
@@ -547,6 +573,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             Toast.makeText(getApplicationContext(),"Ticket Booked successfully", Toast.LENGTH_LONG).show();
             clear_fields();
+
+            //----------------------------
+            PrintBill();
         } catch (JSONException e) {
             // TODO Auto-generated catch block
 
@@ -629,5 +658,141 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         editText.setText(quantity);
+    }
+
+    //----------------------------------------------------------------
+    public void PrintBill() {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM-yyyy HH:mm");
+        String currentDateandTime = sdf.format(new Date());
+
+        Log.d("myLogs", "Print ticket called : " + currentDateandTime);
+        String msg = "";
+        byte[] format;
+        byte[] center;
+        byte[] arrayOfByte;
+        try {
+            if (Constants.mmSocket != null && Constants.mmOutputStream != null && Constants.mmInputStream != null) {
+                /*Title*/
+                msg = "My Tech Bus"+ "\n";
+                format = new byte[]{27, 33, 20};
+                center = new byte[]{0x1b, 0x61, 0x01};
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                /*Bill*/
+                /*
+                msg = "BILL\n";
+                format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+                */
+
+                /*Bus number*/
+                msg = "Bus No. HP-06 AB 0123  "+ "\n";
+                format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                /*Journey Datetime*/
+                msg = "Date:  " +currentDateandTime+ "\n";
+                format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                /*Ticket number*/
+                msg = "T.No:1  " + "\n";
+                format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                /*From*/
+                msg = "From: Shimla" + "\n";
+                format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                /*To*/
+                msg = "To: Rampur" + "\n";
+                format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                /*Bill*/
+                StringBuilder sb = new StringBuilder("");
+                sb.append("------------------------").append("\n");
+                sb.append("TYPE     ").append("QTY").append("  FARE").append("    AMT").append("\n");
+                sb.append("------------------------").append("\n");
+                /*
+                sb.append("Full    x").append(" 10").append("  120").append("    1200").append("\n");
+                sb.append("Half    x").append(" 10").append("   60").append("     600").append("\n");
+                sb.append("Lugg    x").append("  2").append("  100").append("     200").append("\n");
+                sb.append("Disc    %").append("  5").append("  120").append("     100").append("\n");
+                */
+
+                sb.append("Full    x").append(" 10").append("  "+full_rate).append("    1200").append("\n");
+                sb.append("Half    x").append(" 10").append("  "+half_rate).append("     600").append("\n");
+                sb.append("Lugg    x").append("  2").append("  "+luggage_rate).append("     200").append("\n");
+                sb.append("Disc    %").append("  5").append("  120").append("     100").append("\n");
+
+                sb.append("------------------------").append("\n");
+                sb.append("Total              1900").append("\n");
+                //sb.append("GST (5%)            85").append("\n");
+                sb.append("------------------------");
+                msg = sb.toString() + "\n";
+                Log.e("MSG : ", msg);
+                format = new byte[]{27, 33, 0};
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                msg = "Total Rs.  1900.00" + "\n";
+                format = new byte[]{27, 33, 15};
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                msg = "Have a nice journey" + "\n";
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+                LineFeed();
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void LineFeed() {
+        try {
+            String msg = "     " + "\n" + "     ";
+            msg = msg + "\n";
+            Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
