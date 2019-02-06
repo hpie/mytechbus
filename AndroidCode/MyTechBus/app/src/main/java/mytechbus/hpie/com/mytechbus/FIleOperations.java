@@ -3,6 +3,9 @@ package mytechbus.hpie.com.mytechbus;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -89,5 +92,21 @@ public class FIleOperations {
         }
 
         return ret;
+    }
+
+    public Integer getTicketCount(String filename, Context context) {
+        Integer count = 0;
+        String file_data = readFromFile(filename, context);
+
+        try {
+            JSONArray values = new JSONArray("[" + file_data + "]");
+
+            count = values.length();
+
+            Log.e("myLogs", "Ticket Count : " + String.valueOf(count));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 }

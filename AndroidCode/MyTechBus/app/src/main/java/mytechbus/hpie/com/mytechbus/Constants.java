@@ -12,6 +12,7 @@ public class Constants {
     public static final int LOCATION_INTERVAL = 120000;
     public static final int FASTEST_LOCATION_INTERVAL = 60000;
 
+    public static final String KEY_TICKET_NUMBER = "ticket_number";
     public static final String KEY_STATUS = "status";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_FULL_NAME = "loginid";

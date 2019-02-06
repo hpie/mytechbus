@@ -3,7 +3,6 @@ package mytechbus.hpie.com.mytechbus;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,9 +19,6 @@ public class SessionHandler {
         this.mContext = mContext;
         mPreferences = mContext.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
         this.mEditor = mPreferences.edit();
-
-        // set to 1 if ticket data uploading to server
-        mEditor.putString("book_ticket_flag", "0");
     }
 
     public String GetRoute() {
@@ -31,13 +27,24 @@ public class SessionHandler {
 
     public void setIMEI( String imei) {
         mEditor.putString(Constants.KEY_IMEI, imei);
-
+        mEditor.commit();
         //Toast.makeText(mContext, "In Set session : " + imei,Toast.LENGTH_LONG).show();
     }
 
     public String getIMEI() {
         //Toast.makeText(mContext, "In get session : " + mPreferences.getString(KEY_IMEI, KEY_EMPTY),Toast.LENGTH_LONG).show();
         return mPreferences.getString(Constants.KEY_IMEI, Constants.KEY_EMPTY);
+    }
+
+    public void setTicketNumber( Integer ticket) {
+        mEditor.putInt(Constants.KEY_TICKET_NUMBER, ticket);
+        mEditor.commit();
+        //Toast.makeText(mContext, "In Set session : " + imei,Toast.LENGTH_LONG).show();
+    }
+
+    public int getTicketNumber() {
+        //Toast.makeText(mContext, "In get session : " + mPreferences.getString(KEY_IMEI, KEY_EMPTY),Toast.LENGTH_LONG).show();
+        return mPreferences.getInt(Constants.KEY_TICKET_NUMBER, 2);
     }
 
     /**
@@ -73,6 +80,15 @@ public class SessionHandler {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String expire_date = df.format(Calendar.getInstance().getTime());
 
+        String last_date = mPreferences.getString("expire_date", "");
+
+        /* If shared preferences does not have a value
+         then user is not logged in
+         */
+        if (last_date.equals("") || !last_date.equals(expire_date)) {
+            mEditor.putInt(Constants.KEY_TICKET_NUMBER, 1);
+        }
+
         mEditor.putString("expire_date", expire_date);
 
         mEditor.commit();
@@ -96,7 +112,7 @@ public class SessionHandler {
             return false;
         }
 
-        Log.d("IsLoggedIn", "initial_date : " + initial_date + " ||||| expire_date : " + expire_date);
+        //Log.d("IsLoggedIn", "initial_date : " + initial_date + " ||||| expire_date : " + expire_date);
 
         /* Check if session is expired by comparing
         current date and Session expiry date

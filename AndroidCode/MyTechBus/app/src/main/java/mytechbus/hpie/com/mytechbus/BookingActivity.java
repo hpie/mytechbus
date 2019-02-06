@@ -88,8 +88,29 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private Float half_rate = 0.0f;
     private Float luggage_rate = 0.0f;
     String route_stages_data = "";
+     /*
+    private Float total_full_passangers = 0.0f;
+    private Float total_half_passangers = 0.0f;
+    private Float total_luggage_quantity = 0.0f;
+    */
+
+    private Integer total_full_passangers = 0;
+    private Integer total_half_passangers = 0;
+    private Integer total_luggage_quantity = 0;
+
+    private String discount_string = "10";
+    private Float total_full_cost = 0.0f;
+    private Float total_half_cost = 0.0f;
+    private Float total_luggage_cost = 0.0f;
+    private Float total_ticket_cost = 0.0f;
+    private Float discount_applied = 0.0f;
+    private Float discounted_ticket_cost = 0.0f;
+
+    public Integer ticket_number;
+    TextView etTicketNumber;
 
     String fileName;
+    String file_date;
 
     Spinner spinner, endspinner;
     ArrayList<String> StartStage, EndStage;
@@ -105,12 +126,23 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         session = new SessionHandler(getApplicationContext());
         fIleOperations = new FIleOperations();
 
+        DateFormat file_dt = new SimpleDateFormat("yyyy_MM_dd");
+        file_date = file_dt.format(Calendar.getInstance().getTime());
+        fileName = session.getIMEI() + "_" + file_date.toString() + ".txt";
+
         setContentView(R.layout.activity_booking);
 
-        TextView etTxtBook = findViewById(R.id.textBook);
+        TextView etTxtRoute = findViewById(R.id.textRoute);
+        etTicketNumber = (TextView) findViewById(R.id.textTicketNumber);
         Button book = findViewById(R.id.btnBook);
 
-        etTxtBook.setText(session.GetRoute());
+        etTxtRoute.setText(session.GetRoute());
+
+        ticket_number = fIleOperations.getTicketCount(fileName, this);
+
+        Log.d("session_tecket", "On creacte : " + String.valueOf(session.getTicketNumber()));
+
+        etTicketNumber.setText(String.valueOf(ticket_number + 1));
 
         // plus minus buttons for adding
         fullplus = (Button) findViewById(R.id.fullPlus);
@@ -256,6 +288,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void confirmDialog() {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // Get the layout inflater
@@ -275,9 +308,19 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         final TextView proptLugguage=(TextView)promptTicketView.findViewById(R.id.proptLuggage);
         final TextView proptLuggageTotal =(TextView)promptTicketView.findViewById(R.id.proptLuggageTotal);
 
-        final TextView proptTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptTicketTotal);
+        final TextView proptDiscountRate =(TextView)promptTicketView.findViewById(R.id.proptDiscountRate);
+        final TextView proptTotalForDiscount=(TextView)promptTicketView.findViewById(R.id.proptTotalForDiscount);
+        final TextView proptDiscountApplied =(TextView)promptTicketView.findViewById(R.id.proptDiscountApplied);
 
-         //------------------------------------------
+        final TextView proptTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptTicketTotal);
+        final TextView proptDiscountedTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptDiscountedTicketTotal);
+
+        //------------------------------------------
+
+        proptDiscountRate.setText(discount_string);
+        proptTotalForDiscount.setText(String.valueOf(discounted_ticket_cost));
+        proptDiscountApplied.setText(String.valueOf(discount_applied));
+
 
         proptFullRate.setText(String.valueOf(full_rate));
         proptFullPassengers.setText(etFullPassengers.getText().toString());
@@ -288,17 +331,17 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         proptLuggageRate.setText(String.valueOf(luggage_rate));
         proptLugguage.setText(etLuggage.getText().toString());
 
+        //Double fulltotal = Double.valueOf(etFullPassengers.getText().toString()) * full_rate;
+        proptFullTotal.setText(String.valueOf(total_full_cost));
 
-        Double fulltotal = Double.valueOf(etFullPassengers.getText().toString()) * full_rate;
-        proptFullTotal.setText(String.valueOf(fulltotal));
+        //Double halftotal = Double.valueOf(etHalfPassengers.getText().toString()) * half_rate;
+        proptHalfTotal.setText(String.valueOf(total_half_cost));
 
-        Double halftotal = Double.valueOf(etHalfPassengers.getText().toString()) * half_rate;
-        proptHalfTotal.setText(String.valueOf(halftotal));
-
-        Double luggagetotal = Double.valueOf(etLuggage.getText().toString()) * luggage_rate;
-        proptLuggageTotal.setText(String.valueOf(luggagetotal));
+        //Double luggagetotal = Double.valueOf(etLuggage.getText().toString()) * luggage_rate;
+        proptLuggageTotal.setText(String.valueOf(total_luggage_cost));
 
         proptTicketTotal.setText(etTotal.getText().toString());
+        proptDiscountedTicketTotal.setText(String.valueOf(discounted_ticket_cost));
 
         builder
                 .setMessage("Confirm Ticket details.")
@@ -318,6 +361,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 })
                 .show();
+
     }
 
     private void displayLoader() {
@@ -347,25 +391,29 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void calculate_total() {
+
         try {
-            String full_text = (!etFullPassengers.getText().toString().trim().equals("")) ? etFullPassengers.getText().toString(): "0" ;
-            String half_text = (!etHalfPassengers.getText().toString().trim().equals("")) ? etHalfPassengers.getText().toString(): "0" ;
-            String luggage_text = (!etLuggage.getText().toString().trim().equals("")) ? etLuggage.getText().toString(): "0" ;
+            total_full_passangers = Integer.valueOf(etFullPassengers.getText().toString());
+            total_half_passangers = Integer.valueOf(etHalfPassengers.getText().toString());
+            total_luggage_quantity = Integer.valueOf(etLuggage.getText().toString());
 
-            Float passengers_full = Float.valueOf(full_text);
+            total_full_cost = (total_full_passangers * full_rate);
+            total_half_cost = (total_half_passangers * half_rate);
+            total_luggage_cost = (total_luggage_quantity * luggage_rate);
 
+            total_ticket_cost =  total_full_cost + total_half_cost + total_luggage_cost;
 
-            Float passengers_half = Float.valueOf(half_text);
-            Float passengers_luggage = Float.valueOf(luggage_text);
+            discount_applied = (total_ticket_cost * Float.valueOf(discount_string))/100;
 
-            Float total = (passengers_full * full_rate) + (passengers_half * half_rate) + (passengers_luggage * luggage_rate);
+            discounted_ticket_cost = total_ticket_cost - discount_applied;
 
-            etTotal.setText(Float.toString(total));
+            etTotal.setText(Float.toString(total_ticket_cost));
 
         } catch (Exception e) {
-            Log.d("Suresh12345 : error", "Error occured");
+            Log.d("myLogs", "Error occured");
             e.printStackTrace();
         }
+
     }
 
     private void get_fare(String start, String end) {
@@ -515,25 +563,27 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     // Book ticket
     private void book_ticket() {
+
         displayLoader();
 
         //Create JSON Object
 
         JSONObject file_data_store = new JSONObject();
         try {
-           // file_data_store.put("id", "3");
+            // file_data_store.put("id", "3");
 
             String full_text    = etFullPassengers.getText().toString();
             String half_text    = etHalfPassengers.getText().toString();
             String luggage_text = etLuggage.getText().toString();
 
-           // Toast.makeText(getApplicationContext(),full_text + " " +half_text + " " +luggage_text, Toast.LENGTH_LONG).show();
+            // Toast.makeText(getApplicationContext(),full_text + " " +half_text + " " +luggage_text, Toast.LENGTH_LONG).show();
 
             DateFormat booking_reference_df = new SimpleDateFormat("yyMMddHHmmssZ");
             String booking_reference = booking_reference_df.format(Calendar.getInstance().getTime());
 
             file_data_store.put("booking_reference", session.getIMEI() + "_" + booking_reference);
             file_data_store.put("route_code",session.GetRoute());
+            file_data_store.put("ticket_number", ticket_number );
             file_data_store.put("start_stage",start_stage);
             file_data_store.put("end_stage",end_stage);
             file_data_store.put("fare_full_cost", String.valueOf(full_rate));
@@ -549,15 +599,21 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             file_data_store.put("booking_time",date);
             file_data_store.put("total_fare",etTotal.getText().toString());
+
+
+            file_data_store.put("discount", discount_string);
+            file_data_store.put("discount_applied", discount_applied);
+            file_data_store.put("discounted_total", discounted_ticket_cost);
+
             file_data_store.put("created_by","1");
 
-            Log.d("Ticket Booked : ", String.valueOf(file_data_store));
+            //Log.d("Ticket Booked : ", String.valueOf(file_data_store));
 
             //------------------------------------------------------------------------------
-            DateFormat file_dt = new SimpleDateFormat("yyyy_MM_dd");
-            String file_date = file_dt.format(Calendar.getInstance().getTime());
+            //DateFormat file_dt = new SimpleDateFormat("yyyy_MM_dd");
+            //String file_date = file_dt.format(Calendar.getInstance().getTime());
 
-            fileName = session.getIMEI() + "_" + file_date.toString() + ".txt";
+
 
             // Add ticket details in local log daily file
             fIleOperations.writeToFile(fileName, file_data_store.toString(), this, "1");
@@ -576,6 +632,12 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             //----------------------------
             PrintBill();
+            ticket_number = fIleOperations.getTicketCount(fileName, this);
+            //session.setTicketNumber(ticket_number);
+
+            Log.d("session_tecket", "after print : " + String.valueOf(session.getTicketNumber()));
+
+            etTicketNumber.setText(String.valueOf(ticket_number + 1));
         } catch (JSONException e) {
             // TODO Auto-generated catch block
 
@@ -585,9 +647,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         String file_contents = fIleOperations.readFromFile(fileName, this);
 
-        Log.d("myLogs", "Ticket Booking Data : " + file_contents);
+        //Log.d("myLogs", "Ticket Booking Data : " + file_contents);
 
         pDialog.dismiss();
+
     }
 
     /**
@@ -713,7 +776,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
                 /*Ticket number*/
-                msg = "T.No:1  " + "\n";
+                msg = "T.No: "+ticket_number+"  " + "\n";
                 format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
                 format[2] = ((byte) (0x8 | arrayOfByte[2]));
@@ -722,7 +785,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
                 /*From*/
-                msg = "From: Shimla" + "\n";
+                msg = "From: "+ start_stage + "\n";
                 format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
                 format[2] = ((byte) (0x8 | arrayOfByte[2]));
@@ -731,7 +794,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
                 /*To*/
-                msg = "To: Rampur" + "\n";
+                msg = "To: "+ end_stage + "\n";
                 format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
                 format[2] = ((byte) (0x8 | arrayOfByte[2]));
@@ -749,15 +812,19 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 sb.append("Half    x").append(" 10").append("   60").append("     600").append("\n");
                 sb.append("Lugg    x").append("  2").append("  100").append("     200").append("\n");
                 sb.append("Disc    %").append("  5").append("  120").append("     100").append("\n");
-                */
-
-                sb.append("Full :").append(" 10").append("x "+full_rate).append("    1200").append("\n");
-                sb.append("Half :").append(" 10").append("x "+half_rate).append("     600").append("\n");
-                sb.append("Lugg :").append("  2").append("x "+luggage_rate).append("     200").append("\n");
-                sb.append("Disc :").append("100").append("% 1200").append("   10000").append("\n");
 
                 sb.append("------------------------").append("\n");
-                sb.append("Total :       ").append("     1900").append("\n");
+                sb.append("Total              "+discounted_ticket_cost).append("\n");
+
+                */
+
+                sb.append("Full :").append(" " + total_full_passangers).append("x "+full_rate).append("    1200").append("\n");
+                sb.append("Half :").append(" " + total_half_passangers).append("x "+half_rate).append("     600").append("\n");
+                sb.append("Lugg :").append("  " + total_luggage_quantity).append("x "+luggage_rate).append("     200").append("\n");
+                sb.append("Disc :").append(discount_string).append("% "+total_ticket_cost).append("   "+discount_applied).append("\n");
+
+                sb.append("------------------------").append("\n");
+                sb.append("Total :       ").append("     "+discounted_ticket_cost).append("\n");
                 //sb.append("GST (5%)            85").append("\n");
                 sb.append("------------------------");
                 msg = sb.toString() + "\n";
@@ -766,7 +833,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
-                msg = "Total Rs.  1900.00" + "\n";
+                msg = "Total Rs.  "+discounted_ticket_cost + "\n";
                 format = new byte[]{27, 33, 15};
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);

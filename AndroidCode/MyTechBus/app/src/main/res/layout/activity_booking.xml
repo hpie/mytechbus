@@ -8,7 +8,20 @@
     tools:context="mytechbus.hpie.com.mytechbus.BookingActivity">
 
     <TextView
-        android:id="@+id/textBook"
+        android:id="@+id/textRoute"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:text="@string/sign_up"
+        android:textAllCaps="true"
+        android:textColor="@android:color/black"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        tools:text="Route" />
+
+    <TextView
+        android:id="@+id/textTicketNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"

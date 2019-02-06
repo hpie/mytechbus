@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                         current_latitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LATITUDE).trim();
                         current_longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE).trim();
 
-                        Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+                        //Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
 
                         if (current_latitude != null && current_longitude != null) {
@@ -184,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
                          }
                          }
 
-                        Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+                        //Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
                     }
                 }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST)
@@ -213,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    Log.d("Ticket Booked : ", response);
+                                   // Log.d("Ticket Booked : ", response);
                                     try {
 
                                         JSONObject ticket_response = new JSONObject(response);
@@ -250,7 +250,7 @@ public class LoginActivity extends AppCompatActivity {
                     //Log.d("myLogs", " Book Ticket If : current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
                 } else {
-                Log.d("myLogs", " Book Ticket else : wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
+                //Log.d("myLogs", " Book Ticket else : wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
                 }
             };
         };
@@ -285,7 +285,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void getCrashReports() {
-        Log.d("myLogs", "Crash report called : ");
+       // Log.d("myLogs", "Crash report called : ");
         if ( bIsThereAnyErrorFile() ) {
             String[] ErrorFileList = GetErrorFileList();
             String WholeErrorText = "";
@@ -304,7 +304,7 @@ public class LoginActivity extends AppCompatActivity {
                 //curFile.delete();
             }
 
-            Log.d("myLogs", "Crash report files : " + WholeErrorText);
+            //Log.d("myLogs", "Crash report files : " + WholeErrorText);
         }
     }
 
@@ -470,9 +470,9 @@ public class LoginActivity extends AppCompatActivity {
         if (!mAlreadyStartedService) {
 
             //Start location sharing service to app server.........
-            //Intent intent = new Intent(this, LocationMonitoringService.class);
-            //startService(intent);
-            Log.d("myLogs", "Start Step 3 for Location ");
+            Intent intent = new Intent(this, LocationMonitoringService.class);
+            startService(intent);
+            //Log.d("myLogs", "Start Step 3 for Location ");
             mAlreadyStartedService = true;
             //Ends................................................
         }
