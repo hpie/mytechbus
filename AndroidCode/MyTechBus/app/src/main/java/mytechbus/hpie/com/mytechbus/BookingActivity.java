@@ -22,6 +22,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,7 +73,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private ProgressDialog pDialog;
     private FIleOperations fIleOperations;
 
-    private JSONObject end_stages, fare_km, fare_full, fare_half, fare_luggage;
+    private JSONObject end_stages, fare_km, fare_full, fare_half, fare_luggage, discountObject;
 
     private TextView fullRate, halfRate, luggageRate;
 
@@ -98,7 +100,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private Integer total_half_passangers = 0;
     private Integer total_luggage_quantity = 0;
 
-    private String discount_string = "10";
+    private String discount_string = "0";
     private Float total_full_cost = 0.0f;
     private Float total_half_cost = 0.0f;
     private Float total_luggage_cost = 0.0f;
@@ -112,8 +114,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     String fileName;
     String file_date;
 
-    Spinner spinner, endspinner;
-    ArrayList<String> StartStage, EndStage;
+    Spinner spinner, endspinner, spinnerDiscount;
+    ArrayList<String> StartStage, EndStage, discountArray;
+
+    JSONObject journey_type_object;
+    RadioGroup radioGroup;
+
+    String discount_key;
 
     //---------------------------------------------------------------------
 
@@ -139,8 +146,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         etTxtRoute.setText(session.GetRoute());
 
         ticket_number = fIleOperations.getTicketCount(fileName, this);
-
-        Log.d("session_tecket", "On creacte : " + String.valueOf(session.getTicketNumber()));
 
         etTicketNumber.setText(String.valueOf(ticket_number + 1));
 
@@ -176,9 +181,24 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         spinner = (Spinner)findViewById(R.id.startStage);
         endspinner = (Spinner)findViewById(R.id.endStage);
+        spinnerDiscount = (Spinner)findViewById(R.id.spinnerDiscount);
+        radioGroup = (RadioGroup) findViewById(R.id.journeyType);
 
         // Initialize the dropdown with values
         route_stages();
+
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // checkedId is the RadioButton selected
+                RadioButton rb = (RadioButton)findViewById(checkedId);
+
+                session.setJourneyType(rb.getText().toString());
+                route_stages();
+            }
+        });
 
         // Start stage change event
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -205,6 +225,34 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 //Toast.makeText(getApplicationContext(),end_stage,Toast.LENGTH_LONG).show();
 
                 get_fare(start_stage, end_stage);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // DO Nothing here
+            }
+        });
+
+        // Discount change event
+        spinnerDiscount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                //clear_fields();
+                discount_key = spinnerDiscount.getItemAtPosition(spinnerDiscount.getSelectedItemPosition()).toString();
+
+
+                try {
+                    if (discountObject.has(discount_key)) {
+                        discount_string = discountObject.getString(discount_key);
+                       // Toast.makeText(getApplicationContext(), "Discount found" + discount_string,Toast.LENGTH_LONG).show();
+
+                    } else {
+                        discount_string = "0";
+                               // Toast.makeText(getApplicationContext(), "No discount found" + discount_string,Toast.LENGTH_LONG).show();
+                    }
+                    calculate_total();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -317,6 +365,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         //------------------------------------------
 
+        //Log.d("myLogs", "discount_string : " + discount_string + " ||| discounted_ticket_cost : " + discounted_ticket_cost+ " ||| discount_applied : " + discount_applied);
+
         proptDiscountRate.setText(discount_string);
         proptTotalForDiscount.setText(String.valueOf(discounted_ticket_cost));
         proptDiscountApplied.setText(String.valueOf(discount_applied));
@@ -379,6 +429,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         etLuggage.setText("0");
         etTotal.setText("");
         etMobile.setText("");
+        spinnerDiscount.setSelection(0);
     }
 
     private void add_data() {
@@ -403,9 +454,15 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             total_ticket_cost =  total_full_cost + total_half_cost + total_luggage_cost;
 
+            //Log.d("myLogs", "total_full_cost : " + total_full_cost + " ||| total_half_cost : " + total_half_cost+ " ||| total_luggage_cost : " + total_luggage_cost);
+
+
             discount_applied = (total_ticket_cost * Float.valueOf(discount_string))/100;
 
             discounted_ticket_cost = total_ticket_cost - discount_applied;
+
+            //Log.d("myLogs", "total_ticket_cost : " + total_ticket_cost + " ||| discount_string : " + discount_string+ " ||| discount_applied : " + discount_applied);
+
 
             etTotal.setText(Float.toString(total_ticket_cost));
 
@@ -457,16 +514,18 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     // Get route details
     private void route_stages() {
-        route_stages_data = fIleOperations.readFromFile("route_stages.txt", this);
+        //route_stages_data = fIleOperations.readFromFile("route_stages.txt", this);
+
+        route_stages_data = fIleOperations.readFromFile("trip_data.txt", this);
         if(!route_stages_data.equals("")) {
-            update_routes_spinner(route_stages_data);
+            update_routes_spinner2(route_stages_data);
             //Toast.makeText(getApplicationContext(),"Data exists",Toast.LENGTH_LONG).show();
-            Log.d("Hiiiiii if: ", route_stages_data);
+            //Log.d("Hiiiiii if: ", route_stages_data);
             return;
         } else  {
             //Toast.makeText(getApplicationContext(),"No Data exists",Toast.LENGTH_LONG).show();
 
-            Log.d("Hiiielseiii : ", route_stages_data);
+            //Log.d("Hiiielseiii : ", route_stages_data);
         }
 
         displayLoader();
@@ -478,7 +537,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         pDialog.dismiss();
                         //Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
 
-                        Log.d("Route stages response", response);
+                        //Log.d("Route stages response", response);
 
                         try {
                             JSONObject route_response = new JSONObject(response);
@@ -556,7 +615,125 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             spinner.setAdapter(new ArrayAdapter<String>(BookingActivity.this, android.R.layout.simple_spinner_dropdown_item, StartStage));
 
         } catch (JSONException e) {
-            Log.d("Suresh12345 : error", "Error occured");
+            //Log.d("Suresh12345 : error", "Error occured");
+            e.printStackTrace();
+        }
+    }
+
+    public void update_routes_spinner2(String response) {
+        try {
+            JSONObject trip_data = new JSONObject(response);
+
+            JSONObject routes_object = trip_data.getJSONObject("routes");
+
+            //routes_object
+
+           // Log.d("myLogs", "In update_routes_spinner2 : " + routes_object.length());
+
+
+           // Toast.makeText(getApplicationContext(), session.getJourneyType(), Toast.LENGTH_SHORT).show();
+
+            Iterator<String> iter = routes_object.keys();
+            Integer j = 0;
+            String journey_type = "";
+
+            RadioButton radioButton;
+
+            //Add te
+            while (iter.hasNext()) {
+                String key = iter.next();
+
+                if(key.equals("ONWARD")) {
+                    radioButton = findViewById(R.id.radio_onward);
+                    radioButton.setVisibility(View.VISIBLE);
+                    if(session.getJourneyType().equals(key)) {
+                        radioButton.setChecked(true);
+                    }
+                }
+
+                if(key.equals("RETURN")) {
+                    radioButton = findViewById(R.id.radio_return);
+                    radioButton.setVisibility(View.VISIBLE);
+                    if(session.getJourneyType().equals(key)) {
+                        radioButton.setChecked(true);
+                    }
+                }
+
+                if(key.equals("CIRCULAR")) {
+                    radioButton = findViewById(R.id.radio_circular);
+                    radioButton.setVisibility(View.VISIBLE);
+                    if(session.getJourneyType().equals(key)) {
+                        radioButton.setChecked(true);
+                    }
+                }
+
+                if(j == 0) {
+                    journey_type = key;
+                }
+                j++;
+            }
+
+            if(session.getJourneyType().equals(Constants.KEY_EMPTY)) {
+                session.setJourneyType(journey_type);
+            }
+
+            journey_type_object = routes_object.getJSONObject(session.getJourneyType());
+
+            //Log.d("myLogs", "In update_routes_spinner2 1111111111111111111 key : " + session.getJourneyType() + " |||| " + journey_type_object);
+
+            JSONArray startStagesArray = journey_type_object.getJSONArray("start_stages");
+
+            //Log.d("myLogs", "In update_routes_spinner2 222startStagesArray22222 key : " + session.getJourneyType() + " |||| " + startStagesArray);
+
+            end_stages      = journey_type_object.getJSONObject("end_stages");
+            fare_km         = journey_type_object.getJSONObject("fare_km");
+            fare_full       = journey_type_object.getJSONObject("fare_full");
+            fare_half       = journey_type_object.getJSONObject("fare_half");
+            fare_luggage    = journey_type_object.getJSONObject("fare_luggage");
+            discountObject  = trip_data.getJSONObject("discounts");
+
+            //------------------------------------------------------------------------------------------
+
+            discountArray = new ArrayList<>();
+
+            Iterator<String> discountItr = discountObject.keys();
+
+            discountArray.add("No Discount");
+            //Create discount spinner data
+            while (discountItr.hasNext()) {
+                String key = discountItr.next();
+                discountArray.add(key);
+            }
+
+            //Log.d("myLogs", "Object : " + discountItr + " ||| array : " + discountArray);
+
+            spinnerDiscount.setAdapter(new ArrayAdapter<String>(BookingActivity.this, android.R.layout.simple_spinner_dropdown_item, discountArray));
+            //-----------------------------------------------------------------------
+            StartStage=new ArrayList<>();
+
+            for(int i=0;i<startStagesArray.length();i++){
+                String start=startStagesArray.getString(i);
+                StartStage.add(start);
+            }
+            spinner.setAdapter(new ArrayAdapter<String>(BookingActivity.this, android.R.layout.simple_spinner_dropdown_item, StartStage));
+
+            /*
+            JSONArray jsonArray = trip_data.getJSONArray("start_stages");
+
+            end_stages      = route_response.getJSONObject("end_stages");
+            fare_km         = route_response.getJSONObject("fare_km");
+            fare_full       = route_response.getJSONObject("fare_full");
+            fare_half       = route_response.getJSONObject("fare_half");
+            fare_luggage    = route_response.getJSONObject("fare_luggage");
+
+            for(int i=0;i<jsonArray.length();i++){
+                String start=jsonArray.getString(i);
+                StartStage.add(start);
+            }
+            spinner.setAdapter(new ArrayAdapter<String>(BookingActivity.this, android.R.layout.simple_spinner_dropdown_item, StartStage));
+            */
+        } catch (JSONException e) {
+            Log.w("myLogs", "In update_routes_spinner2 key : " + session.getJourneyType() + " |||| " + journey_type_object);
             e.printStackTrace();
         }
     }
@@ -627,21 +804,18 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             //------------------------------------------------------------------------------
 
-            Toast.makeText(getApplicationContext(),"Ticket Booked successfully", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Ticket Booked successfully", Toast.LENGTH_SHORT).show();
             clear_fields();
 
             //----------------------------
             PrintBill();
             ticket_number = fIleOperations.getTicketCount(fileName, this);
-            //session.setTicketNumber(ticket_number);
-
-            Log.d("session_tecket", "after print : " + String.valueOf(session.getTicketNumber()));
 
             etTicketNumber.setText(String.valueOf(ticket_number + 1));
         } catch (JSONException e) {
             // TODO Auto-generated catch block
 
-            Toast.makeText(getApplicationContext(),"Ticket not booked. Please try again!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Ticket not booked. Please try again!", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -661,13 +835,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         if(Constants.KEY_EMPTY.equals(ticket_total)){
             //etTotal.setError("Please add passangers or luggage");
 
-            Toast.makeText(getApplicationContext(),"Please addd fare details.",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Please addd fare details.",Toast.LENGTH_SHORT).show();
             return false;
         } else {
             Double validate_total = Double.valueOf(ticket_total);
 
             if(validate_total <= 0) {
-                Toast.makeText(getApplicationContext(),"Please addd fare details.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Please addd fare details.",Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -758,7 +932,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 */
 
                 /*Bus number*/
-                msg = "Bus No. HP-06 AB 0123  "+ "\n";
+                msg = "Bus No. "+ session.getVehicleNumber() +"  "+ "\n";
                 format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
                 format[2] = ((byte) (0x8 | arrayOfByte[2]));

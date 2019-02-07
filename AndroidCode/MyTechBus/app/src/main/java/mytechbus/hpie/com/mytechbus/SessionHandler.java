@@ -25,6 +25,18 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_ROUTE_CODE, Constants.KEY_EMPTY);
     }
 
+    public String getOperator() {
+        return mPreferences.getString(Constants.KEY_OPERATOR_NAME, Constants.KEY_EMPTY);
+    }
+
+    public String getVehicleNumber() {
+        return mPreferences.getString(Constants.KEY_VEHICLE_NUMBER, Constants.KEY_EMPTY);
+    }
+
+    public String getVehiclType() {
+        return mPreferences.getString(Constants.KEY_VEHICLE_TYPE, Constants.KEY_EMPTY);
+    }
+
     public void setIMEI( String imei) {
         mEditor.putString(Constants.KEY_IMEI, imei);
         mEditor.commit();
@@ -36,15 +48,15 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_IMEI, Constants.KEY_EMPTY);
     }
 
-    public void setTicketNumber( Integer ticket) {
-        mEditor.putInt(Constants.KEY_TICKET_NUMBER, ticket);
+    public void setJourneyType( String journeytype) {
+        mEditor.putString(Constants.KEY_JOURNEY_TYPE, journeytype);
         mEditor.commit();
         //Toast.makeText(mContext, "In Set session : " + imei,Toast.LENGTH_LONG).show();
     }
 
-    public int getTicketNumber() {
+    public String getJourneyType() {
         //Toast.makeText(mContext, "In get session : " + mPreferences.getString(KEY_IMEI, KEY_EMPTY),Toast.LENGTH_LONG).show();
-        return mPreferences.getInt(Constants.KEY_TICKET_NUMBER, 2);
+        return mPreferences.getString(Constants.KEY_JOURNEY_TYPE, Constants.KEY_EMPTY);
     }
 
     /**
@@ -71,6 +83,11 @@ public class SessionHandler {
         mEditor.putString(Constants.KEY_USERNAME, username);
         mEditor.putString(Constants.KEY_FULL_NAME, fullName);
         mEditor.putString(Constants.KEY_ROUTE_CODE, routecode);
+
+        mEditor.putString(Constants.KEY_OPERATOR_NAME, routecode);
+        mEditor.putString(Constants.KEY_VEHICLE_NUMBER, routecode);
+        mEditor.putString(Constants.KEY_VEHICLE_TYPE, routecode);
+
         Date date = new Date();
 
         //Set user session for next 7 days

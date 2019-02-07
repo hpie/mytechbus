@@ -104,6 +104,9 @@ public class LoginActivity extends AppCompatActivity {
             fetchLocation = new FetchLocation(LoginActivity.this,LoginActivity.this);
         }
 
+        /**
+         * Login button functionality
+         */
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +136,9 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //------------------------------------------------------------------------------------
+        /**
+         * Receive location updates periodically and update it on server
+         */
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
@@ -183,18 +189,17 @@ public class LoginActivity extends AppCompatActivity {
                              //------------------------------------------------------------------------------------------------------------
                          }
                          }
-
-                        //Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+                        // Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
                     }
                 }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST)
         );
 
         //------------------------------------------------------------
+
         /**
          * A periodic timer to update ticket booking data to server from local files
          */
-
         Timer t = new Timer();
         TimerTask tt = new TimerTask() {
             @Override
@@ -370,13 +375,14 @@ public class LoginActivity extends AppCompatActivity {
                         pDialog.dismiss();
 
                         try {
-                            Log.d("myLogs : Login : ", response);
+                            //Log.d("myLogs : Login : ", response);
                             //Check if user got logged in successfully
                             JSONObject login_response = new JSONObject(response);
 
                             if (login_response.getInt(Constants.KEY_STATUS) == 1) {
                                 session.loginUser(username,login_response.getString(Constants.KEY_FULL_NAME), login_response.getString(Constants.KEY_ROUTE_CODE));
                                 //loadDashboard();
+                                fIleOperations.writeToFile("trip_data.txt", response, LoginActivity.this, "0");
 
                                 if(isNetworkAvailable()) {
                                     loadDashboard();

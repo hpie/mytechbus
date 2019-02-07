@@ -30,7 +30,13 @@ public class Constants {
     public static final String PREF_NAME = "UserSession";
     public static final String KEY_EXPIRES = "expires";
 
-    public static final String login_url = base_url+"login";
+
+    public static final String KEY_OPERATOR_NAME = "operator_name";
+    public static final String KEY_VEHICLE_NUMBER = "vehicle_number";
+    public static final String KEY_VEHICLE_TYPE = "vehicle_type";
+    public static final String KEY_JOURNEY_TYPE = "journey_type";
+
+    public static final String login_url = base_url+"login2";
     public static final String route_stages_url = base_url+"routes_stages";
     public static final String book_ticket_url = base_url+"book_ticket";
     public static final String position_log_url = base_url+"position_log";
