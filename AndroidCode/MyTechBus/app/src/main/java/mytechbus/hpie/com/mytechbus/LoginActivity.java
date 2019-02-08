@@ -375,12 +375,12 @@ public class LoginActivity extends AppCompatActivity {
                         pDialog.dismiss();
 
                         try {
-                            //Log.d("myLogs : Login : ", response);
+                            Log.d("myLogs : Login : ", response);
                             //Check if user got logged in successfully
                             JSONObject login_response = new JSONObject(response);
 
                             if (login_response.getInt(Constants.KEY_STATUS) == 1) {
-                                session.loginUser(username,login_response.getString(Constants.KEY_FULL_NAME), login_response.getString(Constants.KEY_ROUTE_CODE));
+                                session.loginUser(username,login_response.getString(Constants.KEY_FULL_NAME), login_response.getString(Constants.KEY_ROUTE_CODE), login_response.getString("routes_available"), login_response.getString("operator_name"), login_response.getString("vehicle_number"), login_response.getString("vehicle_type"));
                                 //loadDashboard();
                                 fIleOperations.writeToFile("trip_data.txt", response, LoginActivity.this, "0");
 

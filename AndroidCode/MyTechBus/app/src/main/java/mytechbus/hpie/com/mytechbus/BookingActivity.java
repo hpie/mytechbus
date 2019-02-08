@@ -368,7 +368,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         //Log.d("myLogs", "discount_string : " + discount_string + " ||| discounted_ticket_cost : " + discounted_ticket_cost+ " ||| discount_applied : " + discount_applied);
 
         proptDiscountRate.setText(discount_string);
-        proptTotalForDiscount.setText(String.valueOf(discounted_ticket_cost));
+        proptTotalForDiscount.setText(String.valueOf(total_ticket_cost));
         proptDiscountApplied.setText(String.valueOf(discount_applied));
 
 
@@ -398,13 +398,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(promptTicketView)
-                .setPositiveButton("Yes",  new DialogInterface.OnClickListener() {
+                .setPositiveButton("Print",  new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         book_ticket();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog,int id) {
                         dialog.cancel();

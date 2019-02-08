@@ -138,9 +138,15 @@ public class DashboardActivity extends AppCompatActivity {
         bookingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), BookingActivity.class);
-                startActivity(i);
-                finish();
+
+                //Log.d("myLogs"," availibility : " +session.getRouteAvailibilty() + " |||| conition " +session.getRouteAvailibilty().equals("1"));
+                if(session.getRouteAvailibilty().equals("1")) {
+                    Intent i = new Intent(getApplicationContext(), BookingActivity.class);
+                    startActivity(i);
+                    finish();
+                } else {
+                    showDialog("No route assigned. Please contact operator");
+                }
             }
         });
 

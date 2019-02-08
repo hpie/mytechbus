@@ -37,6 +37,10 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_VEHICLE_TYPE, Constants.KEY_EMPTY);
     }
 
+    public String getRouteAvailibilty() {
+        return mPreferences.getString(Constants.KEY_ROUTE_AVAILIBILITY, Constants.KEY_EMPTY);
+    }
+
     public void setIMEI( String imei) {
         mEditor.putString(Constants.KEY_IMEI, imei);
         mEditor.commit();
@@ -79,14 +83,15 @@ public class SessionHandler {
         mEditor.commit();
     }
     */
-    public void loginUser(String username, String fullName, String routecode) {
+    public void loginUser(String username, String fullName, String routecode, String route_availibility, String operator_name, String vehicle_number, String vehicle_type ) {
         mEditor.putString(Constants.KEY_USERNAME, username);
         mEditor.putString(Constants.KEY_FULL_NAME, fullName);
         mEditor.putString(Constants.KEY_ROUTE_CODE, routecode);
+        mEditor.putString(Constants.KEY_ROUTE_AVAILIBILITY, route_availibility);
 
-        mEditor.putString(Constants.KEY_OPERATOR_NAME, routecode);
-        mEditor.putString(Constants.KEY_VEHICLE_NUMBER, routecode);
-        mEditor.putString(Constants.KEY_VEHICLE_TYPE, routecode);
+        mEditor.putString(Constants.KEY_OPERATOR_NAME, operator_name);
+        mEditor.putString(Constants.KEY_VEHICLE_NUMBER, vehicle_number);
+        mEditor.putString(Constants.KEY_VEHICLE_TYPE, vehicle_type);
 
         Date date = new Date();
 
