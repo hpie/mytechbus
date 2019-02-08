@@ -38,4 +38,6 @@
     <string name="permissions_not_granted_read_phone_state">Permission Rejected</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_booking">Book Tickets</string>
+    <string name="print">Print</string>
+    <string name="cancle">Cancle</string>
 </resources>

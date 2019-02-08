@@ -1,5 +1,6 @@
 package mytechbus.hpie.com.mytechbus;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -22,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -79,7 +81,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     private EditText etFullPassengers, etHalfPassengers, etLuggage, etTotal, etMobile;
 
-    private Button fullplus, fullminus, halfplus, halfminus, luggageplus, luggageminus;
+    private Button fullplus, fullminus, halfplus, halfminus, luggageplus, luggageminus, btnAllowPrint, btnCanclePrint;
 
     private String ticket_total;
 
@@ -335,7 +337,99 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    private void confirmDialog() {
+    public void confirmDialog() {
+        // custom dialog
+        final Dialog dialog = new Dialog(BookingActivity.this);
+
+        int width = (int)(getResources().getDisplayMetrics().widthPixels*0.90);
+        int height = (int)(getResources().getDisplayMetrics().heightPixels*0.90);
+
+        dialog.getWindow().setLayout(width, height);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View promptTicketView = inflater.inflate(R.layout.dialog_ticket2,null);
+
+        //------------------------------------------------------------------------------------
+        final TextView proptFullRate =(TextView)promptTicketView.findViewById(R.id.proptFullRate);
+        final TextView proptFullPassengers =(TextView)promptTicketView.findViewById(R.id.proptFullPassengers);
+        final TextView proptFullTotal =(TextView)promptTicketView.findViewById(R.id.proptFullTotal);
+
+        final TextView proptHalfRate =(TextView)promptTicketView.findViewById(R.id.proptHalfRate);
+        final TextView proptHalfPassengers =(TextView)promptTicketView.findViewById(R.id.proptHalfPassengers);
+        final TextView proptHalfTotal =(TextView)promptTicketView.findViewById(R.id.proptHalfTotal);
+
+        final TextView proptLuggageRate =(TextView)promptTicketView.findViewById(R.id.proptLuggageRate);
+        final TextView proptLugguage=(TextView)promptTicketView.findViewById(R.id.proptLuggage);
+        final TextView proptLuggageTotal =(TextView)promptTicketView.findViewById(R.id.proptLuggageTotal);
+
+        final TextView proptDiscountRate =(TextView)promptTicketView.findViewById(R.id.proptDiscountRate);
+        final TextView proptTotalForDiscount=(TextView)promptTicketView.findViewById(R.id.proptTotalForDiscount);
+        final TextView proptDiscountApplied =(TextView)promptTicketView.findViewById(R.id.proptDiscountApplied);
+
+        final TextView proptTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptTicketTotal);
+        final TextView proptDiscountedTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptDiscountedTicketTotal);
+
+        //------------------------------------------
+
+        //Log.d("myLogs", "discount_string : " + discount_string + " ||| discounted_ticket_cost : " + discounted_ticket_cost+ " ||| discount_applied : " + discount_applied);
+
+        proptDiscountRate.setText(discount_string);
+        proptTotalForDiscount.setText(String.valueOf(total_full_cost));
+        proptDiscountApplied.setText(String.valueOf(discount_applied));
+
+
+        proptFullRate.setText(String.valueOf(full_rate));
+        proptFullPassengers.setText(etFullPassengers.getText().toString());
+
+        proptHalfRate.setText(String.valueOf(half_rate));
+        proptHalfPassengers.setText(etHalfPassengers.getText().toString());
+
+        proptLuggageRate.setText(String.valueOf(luggage_rate));
+        proptLugguage.setText(etLuggage.getText().toString());
+
+        //Double fulltotal = Double.valueOf(etFullPassengers.getText().toString()) * full_rate;
+        proptFullTotal.setText(String.valueOf(total_full_cost));
+
+        //Double halftotal = Double.valueOf(etHalfPassengers.getText().toString()) * half_rate;
+        proptHalfTotal.setText(String.valueOf(total_half_cost));
+
+        //Double luggagetotal = Double.valueOf(etLuggage.getText().toString()) * luggage_rate;
+        proptLuggageTotal.setText(String.valueOf(total_luggage_cost));
+
+        proptTicketTotal.setText(etTotal.getText().toString());
+        proptDiscountedTicketTotal.setText(String.valueOf(discounted_ticket_cost));
+        //----------------------------------------------------------------------------------------
+
+        dialog.setContentView(promptTicketView);
+
+        //dialog.setContentView(R.layout.dialog_ticket2);
+        dialog.setTitle("Title...");
+
+        btnCanclePrint = (Button) dialog.findViewById(R.id.btnAllowPrint);
+
+        btnCanclePrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                book_ticket();
+                dialog.dismiss();
+            }
+        });
+
+
+        btnCanclePrint = (Button) dialog.findViewById(R.id.btnCanclePrint);
+        // if button is clicked, close the custom dialog
+        btnCanclePrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void confirmDialog1() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -393,24 +487,28 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         proptTicketTotal.setText(etTotal.getText().toString());
         proptDiscountedTicketTotal.setText(String.valueOf(discounted_ticket_cost));
 
-        builder
-                .setMessage("Confirm Ticket details.")
+
+        btnAllowPrint = (Button) findViewById(R.id.btnAllowPrint);
+        btnCanclePrint = (Button) findViewById(R.id.btnCanclePrint);
+
+        builder.setMessage("Confirm Ticket details.");
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
-                .setView(promptTicketView)
-                .setPositiveButton("Print",  new DialogInterface.OnClickListener() {
+        builder.setView(promptTicketView);
+
+        builder.setPositiveButton("Print",  new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         book_ticket();
                     }
-                })
-                .setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+                });
+        builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog,int id) {
                         dialog.cancel();
                     }
-                })
-                .show();
+                });
+        builder.show();
 
     }
 
