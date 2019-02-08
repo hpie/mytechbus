@@ -40,16 +40,14 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="32dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_weight="1"
-            android:text="Route"
+            android:text="R.No."
             android:textSize="22sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_weight="1"
             android:text=" : "
             android:textSize="22sp" />
 
@@ -64,16 +62,14 @@
         <!-- ==================================== -->
 
         <TextView
-            android:layout_width="32dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_weight="1"
-            android:text="Ticket No."
+            android:text="T.No."
             android:textSize="22sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_weight="1"
             android:text=" : "
             android:textSize="22sp" />
 
@@ -157,18 +153,20 @@
 
         <TextView
             android:id="@+id/fullLabel"
-            android:layout_width="32dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_weight="1"
-            android:text="Full"
+            android:layout_marginRight="10dp"
+            android:text="FT"
             android:textSize="22sp" />
+
         <TextView
             android:id="@+id/fullRate"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:textSize="22sp"
             android:layout_weight="1"
-            android:text="Full" />
+            android:paddingLeft="10dp"
+            android:text="Full"
+            android:textSize="22sp" />
         <Button
             android:id="@+id/fullMinus"
             android:layout_width="32dp"
@@ -206,18 +204,20 @@
 
         <TextView
             android:id="@+id/halfLabel"
-            android:layout_width="32dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_weight="1"
-            android:text="Half"
+            android:layout_marginRight="10dp"
+            android:text="HT"
             android:textSize="22sp" />
+
         <TextView
             android:id="@+id/halfRate"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:textSize="22sp"
             android:layout_weight="1"
-            android:text="Half" />
+            android:paddingLeft="10dp"
+            android:text="Half"
+            android:textSize="22sp" />
         <Button
             android:id="@+id/halfMinus"
             android:layout_width="32dp"
@@ -257,18 +257,20 @@
 
         <TextView
             android:id="@+id/luggageLabel"
-            android:layout_width="32dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_weight="1"
-            android:text="Luggage"
+            android:layout_marginRight="10dp"
+            android:text="LT"
             android:textSize="22sp" />
+
         <TextView
             android:id="@+id/luggageRate"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:textSize="22sp"
             android:layout_weight="1"
-            android:text="Luggage" />
+            android:paddingLeft="10dp"
+            android:text="Luggage"
+            android:textSize="22sp" />
 
         <Button
             android:id="@+id/luggageMinus"
@@ -313,8 +315,8 @@
             android:id="@+id/discountLabel"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_weight="1"
-            android:text="Discount"
+            android:layout_marginRight="10dp"
+            android:text="DT"
             android:textSize="22sp" />
 
         <Spinner
