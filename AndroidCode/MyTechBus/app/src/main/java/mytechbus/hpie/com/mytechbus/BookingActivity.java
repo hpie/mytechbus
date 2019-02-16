@@ -88,9 +88,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     // Start and end stage variables to get fare from fare object
     private String start_stage = "";
     private String end_stage = "";
-    private Integer full_rate = 0;
-    private Integer half_rate = 0;
-    private Integer luggage_rate = 0;
+    private float full_rate = 0.0f;
+    private float half_rate = 0.0f;
+    private float luggage_rate = 0.0f;
     String route_stages_data = "";
      /*
     private Integer total_full_passangers = 0;
@@ -546,9 +546,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             total_half_passangers = Integer.valueOf(etHalfPassengers.getText().toString());
             total_luggage_quantity = Integer.valueOf(etLuggage.getText().toString());
 
-            total_full_cost = (total_full_passangers * full_rate);
-            total_half_cost = (total_half_passangers * half_rate);
-            total_luggage_cost = (total_luggage_quantity * luggage_rate);
+            total_full_cost = Math.round(total_full_passangers * full_rate);
+            total_half_cost = Math.round(total_half_passangers * half_rate);
+            total_luggage_cost = Math.round(total_luggage_quantity * luggage_rate);
 
             total_ticket_cost =  total_full_cost + total_half_cost + total_luggage_cost;
 
@@ -903,13 +903,15 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             //------------------------------------------------------------------------------
 
             Toast.makeText(getApplicationContext(),"Ticket Booked successfully", Toast.LENGTH_SHORT).show();
-            clear_fields();
+
 
             //----------------------------
             PrintBill();
             ticket_number = fIleOperations.getTicketCount(fileName, this);
 
             etTicketNumber.setText(String.valueOf(ticket_number + 1));
+
+            clear_fields();
         } catch (JSONException e) {
             // TODO Auto-generated catch block
 
@@ -1002,7 +1004,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM-yyyy HH:mm");
         String currentDateandTime = sdf.format(new Date());
 
-        Log.d("myLogs", "Print ticket called : " + currentDateandTime);
+        Log.d("myLogs", "Print ticket called : " + currentDateandTime + " ||| full_rate : " + full_rate + " ||| total_full_cost : " + total_full_cost + " ||| half_rate : " + half_rate + " ||| discount_applied : " + discount_applied );
+
+
+        Log.d("myLogs", "Print ticket called : " + currentDateandTime + "" );
         String msg = "";
         byte[] format;
         byte[] center;

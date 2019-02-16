@@ -18,6 +18,8 @@ $app->post('/login', function() {
 	// Initially success parameter set to zero
 	$data['status'] = '0';
 
+	//$data['query_1'] = $deive_query;
+
 	if($device_result->num_rows > 0) {
 		
 		$query = "select * from `vehicle_device_access` WHERE loginid = '".$_POST['username']."' AND PASSWORD = '".$_POST['password']."' AND device_imie = '".$_POST['imei']."'";
@@ -27,7 +29,7 @@ JOIN `master_routes` mr ON mr.row_id = vda.route_id
 JOIN `vehicle_operators` vo ON mr.row_id = vda.operator_id 
 JOIN `vehicle_master` vm ON vm.row_id = vda.vehicle_id WHERE loginid = '".$_POST['username']."' AND PASSWORD = '".$_POST['password']."' AND device_imie = '".$_POST['imei']."'"; //exit;
 
-		//$data['user_query'] = $query;
+		$data['user_query'] = $query;
 
 		$result = $conn->query($query);
 
@@ -47,7 +49,7 @@ JOIN `vehicle_master` vm ON vm.row_id = vda.vehicle_id WHERE loginid = '".$_POST
 			$data['operator_id']	= $user_data['operator_id'];
 			$data['operator_name']	= $user_data['operator_name'];
 
-			$data['vehicle_id']		= $user_data['vehicle_id'];
+			$data['vehicle_code']	= $user_data['vehicle_id'];
 			$data['vehicle_number']	= $user_data['vehicle_number'];
 			$data['vehicle_type']	= $user_data['vehicle_type'];
 
@@ -112,10 +114,11 @@ JOIN `vehicle_master` vm ON vm.row_id = vda.vehicle_id WHERE loginid = '".$_POST
 	//$data['post'] = json_encode($_POST);
 	//$data['all_data'] = json_encode($user_data);
  
+
+ //$data['new_message'] = "hhhhhhhhhhhhhhhhhhhhhhhhhhh";
  echo json_encode($data);
  
 });
-
 
 // Login functionality
 $app->post('/login2', function() {
@@ -136,7 +139,7 @@ $app->post('/login2', function() {
 
 		$query = "select vda.*, mr.route_code as actual_route_code, vo.operator_name, vm.vehicle_number, vm.vehicle_type from `vehicle_device_access` vda 
 JOIN `master_routes` mr ON mr.row_id = vda.route_id 
-JOIN `vehicle_operators` vo ON mr.row_id = vda.operator_id 
+JOIN `vehicle_operators` vo ON vo.row_id = vda.operator_id 
 JOIN `vehicle_master` vm ON vm.row_id = vda.vehicle_id WHERE loginid = '".$_POST['username']."' AND PASSWORD = '".$_POST['password']."' AND device_imie = '".$_POST['imei']."'"; //exit;
 
 		//$data['user_query'] = $query;
@@ -157,7 +160,7 @@ JOIN `vehicle_master` vm ON vm.row_id = vda.vehicle_id WHERE loginid = '".$_POST
 			$data['route_code']		= $user_data['actual_route_code'];			
 			$data['operator_id']	= $user_data['operator_id'];
 			$data['operator_name']	= $user_data['operator_name'];
-			$data['vehicle_id']		= $user_data['vehicle_id'];
+			$data['vehicle_code']	= $user_data['vehicle_id'];
 			$data['vehicle_number']	= $user_data['vehicle_number'];
 			$data['vehicle_type']	= $user_data['vehicle_type'];
 			$data['todays_date']	= date('Y-m-d');
@@ -191,7 +194,8 @@ JOIN `vehicle_master` vm ON vm.row_id = vda.vehicle_id WHERE loginid = '".$_POST
 				if($routes_result->num_rows > 0) {
 
 					//$routes['route_code'] = $user_data['actual_route_code'];
-					
+					$data['routes_available'] = 1;
+
 					$i = 0;
 					while ($row = $routes_result->fetch_assoc()) {
 						if(!isset($routes[$row['journey_type']])) {
@@ -210,6 +214,8 @@ JOIN `vehicle_master` vm ON vm.row_id = vda.vehicle_id WHERE loginid = '".$_POST
 						$routes[$row['journey_type']]['fare_half'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_half'];
 						$routes[$row['journey_type']]['fare_luggage'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_luggage'];
 					}
+				} else {
+					$data['routes_available'] = 0;
 				}
 
 				$data['routes'] = $routes;
@@ -275,7 +281,7 @@ $app->post('/position_log', function() {
 	$sql = "INSERT INTO `location_log` (`vehical_code`, `route_code`, `conductor_code`, `latitude`, `longitude`, `altitude`, `altutude_accuracy`, `heading`, `speed`, `timestamp`) VALUES ('".$_POST['vehicle_code']."', '".$_POST['route_code']."', '".$_POST['conductor_code']."', '".$_POST['latitude']."', '".$_POST['longitude']."', '".$_POST['altitude']."', '".$_POST['altutude_accuracy']."', '".$_POST['heading']."', '".$_POST['speed']."', '".$_POST['timestamp']."')";
 
 	if ($conn->query($sql) === TRUE) {
-		$data['status'] = '0';
+		$data['status'] = '1';
 		$data['message'] = "New record created successfully";
 	} else {
 		echo "Error: " . $sql . "<br>" . $conn->error;
@@ -290,17 +296,13 @@ $app->post('/position_log', function() {
 
 
 // Get available routes stages
-$app->get('/routes_stages', function() {
+$app->post('/routes_stages', function() {
 	//echo "======>>> <pre>"; print_r($_POST); exit;
 
 	require_once('db.php');
 
-	$route_code = $_POST['route_code'];
-
-	//$route_code = 'R-001';
-
 	//Get start stages
-	$query = "select * from route_fare_matrix WHERE route_code = '". $route_code."' ORDER BY row_id";
+	$query = "select * from route_fare_matrix WHERE route_code = '". $_POST['route_code']."' ORDER BY row_id";
 
 	$result = $conn->query($query);
 
@@ -312,7 +314,7 @@ $app->get('/routes_stages', function() {
 		$data['status'] = 1;
 		$data['message'] = "Route details found successfully!";
 
-		$data['route_code'] = $route_code;
+		$data['route_code'] = $_POST['route_code'];
 		
 		$i = 0;
 		while ($row = $result->fetch_assoc()) {
@@ -341,16 +343,13 @@ $app->get('/routes_stages', function() {
 });
 
 // Get available routes stages
-$app->get('/routes_stages2', function() {
+$app->post('/routes_stages2', function() {
 	//echo "======>>> <pre>"; print_r($_POST); exit;
 
 	require_once('db.php');
 
-	$route_code = 'R-001';
-	$vehicle_type = 'ORDINARY';
-
 	//Get start stages
-	echo $query = "select * from route_fare_matrix WHERE route_code = '". $route_code."' AND vehicle_type = '". $vehicle_type."' ORDER BY row_id";
+	$query = "select * from route_fare_matrix WHERE route_code = '". $_POST['route_code']."' ORDER BY row_id";
 
 	$result = $conn->query($query);
 
@@ -362,34 +361,32 @@ $app->get('/routes_stages2', function() {
 		$data['status'] = 1;
 		$data['message'] = "Route details found successfully!";
 
-		$data['route_code'] = $route_code;
-
-		$routes_array = array();
+		$data['route_code'] = $_POST['route_code'];
 		
 		$i = 0;
 		while ($row = $result->fetch_assoc()) {
-			// /*
-			if((!isset($data[$row['journey_type']]) || !isset($data[$row['journey_type']]['start_stages'])) || !in_array($row['start_stage_code'], $data[$row['journey_type']]['start_stages'])) {
-			$data[$row['journey_type']]['start_stages'][$i] = $row['start_stage_code'];
+			
+			if(!in_array($row['start_stage_code'], $data['start_stages'])) {
+			$data['start_stages'][$i] = $row['start_stage_code'];
 			$i++;
 			}
-			$data[$row['journey_type']]['end_stages'][$row['start_stage_code']][] = $row['end_stage_code'];
+			$data['end_stages'][$row['start_stage_code']][] = $row['end_stage_code'];
 
-			$data[$row['journey_type']]['fare_km'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_km'];
-			$data[$row['journey_type']]['fare_full'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_full'];
-			$data[$row['journey_type']]['fare_half'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_half'];
-			$data[$row['journey_type']]['fare_luggage'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_luggage'];
+			//$data['end_stages'][$row['start_stage_code']][$row['end_stage_code']]['name'] = $row['end_stage_code'];
+			$data['fare_km'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_km'];
+			$data['fare_full'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_full'];
+			$data['fare_half'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_half'];
+			$data['fare_luggage'][$row['start_stage_code']][$row['end_stage_code']] = $row['fare_luggage'];
+
+			//$data['start_stages'][$row['start_stage_code']]['position'] = $i;
+
+			
 		}
 	} else {
-		//$data['message'] = "No Routes data found! Please contact administrator.";		
-		$data = 0;
+		$data['message'] = "No Routes data found! Please contact administrator.";		
 	}
 
-	return $data;
-
-	//echo "=====routes_array>>>>>>>>> <pre>"; print_r($data); exit;
-
-	//echo json_encode($data);
+	echo json_encode($data);
 });
 
 //Book ticket
@@ -397,7 +394,7 @@ $app->post('/book_ticket', function() {
 
 	require_once('db.php');
 
-	$sql = "INSERT INTO `ticket_bookings` (`booking_reference`, `route_code`, `start_stage`, `end_stage`, `fare_full_passengers`, `fare_full_cost`, `fare_half_passengers`, `fare_half_cost`, `fare_luggage`, `fare_luggage_cost`, `total_fare`, `mobile`, `booking_time`, `created_by`) VALUES ('".$_POST['booking_reference']."', '".$_POST['route_code']."', '".$_POST['start_stage']."', '".$_POST['end_stage']."', '".$_POST['fare_full_passengers']."', '".$_POST['fare_full_cost']."', '".$_POST['fare_half_passengers']."', '".$_POST['fare_half_cost']."', '".$_POST['fare_luggage']."', '".$_POST['fare_luggage_cost']."', '".$_POST['total_fare']."', '".$_POST['mobile']."', '".date('Y-m-d h:i:s', strtotime($_POST['booking_time']))."', '".$_POST['created_by']."')";
+	$sql = "INSERT INTO `ticket_bookings` (`booking_reference`, `route_code`, `start_stage`, `end_stage`, `fare_full_passengers`, `fare_full_cost`, `fare_half_passengers`, `fare_half_cost`, `fare_luggage`, `fare_luggage_cost`, `total_fare`, `mobile`, `booking_time`, `created_by`) VALUES ('".$_POST['booking_reference']."', '".$_POST['route_code']."', '".$_POST['start_stage']."', '".$_POST['end_stage']."', '".$_POST['fare_full_passengers']."', '".$_POST['fare_full_cost']."', '".$_POST['fare_half_passengers']."', '".$_POST['fare_half_cost']."', '".$_POST['fare_luggage']."', '".$_POST['fare_luggage_cost']."', '".$_POST['discounted_total']."', '".$_POST['mobile']."', '".date('Y-m-d h:i:s', strtotime($_POST['booking_time']))."', '".$_POST['created_by']."')";
 
 	if ($conn->query($sql) === TRUE) {
 		$data['status'] = '1';
@@ -431,7 +428,7 @@ $app->post('/book_ticket_call', function() {
 		//$ticket_data = json_decode($ticket, true);
 
 		$sql .= ($is_first++ == 0) ? '': ', ';
-		$sql .= "('".$ticket['booking_reference']."', '".$ticket['route_code']."', '".$ticket['start_stage']."', '".$ticket['end_stage']."', '".$ticket['fare_full_passengers']."', '".$ticket['fare_full_cost']."', '".$ticket['fare_half_passengers']."', '".$ticket['fare_half_cost']."', '".$ticket['fare_luggage']."', '".$ticket['fare_luggage_cost']."', '".$ticket['total_fare']."', '".$ticket['mobile']."', '".date('Y-m-d h:i:s', strtotime($ticket['booking_time']))."', '".$ticket['created_by']."')";
+		$sql .= "('".$ticket['booking_reference']."', '".$ticket['route_code']."', '".$ticket['start_stage']."', '".$ticket['end_stage']."', '".$ticket['fare_full_passengers']."', '".$ticket['fare_full_cost']."', '".$ticket['fare_half_passengers']."', '".$ticket['fare_half_cost']."', '".$ticket['fare_luggage']."', '".$ticket['fare_luggage_cost']."', '".$ticket['discounted_total']."', '".$ticket['mobile']."', '".date('Y-m-d h:i:s', strtotime($ticket['booking_time']))."', '".$ticket['created_by']."')";
 	}
 	
 	//$data['sql'] = $sql;

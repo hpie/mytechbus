@@ -32,6 +32,7 @@ public class Constants {
 
 
     public static final String KEY_OPERATOR_NAME = "operator_name";
+    public static final String KEY_VEHICLE_CODE = "vehicle_code";
     public static final String KEY_VEHICLE_NUMBER = "vehicle_number";
     public static final String KEY_VEHICLE_TYPE = "vehicle_type";
     public static final String KEY_JOURNEY_TYPE = "journey_type";

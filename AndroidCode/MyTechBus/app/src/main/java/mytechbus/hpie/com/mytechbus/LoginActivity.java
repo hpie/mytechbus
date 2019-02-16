@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
     private String latitude = "", current_latitude = "";
     private String longitude, current_longitude;
+    private String vehicle_code = "";
     private ProgressDialog pDialog;
     private SessionHandler session;
     private boolean mAlreadyStartedService = false;
@@ -143,6 +144,7 @@ public class LoginActivity extends AppCompatActivity {
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
+                        if( !vehicle_code.equals("")) {
                         current_latitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LATITUDE).trim();
                         current_longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE).trim();
 
@@ -150,47 +152,52 @@ public class LoginActivity extends AppCompatActivity {
 
 
                         if (current_latitude != null && current_longitude != null) {
-                             if(!latitude.equals(current_latitude) || !longitude.equals(current_longitude)) {
-                             latitude = current_latitude;
-                             longitude = current_longitude;
-                             //------------------------------------------------------------------------------------------------------------
-                             StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.position_log_url,
-                                     new Response.Listener<String>() {
-                                         @Override
-                                         public void onResponse(String response) {
+                            if (!latitude.equals(current_latitude) || !longitude.equals(current_longitude)) {
+                                latitude = current_latitude;
+                                longitude = current_longitude;
+                                //------------------------------------------------------------------------------------------------------------
+                                StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.position_log_url,
+                                        new Response.Listener<String>() {
+                                            @Override
+                                            public void onResponse(String response) {
 
-                                         }
-                                     },
-                                     new Response.ErrorListener() {
-                                         @Override
-                                         public void onErrorResponse(VolleyError error) {
-                                             //Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
-                                         }
-                                     }) {
-                                 @Override
-                                 protected Map<String, String> getParams() {
-                                     Map<String, String> params = new HashMap<String, String>();
+                                            }
+                                        },
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                //Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+                                            }
+                                        }) {
+                                    @Override
+                                    protected Map<String, String> getParams() {
+                                        Map<String, String> params = new HashMap<String, String>();
 
-                                     params.put("latitude", "" + latitude);
-                                     params.put("longitude", "" + longitude);
-                                     params.put("route_code", "" + session.GetRoute());
-                                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                     String date = df.format(Calendar.getInstance().getTime());
+                                        Log.d("myLogs", "Log vehicle code : " + session.getVehicleCode());
 
-                                     params.put("timestamp", date);
+                                        params.put("vehicle_code", "" + session.getVehicleCode());
+                                        params.put("latitude", "" + latitude);
+                                        params.put("longitude", "" + longitude);
+                                        params.put("route_code", "" + session.GetRoute());
+                                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                        String date = df.format(Calendar.getInstance().getTime());
 
-                                     //params.put(KEY_EMAIL, email);
-                                     return params;
-                                 }
-                             };
+                                        params.put("timestamp", date);
 
-                             // Access the RequestQueue through your singleton class.
-                             mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
-                             //------------------------------------------------------------------------------------------------------------
-                         }
-                         }
-                        // Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+                                        //params.put(KEY_EMAIL, email);
+                                        return params;
+                                    }
+                                };
 
+                                // Access the RequestQueue through your singleton class.
+                                mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
+                                //------------------------------------------------------------------------------------------------------------
+                            }
+                        }
+                        Log.d("myLogs : track location", " vehicle Code : " + vehicle_code + " || current_latitude = " + current_latitude + " AND latitude = " + latitude + " Condition : " + current_latitude.equals(latitude) + " || current_longitude = " + current_longitude + " AND longitude = " + longitude + " Condition :  " + current_longitude.equals(longitude));
+                    } else {
+                        Log.d("myLogs", "Vehicle code empty");
+                        }
                     }
                 }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST)
         );
@@ -218,7 +225,7 @@ public class LoginActivity extends AppCompatActivity {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                   // Log.d("Ticket Booked : ", response);
+                                   Log.d("myLogs", "Ticket Booked : " + response);
                                     try {
 
                                         JSONObject ticket_response = new JSONObject(response);
@@ -255,7 +262,7 @@ public class LoginActivity extends AppCompatActivity {
                     //Log.d("myLogs", " Book Ticket If : current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
                 } else {
-                //Log.d("myLogs", " Book Ticket else : wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
+                Log.d("myLogs", " Book Ticket else : wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
                 }
             };
         };
@@ -380,7 +387,12 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject login_response = new JSONObject(response);
 
                             if (login_response.getInt(Constants.KEY_STATUS) == 1) {
-                                session.loginUser(username,login_response.getString(Constants.KEY_FULL_NAME), login_response.getString(Constants.KEY_ROUTE_CODE), login_response.getString("routes_available"), login_response.getString("operator_name"), login_response.getString("vehicle_number"), login_response.getString("vehicle_type"));
+
+                                Log.d("myLogs", "Received vehicle code : " + login_response.getString("vehicle_code") + " ||| get as Integer : " + login_response.getInt("vehicle_code"));
+
+                                vehicle_code = login_response.getString("vehicle_code");
+
+                                session.loginUser(username,login_response.getString(Constants.KEY_FULL_NAME), login_response.getString(Constants.KEY_ROUTE_CODE), login_response.getString("routes_available"), login_response.getString("operator_name"), login_response.getString("vehicle_code"), login_response.getString("vehicle_number"), login_response.getString("vehicle_type"));
                                 //loadDashboard();
                                 fIleOperations.writeToFile("trip_data.txt", response, LoginActivity.this, "0");
 
