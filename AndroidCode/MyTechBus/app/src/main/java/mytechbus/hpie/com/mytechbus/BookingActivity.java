@@ -880,7 +880,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             file_data_store.put("discount_applied", discount_applied);
             file_data_store.put("discounted_total", discounted_ticket_cost);
 
-            file_data_store.put("created_by","1");
+            file_data_store.put("operator_id", session.getOperatorId());
+            file_data_store.put("created_by", session.getUserId());
 
             //Log.d("Ticket Booked : ", String.valueOf(file_data_store));
 

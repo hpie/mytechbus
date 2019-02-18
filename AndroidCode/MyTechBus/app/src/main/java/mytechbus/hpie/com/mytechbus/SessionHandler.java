@@ -42,6 +42,14 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_VEHICLE_TYPE, Constants.KEY_EMPTY);
     }
 
+    public String getUserId() {
+        return mPreferences.getString(Constants.KEY_USER_ID, Constants.KEY_EMPTY);
+    }
+
+    public String getOperatorId() {
+        return mPreferences.getString(Constants.KEY_OPERATOR_ID, Constants.KEY_EMPTY);
+    }
+
     public String getRouteAvailibilty() {
         return mPreferences.getString(Constants.KEY_ROUTE_AVAILIBILITY, Constants.KEY_EMPTY);
     }
@@ -88,11 +96,13 @@ public class SessionHandler {
         mEditor.commit();
     }
     */
-    public void loginUser(String username, String fullName, String routecode, String route_availibility, String operator_name, String vehicle_code, String vehicle_number, String vehicle_type ) {
+    public void loginUser(String user_id, String operator_id, String username, String fullName, String routecode, String route_availibility, String operator_name, String vehicle_code, String vehicle_number, String vehicle_type ) {
 
 
         Log.d("myLogs", "Set vehicle code : " + vehicle_code);
 
+        mEditor.putString(Constants.KEY_USER_ID, user_id);
+        mEditor.putString(Constants.KEY_OPERATOR_ID, operator_id);
         mEditor.putString(Constants.KEY_USERNAME, username);
         mEditor.putString(Constants.KEY_FULL_NAME, fullName);
         mEditor.putString(Constants.KEY_ROUTE_CODE, routecode);
