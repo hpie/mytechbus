@@ -10,6 +10,23 @@
 			<div class="box-body">
 				<?php echo $form->open(); ?>
 
+					<?php if ( !empty($operators) ): ?>
+					<div class="form-group">
+						<label for="operators">Operators</label>
+						<select name="operator_id" class="form-control">
+						<option value="" disabled selected>Please seect operator</option>
+						<?php foreach ($operators as $operator): ?>
+							<option value="<?php echo $operator->row_id; ?>"><?php echo $operator->operator_name; ?></option>
+						<?php endforeach; ?>
+						</select>
+					</div>
+					<?php endif; ?>
+
+
+					<div class="form-group"><label for="first_name">First Name</label><input type="text" name="first_name" value="" id="first_name" class="form-control">
+</div>
+
+
 					<?php echo $form->bs3_text('First Name', 'first_name'); ?>
 					<?php echo $form->bs3_text('Last Name', 'last_name'); ?>
 					<?php echo $form->bs3_text('Username', 'username'); ?>

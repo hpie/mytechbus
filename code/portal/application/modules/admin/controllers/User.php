@@ -51,6 +51,7 @@ class User extends Admin_Controller {
 			$additional_data = array(
 				'first_name'	=> $this->input->post('first_name'),
 				'last_name'		=> $this->input->post('last_name'),
+				'operator_id'		=> $this->input->post('operator_id'),
 			);
 			$groups = $this->input->post('groups');
 
@@ -85,6 +86,7 @@ class User extends Admin_Controller {
 		// get list of Frontend user groups
 		$this->load->model('group_model', 'groups');
 		$this->mViewData['groups'] = $this->groups->get_all();
+		$this->mViewData['operators'] = $this->db->get('vehicle_operators')->result();
 		$this->mPageTitle = 'Create User';
 
 		$this->mViewData['form'] = $form;

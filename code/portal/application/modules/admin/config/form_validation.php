@@ -25,6 +25,11 @@ $config = array(
 	// Create User
 	'user/create' => array(
 		array(
+			'field'		=> 'operator_id',
+			'label'		=> 'Operator',
+			'rules'		=> 'required',
+		),
+		array(
 			'field'		=> 'first_name',
 			'label'		=> 'First Name',
 			'rules'		=> 'required',

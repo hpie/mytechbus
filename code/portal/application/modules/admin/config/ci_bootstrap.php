@@ -83,6 +83,7 @@ $config['ci_bootstrap'] = array(
 				'Vehicle Route Master'		=> 'VehicleOperatorRoutes',
 				'Vehicle Route Stages'		=> 'VehicleRouteStages',
 				'Vehicle Fare Discounts'	=> 'VehicleOperatorFareDiscounts',
+				'Track Vehicles'			=> 'track/bus',
 			)
 		),
 		'devices' => array(

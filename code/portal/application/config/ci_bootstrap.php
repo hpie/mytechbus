@@ -15,35 +15,38 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $config['ci_bootstrap'] = array(
 
 	// Site name
-	'site_name' => 'CI Bootstrap 3',
-
-	// Default page title prefix
-	'page_title_prefix' => '',
+	'site_name' => 'My Tech Bus',
+    // Default page title prefix
+    'page_title_prefix' => 'MyTechBus - ',
 
 	// Default page title
 	'page_title' => '',
 
 	// Default meta data
 	'meta_data'	=> array(
-		'author'		=> '',
-		'description'	=> '',
-		'keywords'		=> ''
+		 'author' => 'HPIE',
+        'description' => 'My Tech Bus',
+        'keywords' => 'PHP,CodeIgniter,CRUD'
 	),
 
 	// Default scripts to embed at page head or end
 	'scripts' => array(
 		'head'	=> array(
+            'assets/dist/frontend/jquery-2.2.4.min.js',
+            'assets/dist/frontend/bootstrap.min.js',
 		),
 		'foot'	=> array(
-			'assets/dist/frontend/lib.min.js',
-			'assets/dist/frontend/app.min.js'
+			//'assets/dist/frontend/lib.min.js',
+			//'assets/dist/frontend/app.min.js'
 		),
 	),
 
 	// Default stylesheets to embed at page head
 	'stylesheets' => array(
 		'screen' => array(
-			'assets/dist/frontend/lib.min.css',
+			'assets/dist/frontend/bootstrap.min.css',
+			'assets/dist/frontend/form-style.css',
+			//'assets/dist/frontend/lib.min.css',
 			'assets/dist/frontend/app.min.css'
 		)
 	),
@@ -52,6 +55,9 @@ $config['ci_bootstrap'] = array(
 	'body_class' => '',
 	
 	// Multilingual settings
+
+	'languages' => '',
+	/*
 	'languages' => array(
 		'default'		=> 'en',
 		'autoload'		=> array('general'),
@@ -74,16 +80,27 @@ $config['ci_bootstrap'] = array(
 			)
 		)
 	),
-
+	*/
 	// Google Analytics User ID
 	'ga_id' => '',
 
 	// Menu items
 	'menu' => array(
-		'home' => array(
-			'name'		=> 'Home',
-			'url'		=> '',
-		),
+		'account' => array(
+            'name' => 'My Account',
+            'url' => 'account/',
+            'icon' => 'fa fa-home',
+        ),
+        'auth' => array(
+            'name' => 'Login / Logout',
+            'url' => 'auth/login',
+            'icon' => 'fa fa-users',
+        ),
+        'admin' => array(
+            'name' => 'Admin',
+            'url' => 'operator/',
+            'icon' => 'fa fa-home',
+        ),
 	),
 
 	// Login page
@@ -91,6 +108,7 @@ $config['ci_bootstrap'] = array(
 
 	// Restricted pages
 	'page_auth' => array(
+		'account' => array('members'),
 	),
 
 	// Email config

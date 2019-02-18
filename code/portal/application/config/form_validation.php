@@ -7,7 +7,7 @@
 
 $config = array(
 
-	/** Example: 
+	
 	'auth/login' => array(
 		array(
 			'field'		=> 'email',
@@ -19,7 +19,7 @@ $config = array(
 			'label'		=> 'Password',
 			'rules'		=> 'required',
 		),
-	),*/
+	),
 );
 
 /**

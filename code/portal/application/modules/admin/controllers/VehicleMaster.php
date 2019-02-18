@@ -31,6 +31,12 @@ class VehicleMaster extends Admin_Controller {
 		
 		//how to add others? and create a new record if others
 		$crud->set_relation('vehicle_type','vehicle_types','{vehicle_type}  [{vehicle_basefare}]',array('vehicle_type_status' => 'ACTIVE'), 'vehicle_type ASC');
+
+		// Action to get current location of bus
+		if ($crud->getState()=='list' || $this->ion_auth->in_group(array('webmaster', 'admin')))
+		{
+			$crud->add_action('Track', '', 'admin/track/bus', 'fa fa-map-marker');
+		}
 		
 		/*
 		// only webmaster and admin can change member groups

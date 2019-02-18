@@ -76,9 +76,11 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
+	
 	'username' => 's7hpiein_techbus',
 	'password' => 'myt3chbu$',
 	'database' => 's7hpiein_mytechbus',
+
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
