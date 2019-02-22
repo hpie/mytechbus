@@ -27,7 +27,7 @@ class Track extends Admin_Controller {
 		$this->render('track');
 	}
 
-	public function bus()
+	public function Bus()
 	{
 		$form = $this->form_builder->create_form();
 

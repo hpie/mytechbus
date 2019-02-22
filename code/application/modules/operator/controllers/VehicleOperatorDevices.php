@@ -56,7 +56,7 @@ class VehicleOperatorDevices extends Admin_Controller {
 			//Mandatory Feilds
 			$crud->required_fields('device_imie', 'device_number', 'device_status');
 			
-			$crud->field_type('operator_id', 'hidden', $loggedinUser->user_id);
+			$crud->field_type('operator_id', 'hidden', $loggedinUser->operator_id);
 			
 			$crud->field_type('created_by', 'hidden', $loggedinUser->username);
 		
@@ -67,7 +67,7 @@ class VehicleOperatorDevices extends Admin_Controller {
 			//Mandatory Feilds
 			$crud->required_fields('device_number', 'device_status');
 			
-				$crud->field_type('operator_id', 'hidden', $loggedinUser->user_id);
+				$crud->field_type('operator_id', 'hidden', $loggedinUser->operator_id);
 				$crud->field_type('device_imie', 'readonly');
 				
 			$crud->field_type('modified_by', 'hidden', $loggedinUser->username);

@@ -44,7 +44,7 @@ class VehicleMaster extends Admin_Controller {
 		// Action to get current location of bus
 		if ($crud->getState()=='list' || $this->ion_auth->in_group(array('webmaster', 'admin')))
 		{
-			$crud->add_action('Track', '', 'operator/track/bus', 'fa fa-map-marker');
+			$crud->add_action('Track', '', 'operator/Track/Bus', 'fa fa-map-marker');
 		}
 
 		/*
