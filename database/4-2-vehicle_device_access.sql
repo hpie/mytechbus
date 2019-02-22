@@ -7,8 +7,9 @@ CREATE TABLE IF NOT EXISTS `vehicle_device_access` (
   `row_id` bigint(20) NOT NULL,
   `loginid` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is loginid for the device',
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is hashed password for the device',
-  `device_imie` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is IMIE of the device from which the login request should come',
-  `route_code` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'route_code assigned to the device for which route matrix to be downloaded',
+  `device_imie` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'vehicle_operator_devices.device_imie This is IMIE of the device from which the login request should come',
+  `route_id` bigint(20) NOT NULL COMMENT 'This is row_id from master_routes, The route assigend to a vehicle. route_code for matrix to be downloaded',
+  `vehicle_id` bigint(20) NOT NULL COMMENT 'To which vehicle this device will book ticket for. FK to vehicle_master.row_id ',
   `device_last_login` timestamp NOT NULL COMMENT 'Last login timestamp',
   `latitude` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'To capture Last login attempt location',
   `longitude` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'To capture Last login attempt location',
@@ -34,15 +35,25 @@ CREATE TABLE IF NOT EXISTS `vehicle_device_access` (
 ALTER TABLE `vehicle_device_access`
   ADD PRIMARY KEY (`row_id`),
   ADD UNIQUE KEY `devices_login_uk`(`loginid`),
-  ADD UNIQUE KEY `devices_login_imie_uk`(`loginid`, `device_imie`),
-  ADD UNIQUE KEY `devices_login_imie_uk`(`device_imie`, `route_code`);
+  ADD UNIQUE KEY `devices_login_imie_uk`(`device_imie`);
 
+  
+--
+-- Indexes for table `vehicle_device_access`
+-- 
+ALTER TABLE vehicle_device_access
+ADD CONSTRAINT FK_device_access_device_imie_id FOREIGN KEY (device_imie) REFERENCES vehicle_operator_devices(device_imie),
+ADD CONSTRAINT FK_device_access_route_id FOREIGN KEY (route_id) REFERENCES master_routes(row_id),
+ADD CONSTRAINT FK_device_access_vehicle_id FOREIGN KEY (vehicle_id) REFERENCES vehicle_master(row_id),
+ADD CONSTRAINT FK_device_access_operator_id FOREIGN KEY (operator_id) REFERENCES vehicle_operators(row_id);
+  
+  
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `vehicle_operator_devices`
+-- AUTO_INCREMENT for table `vehicle_device_access`
 --
-ALTER TABLE `vehicle_operator_devices`
+ALTER TABLE `vehicle_device_access`
   MODIFY `row_id` bigint(20) NOT NULL AUTO_INCREMENT;

@@ -37,12 +37,19 @@ ALTER TABLE `vehicle_device_users`
   ADD PRIMARY KEY (`row_id`),
   ADD UNIQUE KEY `device_users_uk`(`userid`);
 
+  
+--
+-- Indexes for table `vehicle_device_users`
+-- 
+ALTER TABLE vehicle_device_users
+ADD CONSTRAINT FK_device_users_device_imie_id FOREIGN KEY (device_imie) REFERENCES vehicle_operator_devices(device_imie),
+ADD CONSTRAINT FK_device_users_operator_id FOREIGN KEY (operator_id) REFERENCES vehicle_operators(row_id);  
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `vehicle_operator_devices`
+-- AUTO_INCREMENT for table `vehicle_device_users`
 --
-ALTER TABLE `vehicle_operator_devices`
+ALTER TABLE `vehicle_device_users`
   MODIFY `row_id` bigint(20) NOT NULL AUTO_INCREMENT;

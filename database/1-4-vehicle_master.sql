@@ -32,6 +32,15 @@ ALTER TABLE `vehicle_master`
   ADD UNIQUE KEY `vehicle_master_engine_uk`(`vehicle_engine_no`),
   ADD UNIQUE KEY `vehicle_master_chassis_uk`(`vehicle_chassis_no`);
 
+  
+--
+-- Indexes for table `vehicle_master`
+-- 
+ALTER TABLE vehicle_master
+ADD CONSTRAINT FK_vehicle_master_vehicle_type FOREIGN KEY (vehicle_type) REFERENCES vehicle_types(vehicle_type),
+ADD CONSTRAINT FK_vehicle_master_operator_id FOREIGN KEY (operator_id) REFERENCES vehicle_operators(row_id);
+  
+  
 --
 -- AUTO_INCREMENT for dumped tables
 --

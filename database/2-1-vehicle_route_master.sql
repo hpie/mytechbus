@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `master_routes` (
   `route_start_stage` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `route_end_stage` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `route_stop_count` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This will be updated once route matrix is generated for this route', 
-  `route_type` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `route_type` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'TWOWAY, CIRCULAR are currenlty supported. Two way will have onward and return routs',
   `route_status` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'ACTIVE, INACTIVE, DELETED',
   `operator_id` bigint(20) NOT NULL COMMENT 'This is row_id from vehicle_operators, The operator to whom this route is attached to',
   `created_by` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
@@ -28,12 +28,19 @@ ALTER TABLE `master_routes`
   ADD PRIMARY KEY (`row_id`),
   ADD UNIQUE KEY `route_code_uk`(`route_code`);
 
+  
+--
+-- Indexes for table `master_routes`
+-- 
+ALTER TABLE master_routes
+ADD CONSTRAINT FK_routes_operator_id FOREIGN KEY (operator_id) REFERENCES vehicle_operators(row_id);
+
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `vehicle_operators`
+-- AUTO_INCREMENT for table `master_routes`
 --
 ALTER TABLE `master_routes`
   MODIFY `row_id` bigint(20) NOT NULL AUTO_INCREMENT;

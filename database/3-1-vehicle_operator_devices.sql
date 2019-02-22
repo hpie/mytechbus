@@ -4,7 +4,6 @@
 --
 
 CREATE TABLE IF NOT EXISTS `vehicle_operator_devices` (
-  `row_id` bigint(20) NOT NULL,
   `device_imie` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is Unique IMIE of the device',
   `device_make` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is device manufacturer Nokia, Samsung, LG, MI, Karbon, Motorolla etc.',
   `device_model` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'This is device manufacturer model Lumia, S7 etc.',
@@ -28,15 +27,16 @@ CREATE TABLE IF NOT EXISTS `vehicle_operator_devices` (
 -- Indexes for table `vehicle_operator_devices`
 --
 ALTER TABLE `vehicle_operator_devices`
-  ADD PRIMARY KEY (`row_id`),
-  ADD UNIQUE KEY `operator_devices_uk`(`device_imie`);
+  ADD PRIMARY KEY (`device_imie`),
+  ADD UNIQUE KEY `operator_devices_uk`(`device_number`);
 
+  
+--
+-- Indexes for table `vehicle_operator_devices`
+-- 
+ALTER TABLE vehicle_operator_devices
+ADD CONSTRAINT FK_operator_devices_operator_id FOREIGN KEY (operator_id) REFERENCES vehicle_operators(row_id);
+  
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `vehicle_operator_devices`
---
-ALTER TABLE `vehicle_operator_devices`
-  MODIFY `row_id` bigint(20) NOT NULL AUTO_INCREMENT;

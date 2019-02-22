@@ -1,5 +1,6 @@
 --
 -- Table structure for table `vehicle_types`
+-- This is Master Data for types if Vewhicles and is indeipendent of any Operator.
 --
 
 CREATE TABLE IF NOT EXISTS `vehicle_types` (

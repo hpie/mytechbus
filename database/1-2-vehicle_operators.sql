@@ -1,6 +1,7 @@
 --
 -- Table structure for table `vehicle_operators`
--- There are operator reg details who run business
+-- There are operator registration details who runs business.
+-- May objects are tied to the operator_id which is row_id of this table
 --
 
 CREATE TABLE IF NOT EXISTS `vehicle_operators` (
@@ -30,7 +31,9 @@ CREATE TABLE IF NOT EXISTS `vehicle_operators` (
 --
 ALTER TABLE `vehicle_operators`
   ADD PRIMARY KEY (`row_id`),
-  ADD UNIQUE KEY `operator_name_uk`(`operator_name`);
+  ADD UNIQUE KEY `operator_name_uk`(`operator_name`),
+  ADD UNIQUE KEY `operator_phome_uk`(`operator_phone`),
+  ADD UNIQUE KEY `operator_email_uk`(`operator_email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
