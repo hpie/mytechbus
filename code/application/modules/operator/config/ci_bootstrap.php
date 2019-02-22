@@ -232,4 +232,4 @@ $config['ci_bootstrap'] = array(
 | Override values from /application/config/config.php
 | -------------------------------------------------------------------------
 */
-$config['sess_cookie_name'] = 'ci_session_admin';
+$config['sess_cookie_name'] = 'ci_session_operator';
