@@ -130,103 +130,119 @@ $config['ci_bootstrap'] = array(
 
 		),
 
-		'master' => array(
+		'MasterData' => array(
 
 			'name'		=> 'Master Data',
 
-			'url'		=> 'master',
+			'url'		=> 'MasterData',
 
 			'icon'		=> 'fa fa-home',
 
 			'children'  => array(
 
-				'Vehicle Types'			=> 'VehicleTypes',
+				'Vehicle Types'			=> 'MasterData/VehicleTypes',
 
-				'Vehicle Operators'		=> 'VehicleOperators',
+				'Vehicle Operators'		=> 'MasterData/VehicleOperators',
 
-				'Vehicle Fare Master'	=> 'VehicleFareMaster',
+				'Vehicle Fare Master'	=> 'MasterData/VehicleFareMaster',
 
 			)
 
 		),
 
-		'vehicles' => array(
+		'VehicleData' => array(
 
 			'name'		=> 'Vehicle Data',
 
-			'url'		=> 'vehicles',
+			'url'		=> 'VehicleData',
 
 			'icon'		=> 'fa fa-home',
 
 			'children'  => array(
 
-				'Vehicle Master'			=> 'VehicleMaster',
+				'Vehicle Master'			=> 'VehicleData/VehicleMaster',
 
-				'Vehicle Route Master'		=> 'VehicleOperatorRoutes',
+				'Vehicle Route Master'		=> 'VehicleData/VehicleOperatorRoutes',
 
-				'Vehicle Route Stages'		=> 'VehicleRouteStages',
+				'Vehicle Route Stages'		=> 'VehicleData/VehicleRouteStages',
 
-				'Vehicle Fare Discounts'	=> 'VehicleOperatorFareDiscounts',
-
-				'Track Vehicles'			=> 'track/bus',
+				'Vehicle Fare Discounts'	=> 'VehicleData/VehicleOperatorFareDiscounts',
 
 			)
 
 		),
 
-		'devices' => array(
+		'Devices' => array(
 
 			'name'		=> 'Devices',
 
-			'url'		=> 'devices',
+			'url'		=> 'Devices',
 
 			'icon'		=> 'fa fa-home',
 
 			'children'  => array(
 
-				'Vehicle Operator Devices'	=> 'VehicleOperatorDevices',
+				'Vehicle Operator Devices'	=> 'Devices/VehicleOperatorDevices',
 
-				'Vehicle Device Access'	=> 'VehicleDeviceAccess',
-
-				'Login Attempts'	=> 'LoginAttempts',
+				'Vehicle Device Access'	=> 'Devices/VehicleDeviceAccess',
 
 			)
 
 		),
 
-		'routes' => array(
+		'RouteMatrix' => array(
 
-			'name'		=> 'Fare',
+			'name'		=> 'Route Matrix',
 
-			'url'		=> 'routes',
+			'url'		=> 'RouteMatrix',
 
 			'icon'		=> 'fa fa-home',
 
 			'children'  => array(
 
-				'Route Matrix'	=> 'VehicleRouteMatrix',
+				'Vehicle Route Matrix'	=> 'VehicleRouteMatrix',
 
 			)
 
 		),
 
-		'tickets' => array(
+		'Track' => array(
 
-			'name'		=> 'Tickets',
+			'name'		=> 'Track',
 
-			'url'		=> 'tickets',
+			'url'		=> 'Track',
 
 			'icon'		=> 'fa fa-home',
 
 			'children'  => array(
 
-				'Tickets List'	=> 'VehicleTicketBookings',
-				'Todays Collection'	=> 'Reports/todays_collection',
-				'Collections'		=> 'Reports',
+               'Login Attempts'	=> 'Track/LoginAttempts',
+
+               'Tickets List'	=> 'Track/VehicleTicketBookings',
+
+               'Track Vehicles'	=> 'Track/Bus',
 
 			)
 
-		),		
+		),
+
+        'Reports' => array(
+
+            'name'		=> 'Reports',
+
+            'url'		=> 'Reports',
+
+            'icon'		=> 'fa fa-home',
+
+            'children'  => array(
+
+                'Todays Collection'	=> 'Reports/CollectionToday',
+
+                'Collections'		=> 'Reports/Collection',
+
+            )
+
+        ),
 
 		'user' => array(
 

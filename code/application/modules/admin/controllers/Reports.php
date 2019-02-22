@@ -11,6 +11,21 @@ class Reports extends Admin_Controller {
 
 	public function index()
 	{
+		$this->load->model('user_model', 'users');
+
+		$this->mViewData['count'] = array(
+
+			'users' => $this->users->count_all(),
+
+		);
+
+		$this->render('home');
+		
+	}
+	
+	
+	public function Collection()
+	{
 		$loggedinUser = $this->mUser;
 		
 		//$this->mViewData['all_routes'] = $this->db->get_where('master_routes', array('operator_id' => $loggedinUser->operator_id))->result();
@@ -71,13 +86,15 @@ class Reports extends Admin_Controller {
 
 		
 		//$this->mViewData['all_routes'] = $this->db->get_where('master_routes', array('operator_id' => $loggedinUser->operator_id))->result();
-
+		$crud->unset_add();
+		$crud->unset_edit();
+		$crud->unset_delete();
 
 		$this->mPageTitle = 'Collections';
 		$this->render_crud();
 	}
 
-	public function todays_collection()
+	public function CollectionToday()
 	{
 		$loggedinUser = $this->mUser;
 		
@@ -129,7 +146,9 @@ class Reports extends Admin_Controller {
 
 		
 		//$this->mViewData['all_routes'] = $this->db->get_where('master_routes', array('operator_id' => $loggedinUser->operator_id))->result();
-
+		$crud->unset_add();
+		$crud->unset_edit();
+		$crud->unset_delete();
 
 		$this->mPageTitle = 'Todays Collection';
 		$this->render_crud();
