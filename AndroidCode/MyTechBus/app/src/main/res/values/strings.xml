@@ -34,10 +34,10 @@
     <string name="total">Total</string>
     <string name="back">Back</string>
     <string name="mobile">Mobile (optional)</string>
-    <string name="permission_read_phone_state_rationale">Permission required to continue furthur</string>
+    <string name="permission_read_phone_state_rationale">Permission required to continue further</string>
     <string name="permissions_not_granted_read_phone_state">Permission Rejected</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_booking">Book Tickets</string>
     <string name="print">Print</string>
-    <string name="cancle">Cancle</string>
+    <string name="cancle">Cancel</string>
 </resources>
