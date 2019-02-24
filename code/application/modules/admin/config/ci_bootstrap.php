@@ -136,7 +136,7 @@ $config['ci_bootstrap'] = array(
 
 			'url'		=> 'MasterData',
 
-			'icon'		=> 'fa fa-home',
+			'icon'		=> 'fa fa-wrench',
 
 			'children'  => array(
 
@@ -156,7 +156,7 @@ $config['ci_bootstrap'] = array(
 
 			'url'		=> 'VehicleData',
 
-			'icon'		=> 'fa fa-home',
+			'icon'		=> 'fa fa-truck',
 
 			'children'  => array(
 
@@ -178,7 +178,7 @@ $config['ci_bootstrap'] = array(
 
 			'url'		=> 'Devices',
 
-			'icon'		=> 'fa fa-home',
+			'icon'		=> 'fa fa-mobile',
 
 			'children'  => array(
 
@@ -196,7 +196,7 @@ $config['ci_bootstrap'] = array(
 
 			'url'		=> 'RouteMatrix',
 
-			'icon'		=> 'fa fa-home',
+			'icon'		=> 'fa fa-puzzle-piece',
 
 			'children'  => array(
 
@@ -212,7 +212,7 @@ $config['ci_bootstrap'] = array(
 
 			'url'		=> 'Track',
 
-			'icon'		=> 'fa fa-home',
+			'icon'		=> 'fa fa-road',
 
 			'children'  => array(
 
@@ -232,7 +232,7 @@ $config['ci_bootstrap'] = array(
 
             'url'		=> 'Reports',
 
-            'icon'		=> 'fa fa-home',
+            'icon'		=> 'fa fa-gears',
 
             'children'  => array(
 
