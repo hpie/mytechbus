@@ -1,4 +1,3 @@
-
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -57,3 +56,5 @@ class VehicleRouteMatrix extends Admin_Controller {
 		$this->render_crud();
 	}
 }
+
+?>

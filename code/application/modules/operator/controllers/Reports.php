@@ -125,3 +125,5 @@ class Reports extends Admin_Controller {
 		$this->render_crud();
 	}
 }
+
+?>

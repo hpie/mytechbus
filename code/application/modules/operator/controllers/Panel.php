@@ -192,3 +192,4 @@ class Panel extends Admin_Controller {
 		redirect($this->mConfig['login_url']);
 	}
 }
+?>

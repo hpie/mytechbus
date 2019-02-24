@@ -84,3 +84,5 @@ class VehicleOperatorFareDiscounts extends Admin_Controller {
 		$this->render_crud();
 	}
 }
+
+?>

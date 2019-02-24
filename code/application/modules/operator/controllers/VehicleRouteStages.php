@@ -1,4 +1,3 @@
-
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -84,3 +83,5 @@ class VehicleRouteStages extends Admin_Controller {
 		$this->render_crud();
 	}
 }
+
+?>
