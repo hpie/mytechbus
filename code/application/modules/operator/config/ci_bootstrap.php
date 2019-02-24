@@ -210,22 +210,7 @@ $config['ci_bootstrap'] = array(
 			'target'	=> '_blank',
 			'color'		=> 'text-aqua'
 		),
-		array(
-			'auth'		=> array('webmaster', 'admin'),
-			'name'		=> 'API Site',
-			'url'		=> 'api',
-			'target'	=> '_blank',
-			'color'		=> 'text-orange'
-		),
-		array(
-			'auth'		=> array('webmaster', 'admin', 'manager', 
-
-'staff'),
-			'name'		=> 'Github Repo',
-			'url'		=> CI_BOOTSTRAP_REPO,
-			'target'	=> '_blank',
-			'color'		=> 'text-green'
-		),
+		
 	),
 
 	// Debug tools
