@@ -28,6 +28,12 @@ class VehicleDeviceAccess extends Admin_Controller {
 		$crud->field_type('access_status','dropdown',array('ACTIVE'=>'ACTIVE','INACTIVE'=>'INACTIVE','DELETED'=>'DELETED'));	
 
 		
+		//Show Operator name on List
+		if ($crud->getState()=='list')
+		{
+			$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
+		}
+		
 		//how to add others? and create a new record if others
 		//$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
 		
@@ -35,7 +41,7 @@ class VehicleDeviceAccess extends Admin_Controller {
 		$crud->set_relation('device_imie','vehicle_operator_devices','{device_imie}-{device_number}',array('device_status' => 'ACTIVE', 'operator_id' => $loggedinUser->operator_id), 'device_number ASC');
 		
 		//how to add others? and create a new record if others
-		$crud->set_relation('route_id','master_routes','{route_start_stage}-{route_end_stage}',array('route_status' => 'ACTIVE', 'operator_id' => $loggedinUser->operator_id), 'route_code, route_start_stage ASC');
+		$crud->set_relation('route_id','master_routes','{route_code}-{route_start_stage}-{route_end_stage}',array('route_status' => 'ACTIVE', 'operator_id' => $loggedinUser->operator_id), 'route_code, route_start_stage ASC');
 		
 		//how to add others? and create a new record if others
 		$crud->set_relation('vehicle_id','vehicle_master','{vehicle_number}-{vehicle_type}',array('vehicle_status' => 'ACTIVE', 'operator_id' => $loggedinUser->operator_id), 'operator_id, vehicle_number ASC');
@@ -81,7 +87,7 @@ class VehicleDeviceAccess extends Admin_Controller {
 		
 		// disable direct create / delete Frontend User
 		//$crud->unset_add();
-		//$crud->unset_delete();
+		$crud->unset_delete();
 
 		$this->mPageTitle = 'Operator Device Access';
 		$this->render_crud();

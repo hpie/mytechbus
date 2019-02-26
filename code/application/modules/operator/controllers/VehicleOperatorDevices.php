@@ -28,6 +28,12 @@ class VehicleOperatorDevices extends Admin_Controller {
 		$crud->field_type('device_status','dropdown',array('ACTIVE'=>'ACTIVE','INACTIVE'=>'INACTIVE','DELETED'=>'DELETED'));	
 
 		
+		//Show Operator name on List
+		if ($crud->getState()=='list')
+		{
+			$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
+		}
+		
 		//how to add others? and create a new record if others
 		//$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
 		

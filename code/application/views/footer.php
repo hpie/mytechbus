@@ -133,7 +133,7 @@
 
         <!-- Copyright -->
         <div class="footer-copyright text-center text-black-50 py-3">&copy; 2019 Copyright:
-            <a class="dark-grey-text" href="index.php">MyTechBus.com</a> developed and maintained by <a class="dark-grey-text" href="softctrl.in">SoftCtrl</a>
+            <a class="dark-grey-text" href="index.php">MyTechBus.com</a> developed and maintained by <a class="dark-grey-text" href="http://softctrl.in">SoftCtrl</a> for <a class="dark-grey-text" href="http://hpie.in">H.P.I.E</a>
         </div>
         <!-- Copyright -->
 
