@@ -909,6 +909,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
 
             //----------------------------
+
+            Log.d("myLogs", " operator name : " + session.getOperator() + " ||| operator name : " + session.getTicketMessage());
+
+
             PrintBill();
             ticket_number = fIleOperations.getTicketCount(fileName, this);
 
@@ -1018,7 +1022,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         try {
             if (Constants.mmSocket != null && Constants.mmOutputStream != null && Constants.mmInputStream != null) {
                 /*Title*/
-                msg = "My Tech Bus"+ "\n";
+               // msg = "My Tech Bus"+ "\n";
+                msg = session.getOperator() + "\n";
                 format = new byte[]{27, 33, 20};
                 center = new byte[]{0x1b, 0x61, 0x01};
                 arrayOfByte = new byte[]{27, 33, 0};
@@ -1121,7 +1126,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
-                msg = "Have a nice journey" + "\n";
+                //msg = "Have a nice journey" + "\n";
+
+                msg = session.getTicketMessage() + "\n";
                 arrayOfByte = new byte[]{27, 33, 0};
                 format[2] = ((byte) (0x8 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(center);

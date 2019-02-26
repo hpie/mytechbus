@@ -29,6 +29,10 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_OPERATOR_NAME, Constants.KEY_EMPTY);
     }
 
+    public String getTicketMessage() {
+        return mPreferences.getString(Constants.KEY_TICKET_MESSAGE, Constants.KEY_EMPTY);
+    }
+
     public String getVehicleCode() {
         Log.d("myLogs", "Return vehicle code : " + mPreferences.getString(Constants.KEY_VEHICLE_CODE, Constants.KEY_EMPTY));
         return mPreferences.getString(Constants.KEY_VEHICLE_CODE, Constants.KEY_EMPTY);
@@ -96,7 +100,7 @@ public class SessionHandler {
         mEditor.commit();
     }
     */
-    public void loginUser(String user_id, String operator_id, String username, String fullName, String routecode, String route_availibility, String operator_name, String vehicle_code, String vehicle_number, String vehicle_type ) {
+    public void loginUser(String user_id, String operator_id, String username, String fullName, String routecode, String route_availibility, String operator_name, String vehicle_code, String vehicle_number, String vehicle_type, String ticket_message ) {
 
 
         Log.d("myLogs", "Set vehicle code : " + vehicle_code);
@@ -108,6 +112,7 @@ public class SessionHandler {
         mEditor.putString(Constants.KEY_ROUTE_CODE, routecode);
         mEditor.putString(Constants.KEY_ROUTE_AVAILIBILITY, route_availibility);
 
+        mEditor.putString(Constants.KEY_TICKET_MESSAGE, ticket_message);
         mEditor.putString(Constants.KEY_OPERATOR_NAME, operator_name);
         mEditor.putString(Constants.KEY_VEHICLE_CODE, vehicle_code);
         mEditor.putString(Constants.KEY_VEHICLE_NUMBER, vehicle_number);

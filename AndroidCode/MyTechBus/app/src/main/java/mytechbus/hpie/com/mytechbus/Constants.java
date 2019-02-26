@@ -33,6 +33,7 @@ public class Constants {
     public static final String KEY_EXPIRES = "expires";
 
 
+    public static final String KEY_TICKET_MESSAGE  = "ticket_message";
     public static final String KEY_OPERATOR_NAME  = "operator_name";
     public static final String KEY_VEHICLE_CODE   = "vehicle_code";
     public static final String KEY_VEHICLE_NUMBER = "vehicle_number";
