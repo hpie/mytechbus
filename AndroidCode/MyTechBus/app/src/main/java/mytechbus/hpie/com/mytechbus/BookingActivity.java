@@ -88,6 +88,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     // Start and end stage variables to get fare from fare object
     private String start_stage = "";
     private String end_stage = "";
+    private String ticket_km = "";
     private float full_rate = 0.0f;
     private float half_rate = 0.0f;
     private float luggage_rate = 0.0f;
@@ -227,6 +228,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 //Toast.makeText(getApplicationContext(),end_stage,Toast.LENGTH_LONG).show();
 
                 get_fare(start_stage, end_stage);
+
+                get_km(start_stage, end_stage);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -542,13 +545,29 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private void calculate_total() {
 
         try {
-            total_full_passangers = Integer.valueOf(etFullPassengers.getText().toString());
-            total_half_passangers = Integer.valueOf(etHalfPassengers.getText().toString());
-            total_luggage_quantity = Integer.valueOf(etLuggage.getText().toString());
+            total_full_passangers   = Integer.valueOf(etFullPassengers.getText().toString());
+            total_half_passangers   = Integer.valueOf(etHalfPassengers.getText().toString());
+            total_luggage_quantity  = Integer.valueOf(etLuggage.getText().toString());
 
-            total_full_cost = Math.round(total_full_passangers * full_rate);
-            total_half_cost = Math.round(total_half_passangers * half_rate);
-            total_luggage_cost = Math.round(total_luggage_quantity * luggage_rate);
+            /**
+            *   Check if rate is less than minimum ticket price
+             */
+
+            Log.d("myLogs", "Min Ticket : " + session.getMinTicket());
+            if(full_rate < session.getMinTicket()) {
+                total_full_cost         = Math.round(total_full_passangers * session.getMinTicket());
+            } else {
+                total_full_cost         = Math.round(total_full_passangers * full_rate);
+            }
+
+            if(half_rate < session.getMinTicket()) {
+                total_half_cost         = Math.round(total_half_passangers * session.getMinTicket());
+            } else {
+                total_half_cost         = Math.round(total_half_passangers * half_rate);
+            }
+
+
+            total_luggage_cost      = Math.round(total_luggage_quantity * luggage_rate);
 
             total_ticket_cost =  total_full_cost + total_half_cost + total_luggage_cost;
 
@@ -578,19 +597,44 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             JSONObject fare_half_rates = fare_half.getJSONObject(start);
             JSONObject fare_luggage_rates = fare_luggage.getJSONObject(start);
 
-            full_rate = Integer.valueOf(fare_full_rates.getString(end));
-            half_rate = Integer.valueOf(fare_half_rates.getString(end));
-            luggage_rate = Integer.valueOf(fare_luggage_rates.getString(end));
 
+            full_rate = Integer.valueOf(fare_full_rates.getString(end)) ;
+            half_rate = Integer.valueOf(fare_half_rates.getString(end));
+
+
+            if(full_rate < session.getMinTicket()) {
+                full_rate         = session.getMinTicket();
+            }
+
+            if(half_rate < session.getMinTicket()) {
+                half_rate         = session.getMinTicket();
+            }
+
+            luggage_rate = Integer.valueOf(fare_luggage_rates.getString(end));
+            /*
             fullRate.setText(fare_full_rates.getString(end));
             halfRate.setText(fare_half_rates.getString(end));
+            */
+            fullRate.setText(String.valueOf(full_rate));
+            halfRate.setText(String.valueOf(half_rate));
+
             luggageRate.setText(fare_luggage_rates.getString(end));
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+    private void get_km(String start, String end) {
+        try {
+            JSONObject fare_km_obj = fare_km.getJSONObject(start);
 
+            ticket_km = fare_km_obj.getString(end);
+
+            Log.d("myLogs", "Ticket Kms : " + ticket_km);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private void set_end_stage(String start) {
         try {
             EndStage=new ArrayList<>();
