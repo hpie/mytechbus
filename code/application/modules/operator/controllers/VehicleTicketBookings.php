@@ -51,8 +51,9 @@ class VehicleTicketBookings extends Admin_Controller {
 		*/
 		
 		// disable direct create / delete Frontend User
-		//$crud->unset_add();
-		//$crud->unset_delete();
+		$crud->unset_add();
+		$crud->unset_edit();
+		$crud->unset_delete();
 
 		$this->mPageTitle = 'Tickets';
 		$this->render_crud();

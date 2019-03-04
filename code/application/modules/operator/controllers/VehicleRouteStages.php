@@ -15,7 +15,7 @@ class VehicleRouteStages extends Admin_Controller {
 		$loggedinUser = $this->mUser;
 		$crud = $this->generate_crud('route_stages');
 		
-        $crud->where('`route_stages`.operator_id', $loggedinUser->user_id);
+        $crud->where('`route_stages`.operator_id', $loggedinUser->operator_id);
 		$crud->columns('operator_id', 'route_id', 'stage_code', 'stage_name', 'stage_km', 'stage_no', 'stage_status');
 		
 		
@@ -35,7 +35,7 @@ class VehicleRouteStages extends Admin_Controller {
 		}
 		
 		//how to add others? and create a new record if others
-		$crud->set_relation('route_id','master_routes','{route_code} [{route_start_stage}-{route_end_stage}]',array('route_status' => 'ACTIVE'), 'route_code, route_start_stage ASC');
+		$crud->set_relation('route_id','master_routes','{route_code} [{route_start_stage}-{route_end_stage}]',array('route_status' => 'ACTIVE', 'operator_id' => $loggedinUser->operator_id), 'route_code, route_start_stage ASC');
 		
 		/*
 		// only webmaster and admin can change member groups

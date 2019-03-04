@@ -181,7 +181,7 @@ class Devices extends Admin_Controller {
 
 		//how to add others? and create a new record if others
 
-		$crud->set_relation('route_id','master_routes','{route_start_stage}-{route_end_stage}',array('route_status' => 'ACTIVE'), 'route_code, route_start_stage ASC');
+		$crud->set_relation('route_id','master_routes','{route_code}-{route_start_stage}-{route_end_stage}',array('route_status' => 'ACTIVE'), 'route_code, route_start_stage ASC');
 
 		//how to add others? and create a new record if others
 

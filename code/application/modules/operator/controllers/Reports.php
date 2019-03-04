@@ -71,6 +71,10 @@ class Reports extends Admin_Controller {
 
 		
 		//$this->mViewData['all_routes'] = $this->db->get_where('master_routes', array('operator_id' => $loggedinUser->operator_id))->result();
+		
+		$crud->unset_add();
+		$crud->unset_edit();
+		$crud->unset_delete();
 
 
 		$this->mPageTitle = 'Collections';
@@ -120,6 +124,9 @@ class Reports extends Admin_Controller {
 		
 		//$this->mViewData['all_routes'] = $this->db->get_where('master_routes', array('operator_id' => $loggedinUser->operator_id))->result();
 
+		$crud->unset_add();
+		$crud->unset_edit();
+		$crud->unset_delete();
 
 		$this->mPageTitle = 'Todays Collection';
 		$this->render_crud();

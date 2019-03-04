@@ -1,8 +1,8 @@
 <?php
 $servername = "localhost";
-$username = "s7hpiein_techbus";
-$password = "myt3chbu$";
-$db = "s7hpiein_mytechbus";
+$username = "s190217m_mytechbus";
+$password = "x^B,wzY;X1On";
+$db = "s190217m_mytechbus";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $db);
@@ -14,8 +14,8 @@ if ($conn->connect_error) {
 //echo "Connected successfully";
 
 // get data
-$route_code="R-003";
-$operator_id="1";
+$route_code="R-201";
+$operator_id="2";
 $vehicle_type="ORDINARY";
 
 $fareQuery= " SELECT
@@ -31,6 +31,7 @@ AND
 vehicle_type='$vehicle_type'; ";
 
 $routeQuery = "SELECT 
+row_id,
 route_code,
 route_start_stage,
 route_end_stage,
@@ -47,19 +48,7 @@ AND
 operator_id='$operator_id'";
 
 
-$routeStageQuery = "SELECT 
-route_code,
-stage_no,
-stage_code,
-stage_km,
-stage_status
-FROM
-route_stages
-WHERE
-route_code='$route_code'
-AND
-stage_status='ACTIVE'
-ORDER BY stage_no;";
+
 
 
 $route_start_stage="";
@@ -93,25 +82,54 @@ echo ("</table> <hr />");
 //$vehicle_type="ORDINARY";
 
 //Array for Matrix
+$route_id = 0;
 $startRoutArray = [];
 $endRoutArray = [];
 
 //ROUTE
 $result = mysqli_query($conn, $routeQuery) or die(mysqli_error($conn));
 $flag = FALSE;
-echo ("<table> <tr> <td>Route Code</td> <td>Start Stage</td> <td>End Stage</td> <td>Operator</td> </tr>" );
+echo ("<table> <tr> <td>Route ID</td> <td>Route Code</td> <td>Start Stage</td> <td>End Stage</td> <td>Operator</td> </tr>" );
 $index=0;
 $routlist = array();	
 while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) 
 {    
 	//echo ($row['stage_code']); 
-	 echo ("<tr> <td>".$row['route_code']."</td> <td>".$row['route_start_stage']."</td> <td>".$row['route_end_stage']."</td> <td>".$row['operator_id']."</td> </tr>");
+	 echo ("<tr> <td>".$row['row_id']."</td> <td>".$row['route_code']."</td> <td>".$row['route_start_stage']."</td> <td>".$row['route_end_stage']."</td> <td>".$row['operator_id']."</td> </tr>");
+
+	 $route_id = $row['row_id'];
+	 
 	 $route_start_stage = $row['route_start_stage'];
 	 $route_end_stage = $row['route_end_stage'];
 }
 echo ("</table> <hr />");
 
 
+$routeStageQuery = "SELECT 
+
+route_id,
+
+stage_no,
+
+stage_code,
+
+stage_km,
+
+stage_status
+
+FROM
+
+route_stages
+
+WHERE
+
+route_id='$route_id'
+
+AND
+
+stage_status='ACTIVE'
+
+ORDER BY stage_no;";
 
 //ROUTE STAGE
 //$query = "SELECT * FROM teacher WHERE tremail=? and trpasssword=?";
@@ -143,14 +161,15 @@ echo ("</table> <hr />");
 
 //$routlistrev = $routlist;
 $arrlength = count($routlist);
-
-$insertsql = "INSERT INTO `route_fare_matrix`(`route_code`, `route_start_stage`, `route_end_stage`, `start_stage_code`, `end_stage_code`, `fare_km`, `fare_full`, `fare_half`, `fare_luggage`, `vehicle_type`) VALUES ";
+$rcount = 0;
+$insertsql = "INSERT INTO `route_fare_matrix`(`route_code`, `route_start_stage`, `route_end_stage`, `start_stage_code`, `end_stage_code`, `fare_km`, `fare_full`, `fare_half`, `fare_luggage`, `vehicle_type`, `operator_id`) VALUES ";
 
 for($x = 0; $x < $arrlength; $x++) {
 	$fromstage = $routlist[$x]['stage_code'];
     echo ("<table> <tr> <td>".$fromstage."</td> </tr>" ); 
     echo ("<tr>");
 	for($y = $x+1; $y < $arrlength; $y++) {
+		$rcount ++;
 		$tostage = $routlist[$y]['stage_code'];
 		echo ("<td>".$tostage." <br />" );
 		$distance = $routlist[$y]['stage_km']-$routlist[$x]['stage_km'];
@@ -162,8 +181,15 @@ for($x = 0; $x < $arrlength; $x++) {
 		echo (" fare_half= ".$half_fare_val." <br />" );
 		echo (" fare_luggage= ".$luggage_fare_val." <br />" );
 		echo (" </td>" );
-
-		$insertsql .= "('$route_code','". $route_start_stage ."','". $route_end_stage ."','" .$fromstage. "','" .$tostage. "','" .$distance. "','" .$full_fare_val. "','" .$half_fare_val. "','" .$luggage_fare_val. "','" .$vehicle_type. "');  <br />" ;
+        if($rcount % 200 == 0)
+		{
+			$insertsql .= "('$route_code','". $route_start_stage ."','". $route_end_stage ."','" .$fromstage. "','" .$tostage. "','" .$distance. "','" .$full_fare_val. "','" .$half_fare_val. "','" .$luggage_fare_val. "','" .$vehicle_type. "','" .$operator_id. "');  <br /><br /><br /><br /><br />" ;
+			$insertsql .= "INSERT INTO `route_fare_matrix`(`route_code`, `route_start_stage`, `route_end_stage`, `start_stage_code`, `end_stage_code`, `fare_km`, `fare_full`, `fare_half`, `fare_luggage`, `vehicle_type`, `operator_id`) VALUES ";
+		}else
+		{
+			$insertsql .= "<br /> ('$route_code','". $route_start_stage ."','". $route_end_stage ."','" .$fromstage. "','" .$tostage. "','" .$distance. "','" .$full_fare_val. "','" .$half_fare_val. "','" .$luggage_fare_val. "','" .$vehicle_type. "','" .$operator_id. "'),  " ;
+		}
+	
 	}
 	echo ("<tr> </table>");
 	
@@ -171,6 +197,8 @@ for($x = 0; $x < $arrlength; $x++) {
 }
 
 echo($insertsql);
+
+echo ("<hr /> <h3> Row Count ".$rcount."</h3>");
 
 //echo( $routlist[0]['stage_code'] );
 

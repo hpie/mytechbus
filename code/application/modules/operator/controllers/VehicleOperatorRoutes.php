@@ -35,10 +35,10 @@ class VehicleOperatorRoutes extends Admin_Controller {
 
 		
 		
-		//how to add others? and create a new record if others
-			if ($crud->getState()=='list')
+		//Show Operator name on List
+		if ($crud->getState()=='list')
 		{
-		$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
+			$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
 		}
 		
 		/*
