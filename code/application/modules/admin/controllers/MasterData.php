@@ -255,7 +255,7 @@ class MasterData extends Admin_Controller {
 				
 
 		//Assocoation with operator_id
-		$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
+		$crud->set_relation('operator_id','vehicle_operators','{row_id} [{operator_name}-{operator_city}]',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
 
 		//Assocoation with vehicle_type
 		$crud->set_relation('vehicle_type','vehicle_types','{vehicle_type}  [{vehicle_basefare}]',array('vehicle_type_status' => 'ACTIVE'), 'vehicle_type ASC');

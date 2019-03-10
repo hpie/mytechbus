@@ -13,6 +13,8 @@
                 <div class="carousel-caption">
                     <h3>Smart Track</h3>
                     <p>Track your travel! Just enter the bus number and find its location.</p>
+					<!--<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>-->
+					<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>
                 </div>
             </div>
             <div class="carousel-item">
@@ -20,6 +22,7 @@
                 <div class="carousel-caption">
                     <h3>Mobile Tickets</h3>
                     <p>Hassel free ticketing! No need of bulky devices, generate tickets through mobile.</p>
+					<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>
                 </div>
             </div>
             <div class="carousel-item">
@@ -27,6 +30,7 @@
                 <div class="carousel-caption">
                     <h3>Realtime Revenue</h3>
                     <p>Know your current sale! Instanly know the sale made so far and do statistical comparision</p>
+					<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>
                 </div>
             </div>
         </div>

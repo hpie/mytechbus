@@ -58,7 +58,7 @@ class Devices extends Admin_Controller {
 
 		
 		//Assocoation with operator_id
-		$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
+		$crud->set_relation('operator_id','vehicle_operators','{row_id} [{operator_name}-{operator_city}]',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
 
 		
 
@@ -171,21 +171,20 @@ class Devices extends Admin_Controller {
 
 
 		//Assocoation with operator_id
-		$crud->set_relation('operator_id','vehicle_operators','{operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
+		$crud->set_relation('operator_id','vehicle_operators','{row_id} [{operator_name}-{operator_city}]',array('operator_status' => 'ACTIVE'), 'operator_name ASC');
 
 
 		//Assocoation with device_imie
-		$crud->set_relation('device_imie','vehicle_operator_devices','{device_imie}-{device_number}',array('device_status' => 'ACTIVE'), 'device_number ASC');
+		$crud->set_relation('device_imie','vehicle_operator_devices','{operator_id} [{device_imie}-{device_number}]',array('device_status' => 'ACTIVE'), 'device_number ASC');
 
-		
 
-		//how to add others? and create a new record if others
 
-		$crud->set_relation('route_id','master_routes','{route_code}-{route_start_stage}-{route_end_stage}',array('route_status' => 'ACTIVE'), 'route_code, route_start_stage ASC');
+        	//Assocoation with route_id
+        	$crud->set_relation('route_id','master_routes','{route_code} [{route_start_stage}-{route_end_stage}]',array('route_status' => 'ACTIVE'), 'route_code, route_start_stage ASC');
 
-		//how to add others? and create a new record if others
+        	//Assocoation with vehicle
 
-		$crud->set_relation('vehicle_id','vehicle_master','{vehicle_number}-{vehicle_type}',array('vehicle_status' => 'ACTIVE'), 'operator_id, vehicle_number ASC');
+		$crud->set_relation('vehicle_id','vehicle_master','{operator_id} [{vehicle_number}-{vehicle_type}]',array('vehicle_status' => 'ACTIVE'), 'operator_id, vehicle_number ASC');
 
 		
 
