@@ -163,6 +163,24 @@ class Track extends Admin_Controller {
 		echo json_encode($response);
 
 	}
+	
+	public function VehicleTicketBookings()
+	{
+		$loggedinUser = $this->mUser;
+		$crud = $this->generate_crud('ticket_bookings');
+		$crud->where('operator_id', $loggedinUser->operator_id);
+		
+		$crud->columns('route_code', 'booking_reference', 'start_stage', 'end_stage', 'fare_full_passengers', 'fare_full_cost', 'fare_half_passengers', 'fare_half_cost', 'fare_luggage', 'fare_luggage_cost', 'total_fare', 'mobile', 'booking_time');
+		
+		// disable direct create / delete Frontend User
+		$crud->unset_add();
+		$crud->unset_edit();
+		$crud->unset_delete();
+
+		$this->mPageTitle = 'Tickets';
+		$this->render_crud();
+
+	}
 
 }
 

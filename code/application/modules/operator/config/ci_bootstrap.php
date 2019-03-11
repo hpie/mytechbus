@@ -63,65 +63,109 @@ $config['ci_bootstrap'] = array(
 			'name'		=> 'Home',
 			'url'		=> '',
 			'icon'		=> 'fa fa-home',
-		),
-		'master' => array(
-			'name'		=> 'Master Data',
-			'url'		=> 'master',
-			'icon'		=> 'fa fa-wrench',
-			'children'  => array(
-				//'Vehicle Types'			=> 'VehicleTypes',
-				//'Vehicle Operators'		=> 'VehicleOperators',
-				'Vehicle Fare Master'	=> 'VehicleFareMaster',
-			)
-		),
-		'vehicles' => array(
-			'name'		=> 'Vehicle Data',
-			'url'		=> 'vehicles',
-			'icon'		=> 'fa fa-truck',
-			'children'  => array(
-				'Vehicle Master'			=> 'VehicleMaster',
-				'Vehicle Route Master'		=> 'VehicleOperatorRoutes',
-				'Vehicle Route Stages'		=> 'VehicleRouteStages',
-				'Vehicle Fare Discounts'	=> 'VehicleOperatorFareDiscounts',
-				'Track Vehicles'			=> 'track/bus',
-			)
-		),
-		'devices' => array(
-			'name'		=> 'Devices',
-			'url'		=> 'devices',
-			'icon'		=> 'fa fa-mobile',
-			'children'  => array(
-				'Vehicle Operator Devices'	=> 'VehicleOperatorDevices',
-				'Vehicle Device Access'	=> 'VehicleDeviceAccess',
-				'Login Attempts'	=> 'LoginAttempts',
-			)
-		),
-		'routes' => array(
-			'name'		=> 'Fare',
-			'url'		=> 'routes',
-			'icon'		=> 'fa fa-tags',
-			'children'  => array(
-				'Route Matrix'	=> 'VehicleRouteMatrix',
-			)
-		),
-		'track' => array(
-			'name'		=> 'Track Vehicle',
-			'url'		=> 'track',
-			'icon'		=> 'fa fa-road',
-			'children'  => array(
-				'Track Vehicles'	=> 'Track/bus',
-			)
-		),
-		'tickets' => array(
-			'name'		=> 'Tickets',
-			'url'		=> 'tickets',
-			'icon'		=> 'fa fa-ticket',
-			'children'  => array(
-				'Tickets List'	=> 'VehicleTicketBookings',
-				'Todays Collection'	=> 'Reports/todays_collection',
-				'Collections'		=> 'Reports',
-			)
 		),		
+		
+		'MasterData' => array(
+
+			'name'		=> 'Master Data',
+
+			'url'		=> 'MasterData',
+
+			'icon'		=> 'fa fa-wrench',
+
+			'children'  => array(
+
+				//'Vehicle Types'			=> 'MasterData/VehicleTypes',
+
+				'Vehicle Operators'		=> 'MasterData/VehicleOperators',
+
+				'Vehicle Fare Master'		=> 'MasterData/VehicleFareMaster',
+
+			)
+
+		),
+
+		'VehicleData' => array(
+
+			'name'		=> 'Vehicle Data',
+
+			'url'		=> 'VehicleData',
+
+			'icon'		=> 'fa fa-truck',
+
+			'children'  => array(
+
+				'Vehicle Master'		=> 'VehicleData/VehicleMaster',
+
+				'Vehicle Route Master'		=> 'VehicleData/VehicleOperatorRoutes',
+
+				'Vehicle Route Stages'		=> 'VehicleData/VehicleRouteStages',
+
+				'Vehicle Fare Discounts'	=> 'VehicleData/VehicleOperatorFareDiscounts',
+
+			)
+
+		),
+
+		'Devices' => array(
+
+			'name'		=> 'Devices',
+
+			'url'		=> 'Devices',
+
+			'icon'		=> 'fa fa-mobile',
+
+			'children'  => array(
+
+				'Vehicle Operator Devices'	=> 'Devices/VehicleOperatorDevices',
+
+				'Vehicle Device Access'	=> 'Devices/VehicleDeviceAccess',
+
+			)
+
+		),
+		
+		
+				
+		'Track' => array(
+
+			'name'		=> 'Track',
+
+			'url'		=> 'Track',
+
+			'icon'		=> 'fa fa-road',
+
+			'children'  => array(
+
+			               //'Login Attempts'	=> 'Track/LoginAttempts',
+
+			               'Tickets List'	=> 'Track/VehicleTicketBookings',
+
+			               'Track Vehicles'	=> 'Track/Bus',
+
+			)
+
+		),
+		
+		
+		
+		'Reports' => array(
+
+		            'name'		=> 'Reports',
+
+		            'url'		=> 'Reports',
+
+		            'icon'		=> 'fa fa-gears',
+
+		            'children'  => array(
+
+		                'Todays Collection'	=> 'Reports/CollectionToday',
+
+		                'Collections'		=> 'Reports/Collection',
+
+		            )
+
+       		 ),		
 		'user' => array(
 			'name'		=> 'Users',
 			'url'		=> 'user',
