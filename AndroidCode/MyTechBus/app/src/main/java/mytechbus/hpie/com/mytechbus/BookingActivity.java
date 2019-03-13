@@ -148,9 +148,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         etTxtRoute.setText(session.GetRoute());
 
-        ticket_number = fIleOperations.getTicketCount(fileName, this);
+        ticket_number = 1 + fIleOperations.getTicketCount(fileName, this);
 
-        etTicketNumber.setText(String.valueOf(ticket_number + 1));
+        etTicketNumber.setText(String.valueOf(ticket_number));
 
         // plus minus buttons for adding
         fullplus = (Button) findViewById(R.id.fullPlus);
@@ -553,7 +553,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             *   Check if rate is less than minimum ticket price
              */
 
-            Log.d("myLogs", "Min Ticket : " + session.getMinTicket());
+            //Log.d("myLogs", "Min Ticket : " + session.getMinTicket());
             if(full_rate < session.getMinTicket()) {
                 total_full_cost         = Math.round(total_full_passangers * session.getMinTicket());
             } else {
@@ -630,7 +630,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             ticket_km = fare_km_obj.getString(end);
 
-            Log.d("myLogs", "Ticket Kms : " + ticket_km);
+            //Log.d("myLogs", "Ticket Kms : " + ticket_km);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -940,6 +940,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             // Add ticket details in local log daily file
             fIleOperations.writeToFile(fileName, file_data_store.toString(), this, "1");
 
+            // Add ticket details in local log daily file in log folder
+            fIleOperations.writeToLogFile(fileName, file_data_store.toString(), this, "1");
+
             // Add ticket details server upload waiting queue file
             fIleOperations.writeToFile("ticket_wait_queue.txt", file_data_store.toString(), this, "1");
 
@@ -954,7 +957,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             //----------------------------
 
-            Log.d("myLogs", " operator name : " + session.getOperator() + " ||| operator name : " + session.getTicketMessage());
+            //Log.d("myLogs", " operator name : " + session.getOperator() + " ||| operator name : " + session.getTicketMessage());
 
 
             PrintBill();

@@ -60,6 +60,15 @@
         android:textColor="@android:color/white" />
 
     <Button
+        android:id="@+id/btnLogs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#24f0ac"
+        android:text="@string/upload_log"
+        android:textColor="@android:color/white" />
+
+    <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

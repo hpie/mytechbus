@@ -49,6 +49,8 @@ public class Constants {
     public static final String book_offline_ticket_url = base_url+"book_ticket_call";
     public static final String upload_file_url = base_url+"upload_file";
 
+    public static final String upload_logs_url = base_url+"upload_logs";
+
     public static BluetoothSocket mmSocket;
     public static OutputStream mmOutputStream;
     public static InputStream mmInputStream;

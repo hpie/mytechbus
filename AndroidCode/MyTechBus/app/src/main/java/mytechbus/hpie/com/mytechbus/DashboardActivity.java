@@ -13,6 +13,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,14 +31,26 @@ import android.widget.Toast;
 
 import com.andprn.port.android.USBPort;
 import com.andprn.port.android.USBPortConnection;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,6 +58,7 @@ public class DashboardActivity extends AppCompatActivity {
     private SessionHandler session;
     String booking_message = "";
     Button btn_connect;
+    private ProgressDialog pDialog;
 
     //-------------------------------------------------------------
 
@@ -66,6 +80,8 @@ public class DashboardActivity extends AppCompatActivity {
     Spinner sp_pname;
     EditText edtext;
 
+    FetchLocation fetchLocation;
+
     Bitmap mBitmap;
     int Ptype = 0;
 
@@ -80,6 +96,7 @@ public class DashboardActivity extends AppCompatActivity {
     private PendingIntent mPermissionIntent;
 
     Context context;
+    private FIleOperations fIleOperations;
 
     //--------------------------------------------------------------
 
@@ -91,9 +108,14 @@ public class DashboardActivity extends AppCompatActivity {
         User user = session.getUserDetails();
         TextView welcomeText = findViewById(R.id.welcomeText);
 
+        fIleOperations = new FIleOperations();
+
+        fetchLocation = new FetchLocation(DashboardActivity.this,DashboardActivity.this);
+
         welcomeText.setText("Welcome "+user.getFullName()+", your session will expire on "+user.getSessionExpiryDate());
 
         Button bookingBtn = findViewById(R.id.btnBooking);
+        Button uploadLogBtn = findViewById(R.id.btnLogs);
 
         btn_connect = (Button) findViewById(R.id.btn_connect);
 
@@ -147,6 +169,13 @@ public class DashboardActivity extends AppCompatActivity {
                 } else {
                     showDialog("No route assigned. Please contact operator");
                 }
+            }
+        });
+
+        uploadLogBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                upload_logs();
             }
         });
 
@@ -461,5 +490,165 @@ public class DashboardActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return true;
+    }
+
+    private void upload_logs() {
+        displayLoader();
+        //------------------------------------------------------------------------------------------------------------
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.upload_logs_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        pDialog.dismiss();
+                        JSONObject login_response = null;
+                        try {
+                            JSONObject upload_response = new JSONObject(response);
+
+                            if (upload_response.getInt(Constants.KEY_STATUS) == 1) {
+
+                                DateFormat file_dt = new SimpleDateFormat("yyyy_MM_dd");
+                                String file_date = file_dt.format(Calendar.getInstance().getTime());
+                                String fileName = session.getIMEI() + "_" + file_date.toString() + ".txt";
+
+
+                                fIleOperations.deleteLogFiles(fileName, DashboardActivity.this, "daily_log");
+
+                                fIleOperations.deleteLogFiles("", DashboardActivity.this, "crashReports");
+
+                                Toast.makeText(getApplicationContext(), "Log files uploaded successfully.",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Something went wrong. Please try again later!",Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        Log.d("myLogs", "Log sent response : " + response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        pDialog.dismiss();
+                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                File fileDirectory = context.getDir("daily_log", context.MODE_PRIVATE); //Creating an internal dir;
+                File[] dirFiles = fileDirectory.listFiles();
+
+                Map<String,String> params = new HashMap<String, String>();
+
+                if (dirFiles.length != 0) {
+                    // loops through the array of files, outputing the name to console
+                    for (int j = 0; j < dirFiles.length; j++) {
+                        // String fileOutput = dirFiles[j].toString();
+
+                        //Log.d("myLogs", "Log FileName:" + dirFiles[j].getName());
+
+                        String file_upload_contents = fIleOperations.readLogFile(dirFiles[j].getName(), DashboardActivity.this, "daily_log");
+
+                        params.put(dirFiles[j].getName(), ""+ file_upload_contents);
+
+                        //Log.d("myLogs", "Files : " + fileOutput);
+                    }
+                }
+
+                File crashDirectory = context.getDir("crashReports", context.MODE_PRIVATE); //Creating an internal dir;
+                File[] dirCrash = crashDirectory.listFiles();
+
+                if (dirCrash.length != 0) {
+                    // loops through the array of files, outputing the name to console
+                    for (int j = 0; j < dirCrash.length; j++) {
+                        // String fileOutput = dirFiles[j].toString();
+
+                        //Log.d("myLogs", "crash FileName:" + dirCrash[j].getName());
+
+                        String file_upload_contents = fIleOperations.readLogFile(dirCrash[j].getName(), DashboardActivity.this, "crashReports");
+
+                        params.put(dirCrash[j].getName(), ""+ file_upload_contents);
+
+                        //Log.d("myLogs", "Files : " + fileOutput);
+                    }
+                }
+                params.put("user_id", session.getUserId());
+
+                params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.latitude);
+                params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.longitude);
+
+                return params;
+            }
+        };
+
+        // Access the RequestQueue through your singleton class.
+        mytechbus.hpie.com.mytechbus.MySingleton.getInstance(DashboardActivity.this).addToRequestQueue(stringRequest);
+        //------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------
+    }
+
+    private void upload_log() {
+        displayLoader();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        pDialog.dismiss();
+
+                        try {
+                            Log.d("myLogs : Login : ", response);
+                            //Check if user got logged in successfully
+                            JSONObject login_response = new JSONObject(response);
+
+                            if (login_response.getInt(Constants.KEY_STATUS) == 1) {
+
+                            }else{
+                                Toast.makeText(getApplicationContext(),login_response.getString(Constants.KEY_MESSAGE),Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        pDialog.dismiss();
+                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+
+                        // gets the files in the directory
+                        //File fileDirectory = new File(Environment.getDataDirectory()+"/YourDirectory/");
+
+
+                    }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+
+                String file_upload_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", DashboardActivity.this);
+
+                params.put("user_id", "" + session.getUserId());
+
+                params.put("ticket_data", ""+ file_upload_contents);
+
+                return params;
+            }
+        };
+
+        // Access the RequestQueue through your singleton class.
+        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
+    private void displayLoader() {
+        pDialog = new ProgressDialog(DashboardActivity.this);
+        pDialog.setMessage("Uploading.. Please wait...");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
+
     }
 }

@@ -2,12 +2,15 @@ package mytechbus.hpie.com.mytechbus;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +67,126 @@ public class FIleOperations {
         }
     }
 
+    public void writeToLogFile(String filename, String data,Context context, String mode, String... foldername) {
+        //File mydir = context.getDir("daily_log", context.MODE_APPEND); //Creating an internal dir;
+
+        String file_data = readLogFile(filename, context, "daily_log");
+
+        File mydir = context.getDir("daily_log", context.MODE_PRIVATE); //Creating an internal dir;
+
+        File fileWithinMyDir = new File(mydir, filename); //Getting a file within the dir.
+
+
+
+        try {
+            FileOutputStream out = new FileOutputStream(fileWithinMyDir); //Use the stream as usual to write into the file.
+
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(out);
+            //-----------------------------------------------------------------------
+
+
+
+            //Log.d("myLogs", "before if file data : " + file_data);
+
+            if(!file_data.equals("")) {
+                data = file_data + "," + data;
+               // Log.d("myLogs", "In if file data : " + file_data);
+            }
+            //-----------------------------------------------------
+
+
+            myOutWriter.write(data);
+            myOutWriter.close();
+
+            //out.write(data);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String readLogFile(String filename, Context context, String folder_name) {
+
+        String fileData = "";
+
+        File mydir = context.getDir(folder_name, context.MODE_PRIVATE); //Creating an internal dir;
+        File fileWithinMyDir = new File(mydir, filename); //Getting a file within the dir.
+        try {
+            /*
+            File file[] = mydir.listFiles();
+            Log.d("Files", "Size: " + file.length);
+            for (int i = 0; i < file.length; i++) {
+                //here populate your listview
+                Log.d("myLogs", "FileName:" + file[i].getName());
+
+            }
+            */
+            FileInputStream fileInputStream = new FileInputStream(fileWithinMyDir);
+
+            fileData = readFromFileInputStream(fileInputStream);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileData;
+    }
+
+    public void deleteLogFiles(String filename, Context context, String folder_name) {
+
+        String fileData = "";
+
+        File mydir = context.getDir(folder_name, context.MODE_PRIVATE); //Creating an internal dir;
+
+        File file[] = mydir.listFiles();
+        //Log.d("Files", "Size: " + file.length);
+        for (int i = 0; i < file.length; i++) {
+            //here populate your listview
+
+            if(!filename.equals(file[i].getName())) {
+                Log.d("myLogs", "if not equal FileName:" + file[i].getName());
+
+                File fileWithinMyDir = new File(mydir, file[i].getName()); //Getting a file within the dir.
+
+                fileWithinMyDir.delete();
+            } else {
+                Log.d("myLogs", "else equal FileName:" + file[i].getName());
+            }
+
+            //File fileWithinMyDir = new File(mydir, filename); //Getting a file within the dir.
+        }
+
+    }
+
+
+
+    // This method will read data from FileInputStream.
+    private String readFromFileInputStream(FileInputStream fileInputStream)
+    {
+        StringBuffer retBuf = new StringBuffer();
+
+        try {
+            if (fileInputStream != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String lineData = bufferedReader.readLine();
+                while (lineData != null) {
+                    retBuf.append(lineData);
+                    lineData = bufferedReader.readLine();
+                }
+            }
+        }catch(IOException ex)
+        {
+            Log.e("myLogs", ex.getMessage(), ex);
+        }finally
+        {
+            return retBuf.toString();
+        }
+    }
+
     public String readFromFile(String filename, Context context) {
 
         String ret = "";
@@ -94,6 +217,7 @@ public class FIleOperations {
         return ret;
     }
 
+    /*
     public Integer getTicketCount(String filename, Context context) {
         Integer count = 0;
         String file_data = readFromFile(filename, context);
@@ -104,6 +228,24 @@ public class FIleOperations {
             count = values.length();
 
             Log.e("myLogs", "Ticket Count : " + String.valueOf(count));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+    */
+
+    public Integer getTicketCount(String filename, Context context) {
+        Integer count = 0;
+        //String file_data = readFromFile(filename, context);
+        String file_data = readLogFile(filename, context, "daily_log");
+
+        try {
+            JSONArray values = new JSONArray("[" + file_data + "]");
+
+            count = values.length();
+
+            //Log.e("myLogs", "Ticket Count : " + String.valueOf(count));
         } catch (JSONException e) {
             e.printStackTrace();
         }

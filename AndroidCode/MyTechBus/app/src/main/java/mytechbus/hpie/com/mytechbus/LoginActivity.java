@@ -144,11 +144,16 @@ public class LoginActivity extends AppCompatActivity {
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
+
+                        if( vehicle_code.equals("")) {
+                            vehicle_code = session.getVehicleCode();
+                        }
+
                         if( !vehicle_code.equals("")) {
                         current_latitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LATITUDE).trim();
                         current_longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE).trim();
 
-                        //Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+                       // Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
 
                         if (current_latitude != null && current_longitude != null) {
@@ -173,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                                     protected Map<String, String> getParams() {
                                         Map<String, String> params = new HashMap<String, String>();
 
-                                        Log.d("myLogs", "Log vehicle code : " + session.getVehicleCode());
+                                        //Log.d("myLogs", "Log vehicle code : " + session.getVehicleCode());
 
                                         params.put("vehicle_code", "" + session.getVehicleCode());
                                         params.put("latitude", "" + latitude);
@@ -192,11 +197,14 @@ public class LoginActivity extends AppCompatActivity {
                                 // Access the RequestQueue through your singleton class.
                                 mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
                                 //------------------------------------------------------------------------------------------------------------
+                            } else {
+                                //Log.d("myLogs", "Same location");
                             }
                         }
-                        Log.d("myLogs : track location", " vehicle Code : " + vehicle_code + " || current_latitude = " + current_latitude + " AND latitude = " + latitude + " Condition : " + current_latitude.equals(latitude) + " || current_longitude = " + current_longitude + " AND longitude = " + longitude + " Condition :  " + current_longitude.equals(longitude));
+                            //Log.d("myLogs", "track location");
+                        //Log.d("myLogs : track location", " vehicle Code : " + vehicle_code + " || current_latitude = " + current_latitude + " AND latitude = " + latitude + " Condition : " + current_latitude.equals(latitude) + " || current_longitude = " + current_longitude + " AND longitude = " + longitude + " Condition :  " + current_longitude.equals(longitude));
                     } else {
-                        Log.d("myLogs", "Vehicle code empty");
+                       //Log.d("myLogs", "Vehicle code empty");
                         }
                     }
                 }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST)
@@ -250,6 +258,10 @@ public class LoginActivity extends AppCompatActivity {
 
                             String file_upload_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", LoginActivity.this);
 
+                            params.put("user_id", "" + session.getUserId());
+                            params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.latitude);
+                            params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.longitude);
+
                             params.put("ticket_data", ""+ file_upload_contents);
 
                             return params;
@@ -262,7 +274,7 @@ public class LoginActivity extends AppCompatActivity {
                     //Log.d("myLogs", " Book Ticket If : current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
                 } else {
-                Log.d("myLogs", " Book Ticket else : wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
+                //Log.d("myLogs", " Book Ticket else : wait_queue_contents : " + wait_queue_contents + " |||||| upload_queue_contents " +upload_queue_contents);
                 }
             };
         };
@@ -388,7 +400,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (login_response.getInt(Constants.KEY_STATUS) == 1) {
 
-                                Log.d("myLogs", "Received vehicle code : " + login_response.getString("vehicle_code") + " ||| get as Integer : " + login_response.getInt("vehicle_code"));
+                               // Log.d("myLogs", "Received vehicle code : " + login_response.getString("vehicle_code") + " ||| get as Integer : " + login_response.getInt("vehicle_code"));
 
                                 vehicle_code = login_response.getString("vehicle_code");
 
@@ -428,9 +440,13 @@ public class LoginActivity extends AppCompatActivity {
                 //password = "55555";
                 //DEVICE_IMEI = "911436258233786";
 
-               //username = "manish2";
+
+
+
+
+               //username = "kalta1";
                 //password = "12345";
-                //DEVICE_IMEI = "911436258233786";
+                //DEVICE_IMEI = "868494036290456";
 
                 Map<String,String> params = new HashMap<String, String>();
                 params.put(Constants.KEY_USERNAME,username);

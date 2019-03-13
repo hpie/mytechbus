@@ -38,7 +38,7 @@ public class SessionHandler {
     }
 
     public String getVehicleCode() {
-        Log.d("myLogs", "Return vehicle code : " + mPreferences.getString(Constants.KEY_VEHICLE_CODE, Constants.KEY_EMPTY));
+       // Log.d("myLogs", "Return vehicle code : " + mPreferences.getString(Constants.KEY_VEHICLE_CODE, Constants.KEY_EMPTY));
         return mPreferences.getString(Constants.KEY_VEHICLE_CODE, Constants.KEY_EMPTY);
     }
 
@@ -111,7 +111,7 @@ public class SessionHandler {
                           String vehicle_type, String ticket_message, String min_ticket ) {
 
 
-        Log.d("myLogs", "Set vehicle code : " + vehicle_code);
+        //Log.d("myLogs", "Set vehicle code : " + vehicle_code);
 
         mEditor.putString(Constants.KEY_USER_ID, user_id);
         mEditor.putString(Constants.KEY_OPERATOR_ID, operator_id);
