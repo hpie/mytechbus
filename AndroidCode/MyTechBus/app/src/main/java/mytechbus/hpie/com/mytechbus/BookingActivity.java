@@ -1055,7 +1055,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     public void PrintBill() {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM-yyyy HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         String currentDateandTime = sdf.format(new Date());
 
         Log.d("myLogs", "Print ticket called : " + currentDateandTime + " ||| full_rate : " + full_rate + " ||| total_full_cost : " + total_full_cost + " ||| half_rate : " + half_rate + " ||| discount_applied : " + discount_applied + " ||| ticket_km : " + ticket_km);
@@ -1069,32 +1069,51 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         try {
             if (Constants.mmSocket != null && Constants.mmOutputStream != null && Constants.mmInputStream != null) {
                 /*Title*/
-               // msg = "My Tech Bus"+ "\n";
+                // msg = "My Tech Bus"+ "\n";
                 msg = session.getOperator() + "\n";
                 format = new byte[]{27, 33, 20};
                 center = new byte[]{0x1b, 0x61, 0x01};
-                arrayOfByte = new byte[]{27, 33, 0};
-                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                //arrayOfByte = new byte[]{27, 33, 0};
+                //format[2] = ((byte) (0x8 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
-                /*Bill*/
-                /*
-                msg = "BILL\n";
-                format = new byte[]{27, 33, 0};
+                /*Operator Address*/
+                msg = session.getOperatorAddress1() +  ", \n" + session.getOperatorAddress2() +  ", " + session.getOperatorCity() +  ", Ph: \n" + session.getOperatorHelpline() + "\n";
+
+                //format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
-                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                // Bold
+                //format[2] = ((byte)(0x8 | arrayOfByte[2]));
+                // Height
+                //format[2] = ((byte)(0x10 | arrayOfByte[2]));
+                // Width
+                //format[2] = ((byte) (0x20 | arrayOfByte[2]));
+                // Underline
+                // format[2] = ((byte)(0x80 | arrayOfByte[2]));
+                // Small
+                format[2] = ((byte)(0x1 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
-                */
+
 
                 /*Bus number*/
                 msg = "Bus No. "+ session.getVehicleNumber() +"  "+ "\n";
-                format = new byte[]{27, 33, 0};
+                //format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
-                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+
+                // Bold
+                //format[2] = ((byte)(0x8 | arrayOfByte[2]));
+                // Height
+                //format[2] = ((byte)(0x10 | arrayOfByte[2]));
+                // Width
+                //format[2] = ((byte) (0x20 | arrayOfByte[2]));
+                // Underline
+                // format[2] = ((byte)(0x80 | arrayOfByte[2]));
+                // Small
+                format[2] = ((byte)(0x1 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
@@ -1117,38 +1136,62 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
+                // From and ton in two lines
                 /*From*/
-                msg = "From: "+ start_stage + "\n";
+                /*msg = "From: "+ start_stage + "\n";
                 format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
                 format[2] = ((byte) (0x8 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);
-                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);*/
 
                 /*To*/
-                msg = "To: "+ end_stage + "\n";
-                format = new byte[]{27, 33, 0};
+                /*msg = "To: "+ end_stage + "\n";
+                //format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
                 format[2] = ((byte) (0x8 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);*/
+
+                /*From To Single line */
+                msg = start_stage + " to " +end_stage+ "\n";
+                format = new byte[]{27, 33, 0};
+                //arrayOfByte = new byte[]{27, 33, 0};
+                //format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
-                /*Ticket Km*/
-                msg = "(JOURNEY KMs.: "+ ticket_km + ")\n";
+                /*Journey Km*/
+                msg = "(Journey KM: "+ ticket_km + ")\n";
                 format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
-                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+
+                // Bold
+                //format[2] = ((byte)(0x8 | arrayOfByte[2]));
+                // Height
+                //format[2] = ((byte)(0x10 | arrayOfByte[2]));
+                // Width
+                //format[2] = ((byte) (0x20 | arrayOfByte[2]));
+                // Underline
+                // format[2] = ((byte)(0x80 | arrayOfByte[2]));
+                // Small
+                format[2] = ((byte)(0x1 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
                 /*Bill*/
                 StringBuilder sb = new StringBuilder("");
-                sb.append("------------------------").append("\n");
-                sb.append("TYPE ").append("QTY").append("  FARE").append("    AMT").append("\n");
-                sb.append("------------------------").append("\n");
+                //sb.append("------------------------").append("\n");  // for normal
+                sb.append("--------------------------------").append("\n"); // for small
+                //sb.append("TYPE  ").append("QTY").append("  FARE").append("   AMT").append("\n");  // for normal
+                sb.append("TYPE  ").append("QTY").append("  FARE").append("     AMT").append("\n"); // for small
+                //sb.append("------------------------").append("\n"); // for normal
+                sb.append("--------------------------------").append("\n"); // for small
+
                 /*
                 sb.append("Full    x").append(" 10").append("  120").append("    1200").append("\n");
                 sb.append("Half    x").append(" 10").append("   60").append("     600").append("\n");
@@ -1159,45 +1202,132 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 sb.append("Total              "+discounted_ticket_cost).append("\n");
 
                 */
+                if(total_full_passangers !=0) {
+                    sb.append("Full:").append(" " + total_full_passangers).append("x " + full_rate).append("     " + total_full_cost).append("\n");
+                }
 
-                sb.append("Full :").append(" " + total_full_passangers).append("x "+full_rate).append("    "+total_full_cost).append("\n");
-                sb.append("Half :").append(" " + total_half_passangers).append("x "+half_rate).append("     "+total_half_cost).append("\n");
-                sb.append("Lugg :").append("  " + total_luggage_quantity).append("x "+luggage_rate).append("     "+total_luggage_cost).append("\n");
-                sb.append("Disc :").append(discount_string).append("% "+total_full_cost).append("   "+discount_applied).append("\n");
+                if(total_half_passangers !=0) {
+                    sb.append("Half:").append(" " + total_half_passangers).append("x "+half_rate).append("     "+total_half_cost).append("\n");
+                }
 
-                sb.append("------------------------").append("\n");
-                sb.append("Total :       ").append("     "+discounted_ticket_cost).append("\n");
-                //sb.append("GST (5%)            85").append("\n");
-                sb.append("------------------------");
+                if(total_luggage_quantity !=0) {
+                    sb.append("Lugg:").append(" " + total_luggage_quantity).append("x "+luggage_rate).append("     "+total_luggage_cost).append("\n");
+                }
+
+                if(discount_applied !=0) {
+                    sb.append("Disc:").append(" " + discount_string).append("%of "+total_full_cost).append("    -"+discount_applied).append("\n");
+                }
+
+
+                //sb.append("------------------------").append("\n");
+                //sb.append("Total:       ").append("    "+discounted_ticket_cost).append("\n");
+                ////sb.append("GST (5%)            85").append("\n");
+                //sb.append("------------------------");
                 msg = sb.toString() + "\n";
                 //fIleOperations.writeToFile("ticketprint.txt", msg, this, "0");
                 Log.d("myLogs", msg);
-                format = new byte[]{27, 33, 0};
+                //format = new byte[]{27, 33, 0};
+                // Bold
+                //format[2] = ((byte)(0x8 | arrayOfByte[2]));
+                // Height
+                //format[2] = ((byte)(0x10 | arrayOfByte[2]));
+                // Width
+                //format[2] = ((byte) (0x20 | arrayOfByte[2]));
+                // Underline
+                // format[2] = ((byte)(0x80 | arrayOfByte[2]));
+                // Small
+                format[2] = ((byte)(0x1 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
-                msg = "Total Rs.  "+discounted_ticket_cost + "\n";
-                format = new byte[]{27, 33, 15};
-                Constants.mmOutputStream.write(center);
+
+                //msg ="------------------------" + "\n";  // for Normal
+                msg ="--------------------------------" + "\n";  // for small
+                //format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                //format = new byte[]{27, 33, 0};
+                // Bold
+                //format[2] = ((byte)(0x8 | arrayOfByte[2]));
+                // Height
+                //format[2] = ((byte)(0x10 | arrayOfByte[2]));
+                // Width
+                //format[2] = ((byte) (0x20 | arrayOfByte[2]));
+                // Underline
+                // format[2] = ((byte)(0x80 | arrayOfByte[2]));
+                // Small
+                format[2] = ((byte)(0x1 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
-                // Operator address
-                msg = session.getOperatorAddress1() +  ", " + session.getOperatorAddress2() +  ", " + session.getOperatorCity() +  ", " + session.getOperatorHelpline() + "\n";
-                format = new byte[]{27, 33, 15};
-                Constants.mmOutputStream.write(center);
+                msg ="Total:           "+discounted_ticket_cost+ "\n";
+                format = new byte[]{27, 33, 20};
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                //msg ="------------------------" + "\n";  // for Normal
+                msg ="--------------------------------" + "\n";  // for small
+                //format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                //format = new byte[]{27, 33, 0};
+                // Bold
+                //format[2] = ((byte)(0x8 | arrayOfByte[2]));
+                // Height
+                //format[2] = ((byte)(0x10 | arrayOfByte[2]));
+                // Width
+                //format[2] = ((byte) (0x20 | arrayOfByte[2]));
+                // Underline
+                // format[2] = ((byte)(0x80 | arrayOfByte[2]));
+                // Small
+                format[2] = ((byte)(0x1 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                //msg = "Total Rs.  "+discounted_ticket_cost + "\n";
+                //format = new byte[]{27, 33, 15};
+                //Constants.mmOutputStream.write(center);
+                //Constants.mmOutputStream.write(format);
+                //Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
                 //msg = "Have a nice journey" + "\n";
 
                 msg = session.getTicketMessage() + "\n";
+                //format = new byte[]{27, 33, 0};
                 arrayOfByte = new byte[]{27, 33, 0};
-                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                //format = new byte[]{27, 33, 0};
+                // Bold
+                //format[2] = ((byte)(0x8 | arrayOfByte[2]));
+                // Height
+                //format[2] = ((byte)(0x10 | arrayOfByte[2]));
+                // Width
+                //format[2] = ((byte) (0x20 | arrayOfByte[2]));
+                // Underline
+                // format[2] = ((byte)(0x80 | arrayOfByte[2]));
+                // Small
+                format[2] = ((byte)(0x1 | arrayOfByte[2]));
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                msg = "--- Not Transferable ---" + "\n";
+                //format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                //format = new byte[]{27, 33, 0};
+                // Bold
+                //format[2] = ((byte)(0x8 | arrayOfByte[2]));
+                // Height
+                //format[2] = ((byte)(0x10 | arrayOfByte[2]));
+                // Width
+                //format[2] = ((byte) (0x20 | arrayOfByte[2]));
+                // Underline
+                // format[2] = ((byte)(0x80 | arrayOfByte[2]));
+                // Small
+                format[2] = ((byte)(0x1 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
                 LineFeed();
+                //LineFeed();
                 Log.d("myLogs", "End ticket " + sb.toString() + "\n");
             }
         } catch (IOException e) {
