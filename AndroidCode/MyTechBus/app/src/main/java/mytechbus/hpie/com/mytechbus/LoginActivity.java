@@ -438,8 +438,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                 session.loginUser(login_response.getString(Constants.KEY_USER_ID), login_response.getString(Constants.KEY_OPERATOR_ID), username,login_response.getString(Constants.KEY_FULL_NAME),
                                         login_response.getString(Constants.KEY_ROUTE_CODE), login_response.getString("routes_available"),
-                                        login_response.getString("operator_helpline"), login_response.getString("operator_address1"), login_response.getString("operator_address2"), login_response.getString("operator_city"),
-                                        login_response.getString("operator_name"), login_response.getString("vehicle_code"), login_response.getString("vehicle_number"),
+                                        login_response.getString("operator_name"), login_response.getString("operator_address1"), login_response.getString("operator_address2"), login_response.getString("operator_city"),
+                                        login_response.getString("operator_helpline"), login_response.getString("vehicle_code"), login_response.getString("vehicle_number"),
                                         login_response.getString("vehicle_type"), login_response.getString(Constants.KEY_TICKET_MESSAGE),  login_response.getString(Constants.KEY_MIN_TICKET));
                                 //loadDashboard();
                                 fIleOperations.writeToFile("trip_data.txt", response, LoginActivity.this, "0");
