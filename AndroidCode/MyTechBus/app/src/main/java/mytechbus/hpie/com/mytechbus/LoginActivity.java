@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -382,6 +383,37 @@ public class LoginActivity extends AppCompatActivity {
         pDialog.show();
     }
 
+    public String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        if (model.toLowerCase().startsWith(manufacturer.toLowerCase())) {
+            return capitalize(model);
+        } else {
+            return capitalize(manufacturer) + " " + model;
+        }
+    }
+
+    public String getAndroidVersion() {
+        String versionRelease = Build.VERSION.RELEASE;
+
+        return versionRelease;
+    }
+
+
+    String versionRelease = Build.VERSION.RELEASE;
+
+    private String capitalize(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+        char first = s.charAt(0);
+        if (Character.isUpperCase(first)) {
+            return s;
+        } else {
+            return Character.toUpperCase(first) + s.substring(1);
+        }
+    }
+
     private void login() {
         displayLoader();
 
@@ -400,12 +432,13 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (login_response.getInt(Constants.KEY_STATUS) == 1) {
 
-                               // Log.d("myLogs", "Received vehicle code : " + login_response.getString("vehicle_code") + " ||| get as Integer : " + login_response.getInt("vehicle_code"));
+                               Log.d("myLogs", "Received vehicle code : " + login_response.getString("vehicle_code") + " ||| get as Integer : " + login_response.getInt("vehicle_code"));
 
                                 vehicle_code = login_response.getString("vehicle_code");
 
                                 session.loginUser(login_response.getString(Constants.KEY_USER_ID), login_response.getString(Constants.KEY_OPERATOR_ID), username,login_response.getString(Constants.KEY_FULL_NAME),
                                         login_response.getString(Constants.KEY_ROUTE_CODE), login_response.getString("routes_available"),
+                                        login_response.getString("operator_helpline"), login_response.getString("operator_address1"), login_response.getString("operator_address2"), login_response.getString("operator_city"),
                                         login_response.getString("operator_name"), login_response.getString("vehicle_code"), login_response.getString("vehicle_number"),
                                         login_response.getString("vehicle_type"), login_response.getString(Constants.KEY_TICKET_MESSAGE),  login_response.getString(Constants.KEY_MIN_TICKET));
                                 //loadDashboard();
@@ -452,6 +485,12 @@ public class LoginActivity extends AppCompatActivity {
                 params.put(Constants.KEY_USERNAME,username);
                 params.put(Constants.KEY_PASSWORD,password);
                 params.put(Constants.KEY_IMEI,DEVICE_IMEI);
+
+                params.put("device_model",  ""+ getDeviceName());
+
+
+                Log.d("myLogs : Device name : ",  ""+ getDeviceName());
+                params.put("android_version",  ""+ getAndroidVersion());
 
 
                 params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.latitude);

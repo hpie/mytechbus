@@ -1058,7 +1058,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM-yyyy HH:mm");
         String currentDateandTime = sdf.format(new Date());
 
-        Log.d("myLogs", "Print ticket called : " + currentDateandTime + " ||| full_rate : " + full_rate + " ||| total_full_cost : " + total_full_cost + " ||| half_rate : " + half_rate + " ||| discount_applied : " + discount_applied );
+        Log.d("myLogs", "Print ticket called : " + currentDateandTime + " ||| full_rate : " + full_rate + " ||| total_full_cost : " + total_full_cost + " ||| half_rate : " + half_rate + " ||| discount_applied : " + discount_applied + " ||| ticket_km : " + ticket_km);
 
 
         Log.d("myLogs", "Print ticket called : " + currentDateandTime + "" );
@@ -1135,6 +1135,15 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.mmOutputStream.write(format);
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
+                /*Ticket Km*/
+                msg = "(JOURNEY KMs.: "+ ticket_km + ")\n";
+                format = new byte[]{27, 33, 0};
+                arrayOfByte = new byte[]{27, 33, 0};
+                format[2] = ((byte) (0x8 | arrayOfByte[2]));
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
                 /*Bill*/
                 StringBuilder sb = new StringBuilder("");
                 sb.append("------------------------").append("\n");
@@ -1168,6 +1177,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
 
                 msg = "Total Rs.  "+discounted_ticket_cost + "\n";
+                format = new byte[]{27, 33, 15};
+                Constants.mmOutputStream.write(center);
+                Constants.mmOutputStream.write(format);
+                Constants.mmOutputStream.write(msg.getBytes(), 0, msg.getBytes().length);
+
+                // Operator address
+                msg = session.getOperatorAddress1() +  ", " + session.getOperatorAddress2() +  ", " + session.getOperatorCity() +  ", " + session.getOperatorHelpline() + "\n";
                 format = new byte[]{27, 33, 15};
                 Constants.mmOutputStream.write(center);
                 Constants.mmOutputStream.write(format);

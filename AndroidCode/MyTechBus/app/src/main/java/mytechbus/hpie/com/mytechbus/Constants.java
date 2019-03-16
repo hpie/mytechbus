@@ -7,7 +7,9 @@ import java.io.OutputStream;
 
 public class Constants {
     //Api server url
-    public static final String base_url = "http://mytechbus.com/api/";
+    //public static final String base_url = "http://mytechbus.com/api/";
+
+    public static final String base_url = "http://sptechnoweb.com/portal/api/";
 
     public static final int LOCATION_INTERVAL = 120000;
     public static final int FASTEST_LOCATION_INTERVAL = 60000;
@@ -41,6 +43,11 @@ public class Constants {
     public static final String KEY_VEHICLE_TYPE   = "vehicle_type";
     public static final String KEY_JOURNEY_TYPE   = "journey_type";
     public static final String KEY_ROUTE_AVAILIBILITY = "route_availibility";
+
+    public static final String KEY_OPERATOR_ADDRESS1 = "operator_address1";
+    public static final String KEY_OPERATOR_ADDRESS2 = "operator_address2";
+    public static final String KEY_OPERATOR_CITY = "operator_city";
+    public static final String KEY_OPERATOR_HELPLINE = "operator_helpline";
 
     public static final String login_url = base_url+"login2";
     public static final String route_stages_url = base_url+"routes_stages";

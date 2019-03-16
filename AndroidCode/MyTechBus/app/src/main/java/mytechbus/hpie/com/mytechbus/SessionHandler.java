@@ -54,6 +54,22 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_USER_ID, Constants.KEY_EMPTY);
     }
 
+    public String getOperatorAddress1() {
+        return mPreferences.getString(Constants.KEY_OPERATOR_ADDRESS1, Constants.KEY_EMPTY);
+    }
+
+    public String getOperatorAddress2() {
+        return mPreferences.getString(Constants.KEY_OPERATOR_ADDRESS2, Constants.KEY_EMPTY);
+    }
+
+    public String getOperatorCity() {
+        return mPreferences.getString(Constants.KEY_OPERATOR_CITY, Constants.KEY_EMPTY);
+    }
+
+    public String getOperatorHelpline() {
+        return mPreferences.getString(Constants.KEY_OPERATOR_HELPLINE, Constants.KEY_EMPTY);
+    }
+
     public String getOperatorId() {
         return mPreferences.getString(Constants.KEY_OPERATOR_ID, Constants.KEY_EMPTY);
     }
@@ -107,6 +123,8 @@ public class SessionHandler {
     public void loginUser(String user_id, String operator_id,
                           String username, String fullName, String routecode,
                           String route_availibility, String operator_name,
+                          String operator_address1, String operator_address2,
+                          String operator_city, String operator_helpline,
                           String vehicle_code, String vehicle_number,
                           String vehicle_type, String ticket_message, String min_ticket ) {
 
@@ -124,6 +142,12 @@ public class SessionHandler {
         mEditor.putFloat(Constants.KEY_MIN_TICKET, Float.valueOf(min_ticket));
 
         mEditor.putString(Constants.KEY_OPERATOR_NAME, operator_name);
+
+        mEditor.putString(Constants.KEY_OPERATOR_ADDRESS1, operator_address1);
+        mEditor.putString(Constants.KEY_OPERATOR_ADDRESS2, operator_address2);
+        mEditor.putString(Constants.KEY_OPERATOR_CITY, operator_city);
+        mEditor.putString(Constants.KEY_OPERATOR_HELPLINE, operator_helpline);
+
         mEditor.putString(Constants.KEY_VEHICLE_CODE, vehicle_code);
         mEditor.putString(Constants.KEY_VEHICLE_NUMBER, vehicle_number);
         mEditor.putString(Constants.KEY_VEHICLE_TYPE, vehicle_type);
