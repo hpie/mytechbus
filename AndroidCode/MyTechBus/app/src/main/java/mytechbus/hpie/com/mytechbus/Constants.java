@@ -7,9 +7,7 @@ import java.io.OutputStream;
 
 public class Constants {
     //Api server url
-    //public static final String base_url = "http://mytechbus.com/api/";
-
-    public static final String base_url = "http://sptechnoweb.com/portal/api/";
+    public static final String base_url = "http://mytechbus.com/api/";
 
     public static final int LOCATION_INTERVAL = 120000;
     public static final int FASTEST_LOCATION_INTERVAL = 60000;
