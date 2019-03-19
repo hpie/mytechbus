@@ -50,7 +50,7 @@ a:hover {
 
 .header {
 	background: #fff;
-	border-bottom: 1px solid #000
+	width:100%;
 }
 
 .header_fix {
@@ -83,7 +83,14 @@ a:hover {
 .margin-0 {
 	margin: 0
 }
-
+.play-store{
+	width: 120px;
+	margin: auto;
+	float: left;
+	text-align: right;
+	position: absolute;
+	left: 200px;
+}
 .home_banner {
 	width: 100%;
 	margin: 0;
@@ -208,7 +215,12 @@ a:hover {
 
 .offer .btn-primary {
 	background-color: #67acbc;
-	border-color: #67acbc
+	border-color: #67acbc;
+	transition: 0.3s all ease-in;
+}
+.offer .btn-primary:hover{
+	box-shadow: 0 0 0 0 #0000;
+	border: 1px solid #0000;
 }
 
 .header .navbar-nav .nav-link {
@@ -216,8 +228,35 @@ a:hover {
 	line-height: 20px;
 	font-weight: 700;
 	color: #67acbc;
-	text-transform: uppercase
+	text-transform: uppercase;
+	position: relative;
 }
+/* .header .navbar-nav .nav-link:after{
+	content: "";
+	height: 1px ;
+	background: #007b5e;
+	width:0px;
+	margin: auto;
+	position: absolute;
+	bottom: 0px;
+	transition: 0.3s all ease-out;
+	left: 0px;
+}
+.header .navbar-nav .nav-link:before{
+	content: "";
+	height: 1px ;
+	background: #007b5e;
+	width:0px;
+	margin: auto;
+	position: absolute;
+	top: 0px;
+	transition: 0.3s all ease-out;
+	right: 0px;
+}
+.header .navbar-nav .nav-link:hover:before,
+.header .navbar-nav .nav-link:hover:after{
+	width:95%;
+} */
 
 .header .dropdown-menu {
 	background: #3d3d3d;
@@ -428,12 +467,13 @@ section .section-title {
 	-webkit-transition: .5s all ease;
 	-moz-transition: .5s all ease;
 	transition: .5s all ease;
+	border: 1px solid #ccc;
 }
 
 #what-we-do .card:hover {
-	-webkit-box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
-	-moz-box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
-	box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
+	-webkit-box-shadow:  0px 1px 4px 1px rgb(158, 158, 158);
+	-moz-box-shadow:  0px 1px 4px 1px rgb(158, 158, 158);
+	box-shadow: 0px 1px 4px 1px rgb(158, 158, 158);
 }
 
 #what-we-do .card .card-block {
@@ -755,7 +795,10 @@ footer a {
 	background: #000;
 	margin-bottom: 10px;
 }
-
+.all-titel{
+	font-size: 30px;
+	font-weight: 600;
+}
 .review_main .review_footer {
 	margin-bottom: 10px;
 	width: 100%;
@@ -1142,6 +1185,11 @@ footer a {
 /* Mobile */
 
 @media screen and (max-width:500px) {
+
+	.play-store{
+		left: 0px;
+		right: 0px;
+	}
 	#logreg-forms {
 		width: 100%;
 	}
@@ -1168,6 +1216,17 @@ footer a {
 	}
 	#logreg-forms .google-btn:after {
 		content: 'Google+';
+	}
+}
+@media only screen and (max-width:600px){
+	.custom-controllor{
+		display: none;
+	}
+	.home-banner .carousel-indicators{
+		display: none;
+	}
+	.home-banner .carousel-caption{
+		top: 0px;
 	}
 }
 
@@ -1303,5 +1362,17 @@ footer a {
 @media (max-width:320px) {
 	.container {
 		max-width: 100%
+	}
+}
+@media (max-width:991px){
+	.play-store{
+    width: 120px;
+    margin: auto;
+    float: none;
+    text-align: auto;
+    position: relative;
+    left: auto;
+    right: auto;
+
 	}
 }

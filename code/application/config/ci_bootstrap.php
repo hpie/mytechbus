@@ -66,10 +66,11 @@ $config['ci_bootstrap'] = array(
     'stylesheets' => array(
         'screen' => array(
             // for screen display
+            'assets/css/font-awesome.min.css',
             'assets/css/mytechbus.bootstrap.min.css',
 			'https://fonts.googleapis.com/css?family=Lato:400,700,900',
 			'assets/css/mytechbus.style.css',
-			'assets/css/mytechbus.all.css'
+			// 'assets/css/mytechbus.all.css'
         ),
         'print' => array(
         // for print media

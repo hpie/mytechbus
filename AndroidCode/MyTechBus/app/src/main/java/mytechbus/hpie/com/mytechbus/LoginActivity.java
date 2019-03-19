@@ -238,7 +238,9 @@ public class LoginActivity extends AppCompatActivity {
                 if(!wait_queue_contents.equals("") || !upload_queue_contents.equals("")) {
                 fIleOperations.writeToFile("ticket_wait_queue.txt", "", LoginActivity.this, "0");
 
-                fIleOperations.writeToFile("ticket_upload_queue.txt", wait_queue_contents, LoginActivity.this, "1");
+                if(!wait_queue_contents.equals("")) {
+                    fIleOperations.writeToFile("ticket_upload_queue.txt", wait_queue_contents, LoginActivity.this, "1");
+                }
 
                     //------------------------------------------------------------------------------------------------------------
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.book_offline_ticket_url,

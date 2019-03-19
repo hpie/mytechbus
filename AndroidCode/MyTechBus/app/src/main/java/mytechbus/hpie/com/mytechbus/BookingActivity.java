@@ -1248,7 +1248,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 }
 
                 if(discount_applied !=0) {
-                    sb.append("Disc:").append(" " + discount_string).append("%of "+total_full_cost).append("    -"+discount_applied).append("\n");
+                    sb.append("Disc:").append(" " + discount_string).append("%of "+total_full_cost).append("   -"+discount_applied).append("\n");
                 }
 
 
