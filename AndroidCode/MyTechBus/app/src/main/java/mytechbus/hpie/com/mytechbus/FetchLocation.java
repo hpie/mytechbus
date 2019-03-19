@@ -71,7 +71,7 @@ public class FetchLocation implements LocationListener {
 
     @Override
     public void onProviderDisabled(String provider) {
-        Toast.makeText(mcontext, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mcontext, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
     }
 
     @Override

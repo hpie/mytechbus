@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -69,16 +70,26 @@ public class LoginActivity extends AppCompatActivity {
     String upload_queue_contents = "";
 
     FetchLocation fetchLocation;
+    LocationManager manager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
         session = new SessionHandler(getApplicationContext());
         fIleOperations = new FIleOperations();
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }
 
         //session.loginUser("hpie@hpie.in","hpie@hpie.in", "R-001");
 
         if(session.isLoggedIn()){
+            if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                buildAlertMessageNoGps();
+            }
             // Start periodic location logging
             startStep3();
 
@@ -289,6 +300,27 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
+     *  Check if gps enabled
+     */
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    /**
      *  Check if carash report file exsits
      * @return
      */
@@ -415,6 +447,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+            return;
+        }
         displayLoader();
 
         fIleOperations.writeToFile("route_stages.txt", "", LoginActivity.this, "0");
@@ -473,11 +509,7 @@ public class LoginActivity extends AppCompatActivity {
                 //password = "55555";
                 //DEVICE_IMEI = "911436258233786";
 
-
-
-
-
-               //username = "kalta1";
+                //username = "kalta1";
                 //password = "12345";
                 //DEVICE_IMEI = "868494036290456";
 

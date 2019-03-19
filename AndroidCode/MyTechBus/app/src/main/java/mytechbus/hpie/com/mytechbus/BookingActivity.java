@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.location.LocationManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -84,6 +85,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private Button fullplus, fullminus, halfplus, halfminus, luggageplus, luggageminus, btnAllowPrint, btnCanclePrint;
 
     private String ticket_total;
+    LocationManager manager;
 
     // Start and end stage variables to get fare from fare object
     private String start_stage = "";
@@ -132,6 +134,12 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }
 
         session = new SessionHandler(getApplicationContext());
         fIleOperations = new FIleOperations();
@@ -316,6 +324,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         book.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                    buildAlertMessageNoGps();
+                    return;
+                }
 
                 ticket_total = etTotal.getText().toString().toLowerCase().trim();
 
@@ -338,6 +350,27 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
             }
         });
+    }
+
+    /**
+     *  Check if gps enabled
+     */
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void confirmDialog() {

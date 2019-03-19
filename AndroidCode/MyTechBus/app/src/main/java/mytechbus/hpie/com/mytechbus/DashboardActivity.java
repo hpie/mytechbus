@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -97,6 +98,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     Context context;
     private FIleOperations fIleOperations;
+    LocationManager manager;
 
     //--------------------------------------------------------------
 
@@ -107,6 +109,12 @@ public class DashboardActivity extends AppCompatActivity {
         session = new SessionHandler(getApplicationContext());
         User user = session.getUserDetails();
         TextView welcomeText = findViewById(R.id.welcomeText);
+
+        manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }
 
         fIleOperations = new FIleOperations();
 
@@ -160,6 +168,10 @@ public class DashboardActivity extends AppCompatActivity {
         bookingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                    buildAlertMessageNoGps();
+                    return;
+                }
 
                 //Log.d("myLogs"," availibility : " +session.getRouteAvailibilty() + " |||| conition " +session.getRouteAvailibilty().equals("1"));
                 if(session.getRouteAvailibilty().equals("1")) {
@@ -215,6 +227,27 @@ public class DashboardActivity extends AppCompatActivity {
 
         GetDeviceList();
 
+    }
+
+    /**
+     *  Check if gps enabled
+     */
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void showDialog(String message) {
