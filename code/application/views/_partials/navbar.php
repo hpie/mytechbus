@@ -3,10 +3,17 @@
 <nav class="navbar navbar-expand-lg navbar-light header ">
         <div class="container">
             <a class="navbar-brand" href="index.php"><img src="assets/images/MyTechBus-logo.png" alt="MyTechBus Logo" width="32" height="32"></a>
+            <div class="play-store">
+                <a href="'https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus'">
+                <img src="assets/images/play-store-sm.png" alt="MY tech bus playstore">
+            </a>
+               
+            </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+         
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav  margin-left-auto">                    
                     <li class="nav-item dropdown">

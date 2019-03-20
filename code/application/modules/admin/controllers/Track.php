@@ -242,7 +242,7 @@ class Track extends Admin_Controller {
 
 		$crud = $this->generate_crud('ticket_bookings');
 
-		$crud->columns('operator_id', 'route_code', 'booking_reference', 'start_stage', 'end_stage', 'fare_full_passengers', 'fare_full_cost', 'fare_half_passengers', 'fare_half_cost', 'fare_luggage', 'fare_luggage_cost', 'total_fare', 'mobile', 'booking_time');
+		$crud->columns('operator_id', 'route_code', 'vehicle_number', 'booking_reference', 'start_stage', 'end_stage', 'fare_full_passengers', 'fare_full_cost', 'fare_half_passengers', 'fare_half_cost', 'fare_luggage', 'fare_luggage_cost', 'total_fare', 'mobile', 'booking_time');
 
 		//Assocoation with operator_id
 		$crud->set_relation('operator_id','vehicle_operators','{row_id} {operator_name}-{operator_city}',array('operator_status' => 'ACTIVE'), 'operator_name ASC');

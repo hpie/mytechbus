@@ -11,26 +11,26 @@
             <div class="carousel-item active">
                 <img src="assets/images/bgbanner.png" alt="Los Angeles" width="1100" height="500">
                 <div class="carousel-caption">
+<!--<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>-->
+					
                     <h3>Smart Track</h3>
-                    <p>Track your travel! Just enter the bus number and find its location.</p>
-					<!--<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>-->
-					<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>
+                    <p>Track your travel! Just enter the bus number and find its location.</p>				
                 </div>
             </div>
             <div class="carousel-item">
                 <img src="assets/images/bgbanner.png" alt="Chicago" width="1100" height="500">
                 <div class="carousel-caption">
+
                     <h3>Mobile Tickets</h3>
-                    <p>Hassel free ticketing! No need of bulky devices, generate tickets through mobile.</p>
-					<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>
+                    <p>Hassel free ticketing! No need of bulky devices, generate tickets through mobile.</p>		
                 </div>
             </div>
             <div class="carousel-item">
                 <img src="assets/images/bgbanner.png" alt="New York" width="1100" height="500">
                 <div class="carousel-caption">
+
                     <h3>Realtime Revenue</h3>
-                    <p>Know your current sale! Instanly know the sale made so far and do statistical comparision</p>
-					<p><a href='https://play.google.com/store/apps/details?id=mytechbus.hpie.com.mytechbus'> <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/ style="width:300px; height:100px;"> </a> </p>
+                    <p>Know your current sale! Instanly know the sale made so far and do statistical comparision</p>	
                 </div>
             </div>
         </div>
@@ -51,7 +51,8 @@
                 <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="offer_box shadow rounded ">
                         <div class="offer_icon">
-                            <i class="fa fa-globe" aria-hidden="true"></i>
+                        <i class="fa fa-globe" aria-hidden="true"></i>
+
                         </div>
                         <h2>For Operators</h2>
                         <p>Real time monitoring</p>
@@ -133,7 +134,7 @@
         <div class="spend_time2">
             <div class="row">
                 <div class="col-md-5 hidden-sm col-12 padding-0 img_box">
-                    <img src="https://livedemo00.template-help.com/wt_prod-18847/assets/images/page-1_img03.jpg" alt="">
+                    <!-- <img src="https://livedemo00.template-help.com/wt_prod-18847/assets/images/page-1_img03.jpg" alt=""> -->
                 </div>
                 <div class="col-md-7 col-sm-12 col-12 padding-0">
                     <div class="offer_text">
@@ -174,7 +175,7 @@
     
     	<section id="what-we-do">
 		<div class="container-fluid">
-			<h2 class="section-title mb-2 h1">What we do</h2>
+			<h2 class="section-title mb-2 h1 all-titel">What we do</h2>
 			<p class="text-center text-muted h5">Having and managing a correct marketing strategy is crucial in a fast moving market.</p>
 			<p class="text-center text-muted h5">A unit of <a href="http://hpie.in/new" target="_blank"> H.P.I.E </a> </p>
 			<div class="row mt-5">
@@ -239,18 +240,17 @@
 	</section>
 	<!-- /Services section -->
     
- 		
+    <center><h2 class="section-title mb-2 h1 all-titel">What our Clients say...</h2></center>
 <div class="card col-md-6 mt-5 mb-5">
-  <center><h2 class="section-title mb-2 h1">What our Clients say...</h2></center>
   <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="100000">
     <div class="w-100 carousel-inner" role="listbox">
       <div class="carousel-item active">
         <div class="carousel-caption">
-          <div class="row">
-            <div class="col-sm-3">
+          <div class="row d-flex align-items-center">
+            <div class="col-sm-3 col-3">
               <img src="http://via.placeholder.com/200x200" alt="" class="rounded-circle img-fluid"/>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-9 col-9">
               <h3>Gives me hope</h3>
               <small>.</small>
               <small class="smallest mute">- Yayo Dudemous</small>
@@ -261,10 +261,10 @@
       <div class="carousel-item">
         <div class="carousel-caption">
           <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-3 col-3">
               <img src="http://via.placeholder.com/200x200" alt="" class="rounded-circle img-fluid">
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-9 col-9">
               <h3>You will love it.</h3>
               <small>.</small>
               <small class="smallest mute">- Yayo Dudemous</small>
@@ -275,10 +275,10 @@
       <div class="carousel-item">
         <div class="carousel-caption">
           <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-3 col-3">
               <img src="http://via.placeholder.com/200x200" alt="" class="rounded-circle img-fluid">
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-9 col-9">
               <h3>Velvet pouch!</h3>
               <small>.</small>
               <small class="smallest mute">- Yayo Dudemous</small>
@@ -300,9 +300,7 @@
   </div>
 </div>
 
-<!-- Footer -->
-<?php include 'footer.php';?>
-<!-- Footer -->
+
 	
 	
     <script>
