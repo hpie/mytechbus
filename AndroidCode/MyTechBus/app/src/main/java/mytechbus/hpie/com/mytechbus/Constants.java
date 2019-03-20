@@ -46,6 +46,7 @@ public class Constants {
     public static final String KEY_OPERATOR_ADDRESS2 = "operator_address2";
     public static final String KEY_OPERATOR_CITY = "operator_city";
     public static final String KEY_OPERATOR_HELPLINE = "operator_helpline";
+    public static final String KEY_HOUSEKEEPING = "housekeeping";
 
     public static final String login_url = base_url+"login2";
     public static final String route_stages_url = base_url+"routes_stages";
@@ -55,6 +56,7 @@ public class Constants {
     public static final String upload_file_url = base_url+"upload_file";
 
     public static final String upload_logs_url = base_url+"upload_logs";
+    public static String housekeeping_url = base_url+"housekeeping";
 
     public static BluetoothSocket mmSocket;
     public static OutputStream mmOutputStream;

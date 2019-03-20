@@ -238,8 +238,9 @@ public class LoginActivity extends AppCompatActivity {
                 if(!wait_queue_contents.equals("") || !upload_queue_contents.equals("")) {
                 fIleOperations.writeToFile("ticket_wait_queue.txt", "", LoginActivity.this, "0");
 
-                fIleOperations.writeToFile("ticket_upload_queue.txt", wait_queue_contents, LoginActivity.this, "1");
-
+                if(!wait_queue_contents.equals("")) {
+                    fIleOperations.writeToFile("ticket_upload_queue.txt", wait_queue_contents, LoginActivity.this, "1");
+                }
                     //------------------------------------------------------------------------------------------------------------
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.book_offline_ticket_url,
                             new Response.Listener<String>() {
@@ -446,6 +447,51 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void housekeeping() {
+        fIleOperations.writeToFile("ticket_wait_queue.txt", "", LoginActivity.this, "0");
+        fIleOperations.writeToFile("ticket_upload_queue.txt", "", LoginActivity.this, "0");
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.housekeeping_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        pDialog.dismiss();
+
+                        try {
+                            Log.d("myLogs", response);
+                            //Check if user got logged in successfully
+                            JSONObject housekeeping_response = new JSONObject(response);
+
+                            if (housekeeping_response.getInt(Constants.KEY_STATUS) == 1) {
+                                Toast.makeText(getApplicationContext(),housekeeping_response.getString(Constants.KEY_MESSAGE),Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        pDialog.dismiss();
+                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put(Constants.KEY_IMEI, session.getIMEI());
+                params.put(Constants.KEY_USER_ID, session.getUserId());
+                params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.latitude);
+                params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.longitude);
+                return params;
+            }
+        };
+
+        // Access the RequestQueue through your singleton class.
+        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
     private void login() {
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps();
@@ -480,6 +526,10 @@ public class LoginActivity extends AppCompatActivity {
                                 //loadDashboard();
                                 fIleOperations.writeToFile("trip_data.txt", response, LoginActivity.this, "0");
 
+                                if(login_response.getInt(Constants.KEY_HOUSEKEEPING) == 1) {
+                                    housekeeping();
+                                }
+
                                 if(isNetworkAvailable()) {
                                     loadDashboard();
                                 } else {
@@ -509,7 +559,7 @@ public class LoginActivity extends AppCompatActivity {
                 //password = "55555";
                 //DEVICE_IMEI = "911436258233786";
 
-                //username = "kalta1";
+               //username = "kalta1";
                 //password = "12345";
                 //DEVICE_IMEI = "868494036290456";
 
