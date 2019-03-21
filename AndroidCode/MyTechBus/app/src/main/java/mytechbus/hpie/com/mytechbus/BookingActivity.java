@@ -157,7 +157,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         etTxtRoute.setText(session.GetRoute());
 
-        ticket_number = 1 + fIleOperations.getTicketCount(fileName, this);
+        ticket_number = fIleOperations.getTicketCount(fileName, this);
 
         etTicketNumber.setText(String.valueOf(ticket_number));
 
@@ -842,7 +842,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         displayLoader();
-
+        /*
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.route_stages_url,
                 new Response.Listener<String>() {
                     @Override
@@ -856,9 +856,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             JSONObject route_response = new JSONObject(response);
 
                             if (route_response.getInt(Constants.KEY_STATUS) == 1) {
-                                fIleOperations.writeToFile("route_stages.txt", response, BookingActivity.this, "0");
+                                //fIleOperations.writeToFile("route_stages.txt", response, BookingActivity.this, "0");
 
-                                update_routes_spinner(response);
+                                //update_routes_spinner(response);
 
                             }else{
                                 //Toast.makeText(getApplicationContext(),route_response.getString(Constants.KEY_MESSAGE),Toast.LENGTH_LONG).show();
@@ -888,6 +888,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+        */
     }
 
     /**
@@ -908,7 +909,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         startActivity(i);
         finish();
     }
-
+    /*
     public void update_routes_spinner(String response) {
         try {
             JSONObject route_response = new JSONObject(response);
@@ -932,6 +933,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             e.printStackTrace();
         }
     }
+    */
 
     public void update_routes_spinner2(String response) {
         try {
@@ -1073,7 +1075,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             file_data_store.put("booking_reference", session.getIMEI() + "_" + booking_reference);
             file_data_store.put("route_code",session.GetRoute());
-            file_data_store.put("ticket_number", ticket_number );
+            file_data_store.put("ticket_number", fIleOperations.getTicketCount(fileName, this) );
             file_data_store.put("start_stage",start_stage);
             file_data_store.put("end_stage",end_stage);
             file_data_store.put("fare_full_cost", String.valueOf(full_rate));
@@ -1109,7 +1111,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
 
             // Add ticket details in local log daily file
-            fIleOperations.writeToFile(fileName, file_data_store.toString(), this, "1");
+            //fIleOperations.writeToFile(fileName, file_data_store.toString(), this, "1");
 
             // Add ticket details in local log daily file in log folder
             fIleOperations.writeToLogFile(fileName, file_data_store.toString(), this, "1");
@@ -1140,7 +1142,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             PrintBill();
             ticket_number = fIleOperations.getTicketCount(fileName, this);
 
-            etTicketNumber.setText(String.valueOf(ticket_number + 1));
+            etTicketNumber.setText(String.valueOf(ticket_number));
 
             clear_fields();
         } catch (JSONException e) {
@@ -1150,7 +1152,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             e.printStackTrace();
         }
 
-        String file_contents = fIleOperations.readFromFile(fileName, this);
+        //String file_contents = fIleOperations.readFromFile(fileName, this);
 
         //Log.d("myLogs", "Ticket Booking Data : " + file_contents);
 
@@ -1231,14 +1233,14 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     //----------------------------------------------------------------
 
     public void PrintBill() {
-
+        ticket_number = fIleOperations.getTicketCount(fileName, this) - 1;
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         String currentDateandTime = sdf.format(new Date());
 
         Log.d("myLogs", "Print ticket called : " + currentDateandTime + " ||| full_rate : " + full_rate + " ||| total_full_cost : " + total_full_cost + " ||| half_rate : " + half_rate + " ||| discount_applied : " + discount_applied + " ||| ticket_km : " + ticket_km);
 
 
-        Log.d("myLogs", "Print ticket called : " + currentDateandTime + "" );
+        Log.d("myLogs", "Print ticket called : " + currentDateandTime + " ||| ticket_number : " + ticket_number );
         String msg = "";
         byte[] format;
         byte[] center;

@@ -232,7 +232,7 @@ public class FIleOperations {
         try {
             JSONArray values = new JSONArray("[" + file_data + "]");
 
-            count = values.length();
+            count = values.length() + 1;
 
             //Log.e("myLogs", "Ticket Count : " + String.valueOf(count));
         } catch (JSONException e) {

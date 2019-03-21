@@ -334,26 +334,24 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/btnReprint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginRight="5dp"
+            android:background="#244937"
+            android:text="@string/reprint"
+            android:textColor="@android:color/white" />
+
+        <Button
             android:id="@+id/btnBook"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight=".75"
+            android:layout_weight="1"
             android:background="#f05924"
             android:text="@string/book"
             android:textColor="@android:color/white" />
 
-
-
-        <Button
-            android:id="@+id/btnReprint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight=".25"
-            android:background="#57de9a"
-            android:text="@string/reprint"
-            android:textColor="@android:color/white" />
 
 
     </LinearLayout>
