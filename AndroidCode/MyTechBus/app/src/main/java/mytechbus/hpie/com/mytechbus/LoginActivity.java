@@ -58,8 +58,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private String username;
     private String password;
-    private String latitude = "", current_latitude = "";
-    private String longitude, current_longitude;
+    private String latitude = "", longitude = "";
+    private String  last_latitude = "", last_longitude = "";
+    private String  current_latitude = "", current_longitude = "";
     private String vehicle_code = "";
     private ProgressDialog pDialog;
     private SessionHandler session;
@@ -156,22 +157,52 @@ public class LoginActivity extends AppCompatActivity {
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-
+                        Log.d("myLogs", "Log position called ");
                         if( vehicle_code.equals("")) {
                             vehicle_code = session.getVehicleCode();
                         }
 
-                        if( !vehicle_code.equals("")) {
-                        current_latitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LATITUDE).trim();
-                        current_longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE).trim();
+                       // if( !vehicle_code.equals("")) {
+                        if( !session.getUserId().equals("")) {
 
-                       // Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
 
+                        current_latitude = String.valueOf(intent.getStringExtra(LocationMonitoringService.EXTRA_LATITUDE).trim());
+                        current_longitude = String.valueOf(intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE).trim());
+
+                       Log.d("myLogs : track location", " current_latitude = " +current_latitude+" AND latitude = "+latitude+" Condition : " +  current_latitude.equals(latitude) + " || current_longitude = " +current_longitude+" AND longitude = "+longitude+" Condition :  " + current_longitude.equals(longitude));
+
+                            // Maintain location log on local file system
+                            DateFormat file_dt = new SimpleDateFormat("yyyy_MM_dd");
+                            String file_date = file_dt.format(Calendar.getInstance().getTime());
+                            String fileName = session.getIMEI() + "_" + file_date.toString() + ".loc";
+
+                            JSONObject location_data_store = new JSONObject();
+                            try {
+                                location_data_store.put("user_id", session.getUserId());
+                                location_data_store.put("latitude", current_latitude);
+                                location_data_store.put("longitude", current_longitude);
+
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                String date = df.format(Calendar.getInstance().getTime());
+
+                                location_data_store.put("location_time",date);
+
+                                // Add ticket details in local log daily file in log folder
+                                fIleOperations.writeToLocationLog(fileName, location_data_store.toString(), LoginActivity.this, "1");
+                               // Toast.makeText(getApplicationContext(),"Location updated!", Toast.LENGTH_SHORT).show();
+
+                            } catch (JSONException e) {
+                                // TODO Auto-generated catch block
+
+                                //Toast.makeText(getApplicationContext(),"Location Not updated!", Toast.LENGTH_SHORT).show();
+                                e.printStackTrace();
+                            }
+                            //----------------------------------------------------------------------------
 
                         if (current_latitude != null && current_longitude != null) {
-                            if (!latitude.equals(current_latitude) || !longitude.equals(current_longitude)) {
-                                latitude = current_latitude;
-                                longitude = current_longitude;
+                            if (!last_latitude.equals(current_latitude) || !last_longitude.equals(current_longitude)) {
+                                last_latitude = current_latitude;
+                                last_longitude = current_longitude;
                                 //------------------------------------------------------------------------------------------------------------
                                 StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.position_log_url,
                                         new Response.Listener<String>() {
@@ -193,8 +224,11 @@ public class LoginActivity extends AppCompatActivity {
                                         //Log.d("myLogs", "Log vehicle code : " + session.getVehicleCode());
 
                                         params.put("vehicle_code", "" + session.getVehicleCode());
-                                        params.put("latitude", "" + latitude);
-                                        params.put("longitude", "" + longitude);
+                                        params.put("user_id", "" + session.getUserId());
+                                        params.put("username", "" + session.getUserName());
+                                        params.put("device_imie", "" + session.getIMEI());
+                                        params.put("latitude", "" + current_latitude);
+                                        params.put("longitude", "" + current_longitude);
                                         params.put("route_code", "" + session.GetRoute());
                                         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                         String date = df.format(Calendar.getInstance().getTime());
@@ -210,13 +244,13 @@ public class LoginActivity extends AppCompatActivity {
                                 mytechbus.hpie.com.mytechbus.MySingleton.getInstance(LoginActivity.this).addToRequestQueue(stringRequest);
                                 //------------------------------------------------------------------------------------------------------------
                             } else {
-                                //Log.d("myLogs", "Same location");
+                                Log.d("myLogs", "Same location");
                             }
                         }
                             //Log.d("myLogs", "track location");
                         //Log.d("myLogs : track location", " vehicle Code : " + vehicle_code + " || current_latitude = " + current_latitude + " AND latitude = " + latitude + " Condition : " + current_latitude.equals(latitude) + " || current_longitude = " + current_longitude + " AND longitude = " + longitude + " Condition :  " + current_longitude.equals(longitude));
                     } else {
-                       //Log.d("myLogs", "Vehicle code empty");
+                       Log.d("myLogs", "Vehicle code empty");
                         }
                     }
                 }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST)
@@ -272,8 +306,8 @@ public class LoginActivity extends AppCompatActivity {
                             String file_upload_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", LoginActivity.this);
 
                             params.put("user_id", "" + session.getUserId());
-                            params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.latitude);
-                            params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.longitude);
+                            params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.getLat());
+                            params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.getLong());
 
                             params.put("ticket_data", ""+ file_upload_contents);
 
@@ -574,9 +608,8 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("myLogs : Device name : ",  ""+ getDeviceName());
                 params.put("android_version",  ""+ getAndroidVersion());
 
-
-                params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.latitude);
-                params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.longitude);
+                params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.getLat());
+                params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.getLong());
 
                 //params.put(KEY_EMAIL, email);
                 return params;

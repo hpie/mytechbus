@@ -54,6 +54,10 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_USER_ID, Constants.KEY_EMPTY);
     }
 
+    public String getUserName() {
+        return mPreferences.getString(Constants.KEY_USERNAME, Constants.KEY_EMPTY);
+    }
+
     public String getOperatorAddress1() {
         return mPreferences.getString(Constants.KEY_OPERATOR_ADDRESS1, Constants.KEY_EMPTY);
     }

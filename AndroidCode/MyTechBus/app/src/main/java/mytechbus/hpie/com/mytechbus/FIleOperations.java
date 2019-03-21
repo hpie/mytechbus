@@ -1,5 +1,6 @@
 package mytechbus.hpie.com.mytechbus;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -68,7 +69,6 @@ public class FIleOperations {
     }
 
     public void writeToLogFile(String filename, String data,Context context, String mode, String... foldername) {
-        //File mydir = context.getDir("daily_log", context.MODE_APPEND); //Creating an internal dir;
 
         String file_data = readLogFile(filename, context, "daily_log");
 
@@ -76,25 +76,41 @@ public class FIleOperations {
 
         File fileWithinMyDir = new File(mydir, filename); //Getting a file within the dir.
 
+        try {
+            FileOutputStream out = new FileOutputStream(fileWithinMyDir); //Use the stream as usual to write into the file.
 
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(out);
+
+            if(!file_data.equals("")) {
+                data = file_data + "," + data;
+            }
+            myOutWriter.write(data);
+            myOutWriter.close();
+
+            //out.write(data);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeToLocationLog(String filename, String data,Context context, String mode, String... foldername) {
+
+        String file_data = readLogFile(filename, context, "location_log");
+
+        File mydir = context.getDir("location_log", context.MODE_PRIVATE); //Creating an internal dir;
+
+        File fileWithinMyDir = new File(mydir, filename); //Getting a file within the dir.
 
         try {
             FileOutputStream out = new FileOutputStream(fileWithinMyDir); //Use the stream as usual to write into the file.
 
             OutputStreamWriter myOutWriter = new OutputStreamWriter(out);
-            //-----------------------------------------------------------------------
-
-
-
-            //Log.d("myLogs", "before if file data : " + file_data);
 
             if(!file_data.equals("")) {
                 data = file_data + "," + data;
-               // Log.d("myLogs", "In if file data : " + file_data);
             }
-            //-----------------------------------------------------
-
-
             myOutWriter.write(data);
             myOutWriter.close();
 
@@ -113,15 +129,6 @@ public class FIleOperations {
         File mydir = context.getDir(folder_name, context.MODE_PRIVATE); //Creating an internal dir;
         File fileWithinMyDir = new File(mydir, filename); //Getting a file within the dir.
         try {
-            /*
-            File file[] = mydir.listFiles();
-            Log.d("Files", "Size: " + file.length);
-            for (int i = 0; i < file.length; i++) {
-                //here populate your listview
-                Log.d("myLogs", "FileName:" + file[i].getName());
-
-            }
-            */
             FileInputStream fileInputStream = new FileInputStream(fileWithinMyDir);
 
             fileData = readFromFileInputStream(fileInputStream);
@@ -217,24 +224,6 @@ public class FIleOperations {
         return ret;
     }
 
-    /*
-    public Integer getTicketCount(String filename, Context context) {
-        Integer count = 0;
-        String file_data = readFromFile(filename, context);
-
-        try {
-            JSONArray values = new JSONArray("[" + file_data + "]");
-
-            count = values.length();
-
-            Log.e("myLogs", "Ticket Count : " + String.valueOf(count));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return count;
-    }
-    */
-
     public Integer getTicketCount(String filename, Context context) {
         Integer count = 0;
         //String file_data = readFromFile(filename, context);
@@ -251,4 +240,5 @@ public class FIleOperations {
         }
         return count;
     }
+
 }
