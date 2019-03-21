@@ -153,6 +153,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         TextView etTxtRoute = findViewById(R.id.textRoute);
         etTicketNumber = (TextView) findViewById(R.id.textTicketNumber);
         Button book = findViewById(R.id.btnBook);
+        Button Reprint = findViewById(R.id.btnReprint);
 
         etTxtRoute.setText(session.GetRoute());
 
@@ -340,6 +341,15 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+        Reprint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirmDialogReprint();
+            }
+        });
+
+
+
         Button back = findViewById(R.id.btnBack);
         //Launch Registration screen when Register Button is clicked
         back.setOnClickListener(new View.OnClickListener() {
@@ -371,6 +381,134 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public void confirmDialogReprint() {
+
+        String last_ticket = fIleOperations.readFromFile("last_ticket.txt", this);
+
+        JSONObject last_ticket_obj = null;
+        try {
+            last_ticket_obj = new JSONObject(last_ticket);
+
+
+        Log.d("myLogs", "Last Ticket : " + last_ticket);
+
+        // custom dialog
+        final Dialog dialog_reprint = new Dialog(BookingActivity.this);
+
+        int width = (int)(getResources().getDisplayMetrics().widthPixels*0.90);
+        int height = (int)(getResources().getDisplayMetrics().heightPixels*0.90);
+
+            dialog_reprint.getWindow().setLayout(width, height);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View promptTicketView = inflater.inflate(R.layout.dialog_ticket2,null);
+        //------------------------------------------------------------------------------------
+        final TextView proptFullRate =(TextView)promptTicketView.findViewById(R.id.proptFullRate);
+        final TextView proptFullPassengers =(TextView)promptTicketView.findViewById(R.id.proptFullPassengers);
+        final TextView proptFullTotal =(TextView)promptTicketView.findViewById(R.id.proptFullTotal);
+
+        final TextView proptHalfRate =(TextView)promptTicketView.findViewById(R.id.proptHalfRate);
+        final TextView proptHalfPassengers =(TextView)promptTicketView.findViewById(R.id.proptHalfPassengers);
+        final TextView proptHalfTotal =(TextView)promptTicketView.findViewById(R.id.proptHalfTotal);
+
+        final TextView proptLuggageRate =(TextView)promptTicketView.findViewById(R.id.proptLuggageRate);
+        final TextView proptLugguage=(TextView)promptTicketView.findViewById(R.id.proptLuggage);
+        final TextView proptLuggageTotal =(TextView)promptTicketView.findViewById(R.id.proptLuggageTotal);
+
+        final TextView proptDiscountRate =(TextView)promptTicketView.findViewById(R.id.proptDiscountRate);
+        final TextView proptTotalForDiscount=(TextView)promptTicketView.findViewById(R.id.proptTotalForDiscount);
+        final TextView proptDiscountApplied =(TextView)promptTicketView.findViewById(R.id.proptDiscountApplied);
+
+        final TextView proptTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptTicketTotal);
+        final TextView proptDiscountedTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptDiscountedTicketTotal);
+
+        //------------------------------------------
+
+        //Log.d("myLogs", "discount_string : " + discount_string + " ||| discounted_ticket_cost : " + discounted_ticket_cost+ " ||| discount_applied : " + discount_applied);
+
+            ticket_number = Integer.valueOf(last_ticket_obj.getString("ticket_number"));
+            start_stage = last_ticket_obj.getString("start_stage");
+            end_stage = last_ticket_obj.getString("end_stage");
+            ticket_km = last_ticket_obj.getString("ticket_km");
+
+            total_full_passangers = Integer.valueOf(last_ticket_obj.getString("fare_full_passengers"));
+            full_rate = Float.parseFloat(last_ticket_obj.getString("fare_full_cost"));
+            total_full_cost = Integer.valueOf(last_ticket_obj.getString("total_full_cost"));
+
+            total_half_passangers = Integer.valueOf(last_ticket_obj.getString("fare_half_passengers"));
+            half_rate = Float.parseFloat(last_ticket_obj.getString("fare_half_cost"));
+            total_half_cost = Integer.valueOf(last_ticket_obj.getString("total_half_cost"));
+
+            total_luggage_quantity = Integer.valueOf(last_ticket_obj.getString("fare_luggage"));
+            luggage_rate = Float.parseFloat(last_ticket_obj.getString("fare_luggage_cost"));
+            total_luggage_cost = Integer.valueOf(last_ticket_obj.getString("total_luggage_cost"));
+
+            discount_string = last_ticket_obj.getString("discount");
+            //total_full_cost = last_ticket_obj.getString("end_stage");
+            discount_applied = Integer.valueOf(last_ticket_obj.getString("discount_applied"));
+
+            discounted_ticket_cost = Integer.valueOf(last_ticket_obj.getString("discounted_total"));
+
+        proptDiscountRate.setText(last_ticket_obj.getString("discount"));
+        proptTotalForDiscount.setText(last_ticket_obj.getString("total_full_cost"));
+        proptDiscountApplied.setText(last_ticket_obj.getString("discount_applied"));
+
+
+        proptFullRate.setText(last_ticket_obj.getString("fare_full_cost"));
+        proptFullPassengers.setText(last_ticket_obj.getString("fare_full_passengers"));
+
+        proptHalfRate.setText(last_ticket_obj.getString("fare_half_cost"));
+        proptHalfPassengers.setText(last_ticket_obj.getString("fare_half_passengers"));
+
+        proptLuggageRate.setText(last_ticket_obj.getString("fare_luggage_cost"));
+        proptLugguage.setText(last_ticket_obj.getString("fare_luggage"));
+
+        //Double fulltotal = Double.valueOf(etFullPassengers.getText().toString()) * full_rate;
+        proptFullTotal.setText(last_ticket_obj.getString("total_full_cost"));
+
+        //Double halftotal = Double.valueOf(etHalfPassengers.getText().toString()) * half_rate;
+        proptHalfTotal.setText(last_ticket_obj.getString("total_half_cost"));
+
+        //Double luggagetotal = Double.valueOf(etLuggage.getText().toString()) * luggage_rate;
+        proptLuggageTotal.setText(last_ticket_obj.getString("total_luggage_cost"));
+
+        proptTicketTotal.setText(last_ticket_obj.getString("total_fare"));
+        proptDiscountedTicketTotal.setText(last_ticket_obj.getString("discounted_total"));
+        //----------------------------------------------------------------------------------------
+
+            dialog_reprint.setContentView(promptTicketView);
+
+        //dialog.setContentView(R.layout.dialog_ticket2);
+            dialog_reprint.setTitle("Title...");
+
+        btnCanclePrint = (Button) dialog_reprint.findViewById(R.id.btnAllowPrint);
+
+        btnCanclePrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrintBill();
+                dialog_reprint.dismiss();
+            }
+        });
+
+
+        btnCanclePrint = (Button) dialog_reprint.findViewById(R.id.btnCanclePrint);
+        // if button is clicked, close the custom dialog
+        btnCanclePrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog_reprint.dismiss();
+            }
+        });
+
+            dialog_reprint.show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void confirmDialog() {
@@ -981,6 +1119,12 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             // Add Last ticket details in local file
             file_data_store.put("duplicate_ticket","1");
+
+            file_data_store.put("total_full_cost",total_full_cost);
+            file_data_store.put("total_half_cost", total_half_cost);
+            file_data_store.put("total_luggage_cost",total_luggage_cost);
+            file_data_store.put("ticket_km",ticket_km);
+
             fIleOperations.writeToFile("last_ticket.txt", file_data_store.toString(), this, "0");
 
             //------------------------------------------------------------------------------

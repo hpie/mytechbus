@@ -543,7 +543,6 @@ public class DashboardActivity extends AppCompatActivity {
                                 String file_date = file_dt.format(Calendar.getInstance().getTime());
                                 String fileName = session.getIMEI() + "_" + file_date.toString() + ".txt";
 
-
                                 fIleOperations.deleteLogFiles(fileName, DashboardActivity.this, "daily_log");
 
                                 fIleOperations.deleteLogFiles("", DashboardActivity.this, "crashReports");
@@ -605,6 +604,19 @@ public class DashboardActivity extends AppCompatActivity {
                         params.put(dirCrash[j].getName(), ""+ file_upload_contents);
 
                         //Log.d("myLogs", "Files : " + fileOutput);
+                    }
+                }
+
+                File locationDirectory = context.getDir("location_log", context.MODE_PRIVATE); //Creating an internal dir;
+                File[] dirLocation = locationDirectory.listFiles();
+
+                if (dirLocation.length != 0) {
+                    // loops through the array of files, outputing the name to console
+                    for (int j = 0; j < dirLocation.length; j++) {
+
+                        String file_upload_contents = fIleOperations.readLogFile(dirLocation[j].getName(), DashboardActivity.this, "location_log");
+
+                        params.put(dirLocation[j].getName(), ""+ file_upload_contents);
                     }
                 }
                 params.put("user_id", session.getUserId());
