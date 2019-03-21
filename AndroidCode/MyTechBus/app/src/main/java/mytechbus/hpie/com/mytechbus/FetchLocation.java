@@ -44,12 +44,8 @@ public class FetchLocation implements LocationListener {
     public void getLocation() {
         try {
             locationManager = (LocationManager) mcontext.getSystemService(Context.LOCATION_SERVICE);
-            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-            }
-            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-            }
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(lastKnownLocation != null) {
                 last_konown_latitude = String.valueOf(lastKnownLocation.getLatitude());
