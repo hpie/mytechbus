@@ -23,7 +23,7 @@ public class FetchLocation implements LocationListener {
     Activity activity;
     TextView locationtext;
     Double latitude, longitude;
-    Double last_konown_latitude, last_konown_longitude;
+    String last_konown_latitude = "", last_konown_longitude = "";
 
     //public FetchLocation(Context mContext, Activity mActivity, TextView locationText) {
     public FetchLocation(Context mContext, Activity mActivity) {
@@ -44,27 +44,32 @@ public class FetchLocation implements LocationListener {
     public void getLocation() {
         try {
             locationManager = (LocationManager) mcontext.getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
+            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+            }
+            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            }
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            last_konown_latitude  = lastKnownLocation.getLatitude();
-            last_konown_longitude = lastKnownLocation.getLongitude();
+            if(lastKnownLocation != null) {
+                last_konown_latitude = String.valueOf(lastKnownLocation.getLatitude());
+                last_konown_longitude = String.valueOf(lastKnownLocation.getLongitude());
+            }
         } catch(SecurityException e) {
             e.printStackTrace();
         }
     }
 
-    public Double getLat() {
+    public String getLat() {
         if(latitude != null) {
-            return latitude;
+            return String.valueOf(latitude);
         }
         return last_konown_latitude;
     }
 
-    public Double getLong() {
+    public String getLong() {
         if(longitude != null) {
-            return longitude;
+            return String.valueOf(longitude);
         }
         return last_konown_longitude;
     }
