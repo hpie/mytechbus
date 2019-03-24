@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class FIleOperations {
     public FIleOperations() {
@@ -167,8 +170,6 @@ public class FIleOperations {
 
     }
 
-
-
     // This method will read data from FileInputStream.
     private String readFromFileInputStream(FileInputStream fileInputStream)
     {
@@ -239,6 +240,42 @@ public class FIleOperations {
             e.printStackTrace();
         }
         return count;
+    }
+
+    public void writeToFile(String filename, String data,Context context, String mode, String foldername) {
+
+        String file_data = readLogFile(filename, context, foldername);
+
+        File mydir = context.getDir(foldername, context.MODE_PRIVATE); //Creating an internal dir;
+
+        File fileWithinMyDir = new File(mydir, filename); //Getting a file within the dir.
+
+        try {
+            FileOutputStream out = new FileOutputStream(fileWithinMyDir); //Use the stream as usual to write into the file.
+
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(out);
+
+            if(!file_data.equals("")) {
+                data = file_data + "," + data;
+            }
+            myOutWriter.write(data);
+            myOutWriter.close();
+
+            //out.write(data);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getTodayFileNmaePrefix(String ext) {
+
+        DateFormat file_dt = new SimpleDateFormat("yyyy_MM_dd");
+        String file_date = file_dt.format(Calendar.getInstance().getTime());
+        String fileName = file_date.toString() + "." + ext;
+
+        return fileName;
     }
 
 }

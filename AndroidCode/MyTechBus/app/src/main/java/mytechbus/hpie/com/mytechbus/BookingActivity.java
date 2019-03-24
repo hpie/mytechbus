@@ -118,6 +118,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     String fileName;
     String file_date;
+    String last_ticket;
 
     Spinner spinner, endspinner, spinnerDiscount;
     ArrayList<String> StartStage, EndStage, discountArray;
@@ -385,7 +386,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     public void confirmDialogReprint() {
 
-        String last_ticket = fIleOperations.readFromFile("last_ticket.txt", this);
+        last_ticket = fIleOperations.readFromFile("last_ticket.txt", this);
 
         JSONObject last_ticket_obj = null;
         try {
@@ -489,11 +490,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         btnCanclePrint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                activity_log("reprint", last_ticket);
+
                 PrintBill();
                 dialog_reprint.dismiss();
             }
         });
-
 
         btnCanclePrint = (Button) dialog_reprint.findViewById(R.id.btnCanclePrint);
         // if button is clicked, close the custom dialog
@@ -601,89 +604,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         });
 
         dialog.show();
-    }
-
-    private void confirmDialog1() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        // Get the layout inflater
-        LayoutInflater inflater = this.getLayoutInflater();
-
-        View promptTicketView = inflater.inflate(R.layout.dialog_ticket,null);
-
-        final TextView proptFullRate =(TextView)promptTicketView.findViewById(R.id.proptFullRate);
-        final TextView proptFullPassengers =(TextView)promptTicketView.findViewById(R.id.proptFullPassengers);
-        final TextView proptFullTotal =(TextView)promptTicketView.findViewById(R.id.proptFullTotal);
-
-        final TextView proptHalfRate =(TextView)promptTicketView.findViewById(R.id.proptHalfRate);
-        final TextView proptHalfPassengers =(TextView)promptTicketView.findViewById(R.id.proptHalfPassengers);
-        final TextView proptHalfTotal =(TextView)promptTicketView.findViewById(R.id.proptHalfTotal);
-
-        final TextView proptLuggageRate =(TextView)promptTicketView.findViewById(R.id.proptLuggageRate);
-        final TextView proptLugguage=(TextView)promptTicketView.findViewById(R.id.proptLuggage);
-        final TextView proptLuggageTotal =(TextView)promptTicketView.findViewById(R.id.proptLuggageTotal);
-
-        final TextView proptDiscountRate =(TextView)promptTicketView.findViewById(R.id.proptDiscountRate);
-        final TextView proptTotalForDiscount=(TextView)promptTicketView.findViewById(R.id.proptTotalForDiscount);
-        final TextView proptDiscountApplied =(TextView)promptTicketView.findViewById(R.id.proptDiscountApplied);
-
-        final TextView proptTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptTicketTotal);
-        final TextView proptDiscountedTicketTotal =(TextView)promptTicketView.findViewById(R.id.proptDiscountedTicketTotal);
-
-        //------------------------------------------
-
-        //Log.d("myLogs", "discount_string : " + discount_string + " ||| discounted_ticket_cost : " + discounted_ticket_cost+ " ||| discount_applied : " + discount_applied);
-
-        proptDiscountRate.setText(discount_string);
-        proptTotalForDiscount.setText(String.valueOf(total_full_cost));
-        proptDiscountApplied.setText(String.valueOf(discount_applied));
-
-
-        proptFullRate.setText(String.valueOf(full_rate));
-        proptFullPassengers.setText(etFullPassengers.getText().toString());
-
-        proptHalfRate.setText(String.valueOf(half_rate));
-        proptHalfPassengers.setText(etHalfPassengers.getText().toString());
-
-        proptLuggageRate.setText(String.valueOf(luggage_rate));
-        proptLugguage.setText(etLuggage.getText().toString());
-
-        //Double fulltotal = Double.valueOf(etFullPassengers.getText().toString()) * full_rate;
-        proptFullTotal.setText(String.valueOf(total_full_cost));
-
-        //Double halftotal = Double.valueOf(etHalfPassengers.getText().toString()) * half_rate;
-        proptHalfTotal.setText(String.valueOf(total_half_cost));
-
-        //Double luggagetotal = Double.valueOf(etLuggage.getText().toString()) * luggage_rate;
-        proptLuggageTotal.setText(String.valueOf(total_luggage_cost));
-
-        proptTicketTotal.setText(etTotal.getText().toString());
-        proptDiscountedTicketTotal.setText(String.valueOf(discounted_ticket_cost));
-
-
-        btnAllowPrint = (Button) findViewById(R.id.btnAllowPrint);
-        btnCanclePrint = (Button) findViewById(R.id.btnCanclePrint);
-
-        builder.setMessage("Confirm Ticket details.");
-                // Inflate and set the layout for the dialog
-                // Pass null as the parent view because its going in the dialog layout
-        builder.setView(promptTicketView);
-
-        builder.setPositiveButton("Print",  new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        book_ticket();
-                    }
-                });
-        builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,int id) {
-                        dialog.cancel();
-                    }
-                });
-        builder.show();
-
     }
 
     private void displayLoader() {
@@ -909,31 +829,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         startActivity(i);
         finish();
     }
-    /*
-    public void update_routes_spinner(String response) {
-        try {
-            JSONObject route_response = new JSONObject(response);
-
-            JSONArray jsonArray=route_response.getJSONArray("start_stages");
-
-            end_stages      = route_response.getJSONObject("end_stages");
-            fare_km         = route_response.getJSONObject("fare_km");
-            fare_full       = route_response.getJSONObject("fare_full");
-            fare_half       = route_response.getJSONObject("fare_half");
-            fare_luggage    = route_response.getJSONObject("fare_luggage");
-
-            for(int i=0;i<jsonArray.length();i++){
-                String start=jsonArray.getString(i);
-                StartStage.add(start);
-            }
-            spinner.setAdapter(new ArrayAdapter<String>(BookingActivity.this, android.R.layout.simple_spinner_dropdown_item, StartStage));
-
-        } catch (JSONException e) {
-            //Log.d("Suresh12345 : error", "Error occured");
-            e.printStackTrace();
-        }
-    }
-    */
 
     public void update_routes_spinner2(String response) {
         try {
@@ -1105,13 +1000,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             //Log.d("Ticket Booked : ", String.valueOf(file_data_store));
 
             //------------------------------------------------------------------------------
-            //DateFormat file_dt = new SimpleDateFormat("yyyy_MM_dd");
-            //String file_date = file_dt.format(Calendar.getInstance().getTime());
-
 
 
             // Add ticket details in local log daily file
-            //fIleOperations.writeToFile(fileName, file_data_store.toString(), this, "1");
 
             // Add ticket details in local log daily file in log folder
             fIleOperations.writeToLogFile(fileName, file_data_store.toString(), this, "1");
@@ -1136,8 +1027,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             //----------------------------
 
-            //Log.d("myLogs", " operator name : " + session.getOperator() + " ||| operator name : " + session.getTicketMessage());
-
+            activity_log("book_ticket", file_data_store.toString());
 
             PrintBill();
             ticket_number = fIleOperations.getTicketCount(fileName, this);
@@ -1147,7 +1037,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             clear_fields();
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-
+            activity_log("book_ticket", "Ticket not booked. Please try again! " + e.toString() + " || Ticket Data : " + file_data_store.toString());
             Toast.makeText(getApplicationContext(),"Ticket not booked. Please try again!", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
@@ -1509,8 +1399,11 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 //LineFeed();
                 Log.d("myLogs", "End ticket " + sb.toString() + "\n");
             }
+            activity_log("PrintBill", "Constants.mmSocket != null && Constants.mmOutputStream != null && Constants.mmInputStream != null");
         } catch (IOException e) {
             Log.e("myLogs", "print ticket error occured: " + e.toString());
+
+            activity_log("PrintBill", "print ticket error occured: " + e.toString());
             e.printStackTrace();
         }
     }
@@ -1523,5 +1416,46 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        activity_log("onResume", "");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activity_log("onPause", "");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        activity_log("onStop", "");
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        activity_log("onRestart", "");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        activity_log("app_destroy", "");
+    }
+
+    public void activity_log(String activity_name, String activity_message) {
+        //------------ manage activity log ----------------------------
+        JSONObject activity_log = new JSONObject();
+        try {
+            activity_log.put("activity_name", activity_name);
+            activity_log.put("activity_data", activity_message);
+        } catch (JSONException ee) {
+            ee.printStackTrace();
+        }
+        String activity_log_file = fIleOperations.getTodayFileNmaePrefix("log");
+        fIleOperations.writeToFile(activity_log_file, activity_log.toString(), BookingActivity.this, "1", "activity_log");
+        //--------------------------------------------------------------
     }
 }

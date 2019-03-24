@@ -54,14 +54,9 @@ import java.util.TimerTask;
 public class LoginActivity extends AppCompatActivity {
     private FIleOperations fIleOperations;
 
-    private EditText etUsername;
-    private EditText etPassword;
-    private String username;
-    private String password;
-    private String latitude = "", longitude = "";
-    private String  last_latitude = "", last_longitude = "";
-    private String  current_latitude = "", current_longitude = "";
-    private String vehicle_code = "";
+    private EditText etUsername, etPassword;
+    private String username, password, latitude = "", longitude = "", last_latitude = "", last_longitude = "", current_latitude = "", current_longitude = "", vehicle_code = "";
+
     private ProgressDialog pDialog;
     private SessionHandler session;
     private boolean mAlreadyStartedService = false;
@@ -142,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                     if(isNetworkAvailable()) {
                         login();
                     } else {
+                        activity_log("check_network", "Network not available.");
                         //Toast.makeText(getApplicationContext(), "Network not available.",Toast.LENGTH_LONG).show();
                         showDialog("Network not available.");
                     }
@@ -187,9 +183,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                 location_data_store.put("location_time",date);
 
-                                // Add ticket details in local log daily file in log folder
+                                // Add location details in local log daily file in log folder
                                 fIleOperations.writeToLocationLog(fileName, location_data_store.toString(), LoginActivity.this, "1");
                                // Toast.makeText(getApplicationContext(),"Location updated!", Toast.LENGTH_SHORT).show();
+
+                                //------------ manage activity log ----------------------------
+                                activity_log("auto_location_log", location_data_store.toString());
+                                //--------------------------------------------------------------
 
                             } catch (JSONException e) {
                                 // TODO Auto-generated catch block
@@ -286,6 +286,12 @@ public class LoginActivity extends AppCompatActivity {
                                         JSONObject ticket_response = new JSONObject(response);
 
                                         if (ticket_response.getInt(Constants.KEY_STATUS) == 1) {
+
+                                              //------------ manage activity log ----------------------------
+                                            String file_upload_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", LoginActivity.this);
+                                            activity_log("auto_book_ticket_upload", file_upload_contents.toString());
+                                            //--------------------------------------------------------------
+
                                             fIleOperations.writeToFile("ticket_upload_queue.txt", "", LoginActivity.this, "0");
                                         }
                                     } catch (JSONException e) {
@@ -482,6 +488,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void housekeeping() {
+
+        activity_log("housekeeping", "");
+
         fIleOperations.writeToFile("ticket_wait_queue.txt", "", LoginActivity.this, "0");
         fIleOperations.writeToFile("ticket_upload_queue.txt", "", LoginActivity.this, "0");
 
@@ -559,6 +568,8 @@ public class LoginActivity extends AppCompatActivity {
                                         login_response.getString("vehicle_type"), login_response.getString(Constants.KEY_TICKET_MESSAGE),  login_response.getString(Constants.KEY_MIN_TICKET));
                                 //loadDashboard();
                                 fIleOperations.writeToFile("trip_data.txt", response, LoginActivity.this, "0");
+
+                                activity_log("login", login_response.toString());
 
                                 if(login_response.getInt(Constants.KEY_HOUSEKEEPING) == 1) {
                                     housekeeping();
@@ -674,6 +685,27 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        activity_log("onResume", "");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activity_log("onPause", "");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        activity_log("onStop", "");
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        activity_log("onRestart", "");
+    }
+
+    @Override
     public void onDestroy() {
 
         //Stop location sharing service to app server.........
@@ -682,5 +714,20 @@ public class LoginActivity extends AppCompatActivity {
         //Ends................................................
 
         super.onDestroy();
+        activity_log("app_destroy", "");
+    }
+
+    public void activity_log(String activity_name, String activity_message) {
+        //------------ manage activity log ----------------------------
+        JSONObject activity_log = new JSONObject();
+        try {
+            activity_log.put("activity_name", activity_name);
+            activity_log.put("activity_data", activity_message);
+        } catch (JSONException ee) {
+            ee.printStackTrace();
+        }
+        String activity_log_file = fIleOperations.getTodayFileNmaePrefix("log");
+        fIleOperations.writeToFile(activity_log_file, activity_log.toString(), LoginActivity.this, "1", "activity_log");
+        //--------------------------------------------------------------
     }
 }

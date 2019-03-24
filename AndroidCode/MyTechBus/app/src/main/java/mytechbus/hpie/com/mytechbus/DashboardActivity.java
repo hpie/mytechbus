@@ -187,6 +187,9 @@ public class DashboardActivity extends AppCompatActivity {
         uploadLogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                activity_log("upload_log", "");
+
                 upload_logs();
             }
         });
@@ -196,6 +199,8 @@ public class DashboardActivity extends AppCompatActivity {
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                activity_log("logoutBtn_click", "Logout clicked");
                 session.logoutUser();
                 Intent i = new Intent(DashboardActivity.this, LoginActivity.class);
                 startActivity(i);
@@ -218,7 +223,12 @@ public class DashboardActivity extends AppCompatActivity {
                         btn_connect.setTag("0");
                         btn_connect.setText("connect");
                         toast("Printer DisConnected");
+
+                        activity_log("btn_connect_click", "Printer DisConnected");
+
                     } catch (IOException e) {
+
+                        activity_log("btn_connect_click", "Error occured");
                         e.printStackTrace();
                     }
                 }
@@ -300,10 +310,14 @@ public class DashboardActivity extends AppCompatActivity {
                 if (Constants.mmSocket.isConnected()) {
                     btn_connect.setTag("1");
                     btn_connect.setText("disconnect");
+
+                    activity_log("findBT", "Printer Connected");
                 } else {
+                    activity_log("findBT", "Printer Not Connect");
                     toast("Printer Not Connect");
                 }
             } else {
+                activity_log("findBT", "Printer Not Connect");
                 toast("Printer Not Connect");
             }
         }
@@ -333,6 +347,8 @@ public class DashboardActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
+
+            activity_log("findBT", "error occured");
             e.printStackTrace();
         }
     }
@@ -349,6 +365,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            activity_log("openBT", "error occured");
         }
     }
 
@@ -435,8 +453,12 @@ public class DashboardActivity extends AppCompatActivity {
         Iterator<UsbDevice> deviceIterator = devicelist.values().iterator();
         if (deviceIterator.hasNext()) {
             Toast.makeText(getApplicationContext(), "Device Found", Toast.LENGTH_SHORT).show();
+
+            activity_log("GetDeviceList", "Device Found");
         } else {
             Toast.makeText(getApplicationContext(), "No Device Found", Toast.LENGTH_SHORT).show();
+
+            activity_log("GetDeviceList", "No Device Found");
         }
         String i = "";
         while (deviceIterator.hasNext()) {
@@ -521,12 +543,17 @@ public class DashboardActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            activity_log("isbluetoothconnection", "Error occured");
         }
         return true;
     }
 
     private void upload_logs() {
         displayLoader();
+
+        activity_log("upload_logs", "");
+
         //------------------------------------------------------------------------------------------------------------
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.upload_logs_url,
                 new Response.Listener<String>() {
@@ -568,57 +595,33 @@ public class DashboardActivity extends AppCompatActivity {
                     }
                 }){
             @Override
-            protected Map<String,String> getParams(){
-                File fileDirectory = context.getDir("daily_log", context.MODE_PRIVATE); //Creating an internal dir;
-                File[] dirFiles = fileDirectory.listFiles();
+            protected Map<String,String> getParams() {
+
+                List<String> list = new ArrayList<String>();
+                list.add("daily_log");
+                list.add("crashReports");
+                list.add("location_log");
+                list.add("activity_log");
 
                 Map<String,String> params = new HashMap<String, String>();
 
-                if (dirFiles.length != 0) {
-                    // loops through the array of files, outputing the name to console
-                    for (int j = 0; j < dirFiles.length; j++) {
-                        // String fileOutput = dirFiles[j].toString();
+                for (int i = 0; i < list.size(); i++) {
+                    System.out.println(list.get(i));
 
-                        //Log.d("myLogs", "Log FileName:" + dirFiles[j].getName());
+                    File fileDirectory = context.getDir(list.get(i), context.MODE_PRIVATE); //Creating an internal dir;
+                    File[] dirFiles = fileDirectory.listFiles();
 
-                        String file_upload_contents = fIleOperations.readLogFile(dirFiles[j].getName(), DashboardActivity.this, "daily_log");
+                    if (dirFiles.length != 0) {
+                        // loops through the array of files, outputing the name to console
+                        for (int j = 0; j < dirFiles.length; j++) {
 
-                        params.put(dirFiles[j].getName(), ""+ file_upload_contents);
+                            String file_upload_contents = fIleOperations.readLogFile(dirFiles[j].getName(), DashboardActivity.this, list.get(i));
 
-                        //Log.d("myLogs", "Files : " + fileOutput);
+                            params.put(dirFiles[j].getName(), ""+ file_upload_contents);
+                        }
                     }
                 }
 
-                File crashDirectory = context.getDir("crashReports", context.MODE_PRIVATE); //Creating an internal dir;
-                File[] dirCrash = crashDirectory.listFiles();
-
-                if (dirCrash.length != 0) {
-                    // loops through the array of files, outputing the name to console
-                    for (int j = 0; j < dirCrash.length; j++) {
-                        // String fileOutput = dirFiles[j].toString();
-
-                        //Log.d("myLogs", "crash FileName:" + dirCrash[j].getName());
-
-                        String file_upload_contents = fIleOperations.readLogFile(dirCrash[j].getName(), DashboardActivity.this, "crashReports");
-
-                        params.put(dirCrash[j].getName(), ""+ file_upload_contents);
-
-                        //Log.d("myLogs", "Files : " + fileOutput);
-                    }
-                }
-
-                File locationDirectory = context.getDir("location_log", context.MODE_PRIVATE); //Creating an internal dir;
-                File[] dirLocation = locationDirectory.listFiles();
-
-                if (dirLocation.length != 0) {
-                    // loops through the array of files, outputing the name to console
-                    for (int j = 0; j < dirLocation.length; j++) {
-
-                        String file_upload_contents = fIleOperations.readLogFile(dirLocation[j].getName(), DashboardActivity.this, "location_log");
-
-                        params.put(dirLocation[j].getName(), ""+ file_upload_contents);
-                    }
-                }
                 params.put("user_id", session.getUserId());
 
                 params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.latitude);
@@ -634,60 +637,6 @@ public class DashboardActivity extends AppCompatActivity {
         //-----------------------------------------------------------------------------------------
     }
 
-    private void upload_log() {
-        displayLoader();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.login_url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        pDialog.dismiss();
-
-                        try {
-                            Log.d("myLogs : Login : ", response);
-                            //Check if user got logged in successfully
-                            JSONObject login_response = new JSONObject(response);
-
-                            if (login_response.getInt(Constants.KEY_STATUS) == 1) {
-
-                            }else{
-                                Toast.makeText(getApplicationContext(),login_response.getString(Constants.KEY_MESSAGE),Toast.LENGTH_LONG).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        pDialog.dismiss();
-                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
-
-                        // gets the files in the directory
-                        //File fileDirectory = new File(Environment.getDataDirectory()+"/YourDirectory/");
-
-
-                    }
-                }){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-
-                String file_upload_contents = fIleOperations.readFromFile("ticket_upload_queue.txt", DashboardActivity.this);
-
-                params.put("user_id", "" + session.getUserId());
-
-                params.put("ticket_data", ""+ file_upload_contents);
-
-                return params;
-            }
-        };
-
-        // Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
-    }
-
     private void displayLoader() {
         pDialog = new ProgressDialog(DashboardActivity.this);
         pDialog.setMessage("Uploading.. Please wait...");
@@ -695,5 +644,46 @@ public class DashboardActivity extends AppCompatActivity {
         pDialog.setCancelable(false);
         pDialog.show();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        activity_log("onResume", "");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activity_log("onPause", "");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        activity_log("onStop", "");
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        activity_log("onRestart", "");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        activity_log("app_destroy", "");
+    }
+
+    public void activity_log(String activity_name, String activity_message) {
+        //------------ manage activity log ----------------------------
+        JSONObject activity_log = new JSONObject();
+        try {
+            activity_log.put("activity_name", activity_name);
+            activity_log.put("activity_data", activity_message);
+        } catch (JSONException ee) {
+            ee.printStackTrace();
+        }
+        String activity_log_file = fIleOperations.getTodayFileNmaePrefix("log");
+        fIleOperations.writeToFile(activity_log_file, activity_log.toString(), DashboardActivity.this, "1", "activity_log");
+        //--------------------------------------------------------------
     }
 }
