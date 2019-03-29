@@ -3,15 +3,14 @@
     package="mytechbus.hpie.com.mytechbus">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
-    <!--<uses-permission android:name="android.permission.READ_PROFILE" />-->
-    <!--<uses-permission android:name="android.permission.READ_CONTACTS" />-->
+    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_PROFILE" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_CONTACTS" /> -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -31,13 +30,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="mytechbus.hpie.com.mytechbus.DashboardActivity"
+        <activity
+            android:name=".DashboardActivity"
             android:label="@string/title_dashboard" />
-        <activity android:name=".BookingActivity"
-            android:label="@string/title_booking"  />
+        <activity
+            android:name=".BookingActivity"
+            android:label="@string/title_booking" />
 
         <service android:name=".LocationMonitoringService" />
+
+        <activity android:name=".RouteActivity"></activity>
     </application>
 
 </manifest>

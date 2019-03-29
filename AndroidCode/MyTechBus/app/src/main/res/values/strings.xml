@@ -42,4 +42,6 @@
     <string name="cancle">Cancel</string>
     <string name="upload_log">Upload Log</string>
     <string name="reprint">RP</string>
+    <string name="change_route">Change Route</string>
+    <string name="update_route">Update Route</string>
 </resources>

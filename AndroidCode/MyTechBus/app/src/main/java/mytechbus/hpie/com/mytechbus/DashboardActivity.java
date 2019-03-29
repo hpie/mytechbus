@@ -124,6 +124,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         Button bookingBtn = findViewById(R.id.btnBooking);
         Button uploadLogBtn = findViewById(R.id.btnLogs);
+        Button changerouteBtn = findViewById(R.id.btnChangeRoute);
 
         btn_connect = (Button) findViewById(R.id.btn_connect);
 
@@ -150,6 +151,10 @@ public class DashboardActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Bluetooth Connected", Toast.LENGTH_SHORT).show();
         }
 
+        if(session.getIsMultiRoute().equals("YES")) {
+            changerouteBtn.setVisibility(View.VISIBLE);
+        }
+
         List<String> list = new ArrayList<String>(loadbtpname());
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, list);
         sp_pname.setAdapter(adapter);
@@ -165,6 +170,20 @@ public class DashboardActivity extends AppCompatActivity {
             }
         }
 
+        changerouteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                    buildAlertMessageNoGps();
+                    return;
+                }
+
+                Intent i = new Intent(getApplicationContext(), RouteActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
         bookingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,7 +192,7 @@ public class DashboardActivity extends AppCompatActivity {
                     return;
                 }
 
-                //Log.d("myLogs"," availibility : " +session.getRouteAvailibilty() + " |||| conition " +session.getRouteAvailibilty().equals("1"));
+                Log.d("myLogs"," availibility : " +session.getRouteAvailibilty() + " |||| conition " +session.getRouteAvailibilty().equals("1"));
                 if(session.getRouteAvailibilty().equals("1")) {
                     Intent i = new Intent(getApplicationContext(), BookingActivity.class);
                     startActivity(i);

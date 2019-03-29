@@ -41,6 +41,7 @@ public class Constants {
     public static final String KEY_VEHICLE_TYPE   = "vehicle_type";
     public static final String KEY_JOURNEY_TYPE   = "journey_type";
     public static final String KEY_ROUTE_AVAILIBILITY = "route_availibility";
+    public static final String KEY_IS_MULTIROUTE = "is_multiroute";
 
     public static final String KEY_OPERATOR_ADDRESS1 = "operator_address1";
     public static final String KEY_OPERATOR_ADDRESS2 = "operator_address2";
@@ -54,6 +55,7 @@ public class Constants {
     public static final String position_log_url = base_url+"position_log";
     public static final String book_offline_ticket_url = base_url+"book_ticket_call";
     public static final String upload_file_url = base_url+"upload_file";
+    public static final String update_route = base_url+"update_route";
 
     public static final String upload_logs_url = base_url+"upload_logs";
     public static String housekeeping_url = base_url+"housekeeping";

@@ -51,6 +51,16 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/btnChangeRoute"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@color/blue600"
+        android:text="@string/change_route"
+        android:visibility="gone"
+        android:textColor="@android:color/white" />
+
+    <Button
         android:id="@+id/btnBooking"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

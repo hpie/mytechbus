@@ -21,8 +21,17 @@ public class SessionHandler {
         this.mEditor = mPreferences.edit();
     }
 
+    public void setRoute( String route_code) {
+        mEditor.putString(Constants.KEY_ROUTE_CODE, route_code);
+        mEditor.commit();
+    }
+
     public String GetRoute() {
         return mPreferences.getString(Constants.KEY_ROUTE_CODE, Constants.KEY_EMPTY);
+    }
+
+    public String getIsMultiRoute() {
+        return mPreferences.getString(Constants.KEY_IS_MULTIROUTE, Constants.KEY_EMPTY);
     }
 
     public String getOperator() {
@@ -78,6 +87,11 @@ public class SessionHandler {
         return mPreferences.getString(Constants.KEY_OPERATOR_ID, Constants.KEY_EMPTY);
     }
 
+    public void setRouteAvailibilty(String is_available) {
+        mEditor.putString(Constants.KEY_ROUTE_AVAILIBILITY, is_available);
+        mEditor.commit();
+    }
+
     public String getRouteAvailibilty() {
         return mPreferences.getString(Constants.KEY_ROUTE_AVAILIBILITY, Constants.KEY_EMPTY);
     }
@@ -126,7 +140,8 @@ public class SessionHandler {
     */
     public void loginUser(String user_id, String operator_id,
                           String username, String fullName, String routecode,
-                          String route_availibility, String operator_name,
+                          String route_availibility,
+                          String is_multiroute, String operator_name,
                           String operator_address1, String operator_address2,
                           String operator_city, String operator_helpline,
                           String vehicle_code, String vehicle_number,
@@ -141,6 +156,7 @@ public class SessionHandler {
         mEditor.putString(Constants.KEY_FULL_NAME, fullName);
         mEditor.putString(Constants.KEY_ROUTE_CODE, routecode);
         mEditor.putString(Constants.KEY_ROUTE_AVAILIBILITY, route_availibility);
+        mEditor.putString(Constants.KEY_IS_MULTIROUTE, is_multiroute);
 
         mEditor.putString(Constants.KEY_TICKET_MESSAGE, ticket_message);
         mEditor.putFloat(Constants.KEY_MIN_TICKET, Float.valueOf(min_ticket));
