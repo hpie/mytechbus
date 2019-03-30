@@ -41,6 +41,7 @@ public class RouteActivity extends AppCompatActivity {
     TextView etTxtRoute;
 
     Spinner spinnerRouteList;
+    ArrayList<String> routelistKeyArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class RouteActivity extends AppCompatActivity {
         session = new SessionHandler(getApplicationContext());
         fIleOperations = new FIleOperations();
         spinnerRouteList = (Spinner)findViewById(R.id.spinnerListRoutes);
+        routelistKeyArray = new ArrayList<>();
 
         // Initialize the dropdown with values
         route_stages();
@@ -107,28 +109,28 @@ public class RouteActivity extends AppCompatActivity {
         try {
             JSONObject trip_data = new JSONObject(response);
 
-            JSONObject routes_list_object = trip_data.getJSONObject("routes_list");
+             JSONArray routes_list_array = trip_data.getJSONArray("routes_list_new");
 
             //------------------------------------------------------------------------------------------
 
             ArrayList<String> routelistArray = new ArrayList<>();
 
-            Iterator<String> routelistItr = routes_list_object.keys();
-
             routelistArray.add("Select Route");
-            //Create discount spinner data
-            while (routelistItr.hasNext()) {
-                String key = routelistItr.next();
-                routelistArray.add(key);
-            }
 
-            Log.d("myLogs", "Object : " + routelistItr + " ||| array : " + routelistArray);
+            for(int i=0;i<routes_list_array.length();i++){
+                String key = routes_list_array.getJSONObject(i).getString("key");
+                String route = routes_list_array.getJSONObject(i).getString("route");
+
+                Log.d("myLogs", "Key : " + key + " ||||| Route : " + route);
+
+                routelistKeyArray.add(key);
+                routelistArray.add(route);
+            }
 
             spinnerRouteList.setAdapter(new ArrayAdapter<String>(RouteActivity.this, android.R.layout.simple_spinner_dropdown_item, routelistArray));
 
-
         } catch (JSONException e) {
-            Log.w("myLogs", "In update_routes_spinner2 key : " + session.getJourneyType() + " |||| ");
+            Log.d("myLogs", "In update_routes_spinner2 key : " + session.getJourneyType() + " |||| ");
             e.printStackTrace();
         }
     }
@@ -186,8 +188,9 @@ public class RouteActivity extends AppCompatActivity {
 
                     Map<String,String> params = new HashMap<String, String>();
 
-                    String selected_route = spinnerRouteList.getItemAtPosition(spinnerRouteList.getSelectedItemPosition()).toString();
+                    Integer selected_route_key = spinnerRouteList.getSelectedItemPosition();
 
+                    String selected_route = routelistKeyArray.get(selected_route_key - 1);
 
                     params.put("user_id", session.getUserId());
                     params.put("selected_route", selected_route);

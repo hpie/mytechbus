@@ -175,7 +175,9 @@ public class SessionHandler {
         Date date = new Date();
 
         //Set user session for next 7 days
-        long millis = date.getTime() + (7 * 24 * 60 * 60 * 1000);
+        //long millis = date.getTime() + (7 * 24 * 60 * 60 * 1000);
+
+        long millis = date.getTime() + (1 * 24 * 60 * 60 * 1000);
         mEditor.putLong(Constants.KEY_EXPIRES, millis);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
