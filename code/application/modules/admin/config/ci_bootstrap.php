@@ -200,7 +200,8 @@ $config['ci_bootstrap'] = array(
 
 			'children'  => array(
 
-				'Vehicle Route Matrix'	=> 'VehicleRouteMatrix',
+				'Create Route Matrix'	=> 'RouteMatrix/CreateRouteMatrix',
+				'Vehicle Route Matrix'	=> 'RouteMatrix/ViewRouteMatrix',
 
 			)
 
