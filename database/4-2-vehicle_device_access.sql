@@ -57,3 +57,7 @@ ADD CONSTRAINT FK_device_access_operator_id FOREIGN KEY (operator_id) REFERENCES
 --
 ALTER TABLE `vehicle_device_access`
   MODIFY `row_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  
+  
+--  added is_multiroute 
+ALTER TABLE `vehicle_device_access` ADD `is_multiroute` VARCHAR(10) NOT NULL DEFAULT 'NO' COMMENT 'Values YES or NO, is yes app will allow route selection' AFTER `access_status`; 

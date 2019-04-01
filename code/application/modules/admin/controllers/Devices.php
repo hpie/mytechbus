@@ -157,17 +157,18 @@ class Devices extends Admin_Controller {
 
 		$crud = $this->generate_crud('vehicle_device_access');
 
-		$crud->columns('operator_id', 'loginid', 'password', 'device_imie', 'route_id', 'vehicle_id', 'device_last_login', 'latitude', 'longitude', 'altitude', 'altutude_accuracy', 'device_login_attempts', 'access_status');
+		$crud->columns('operator_id', 'loginid', 'password', 'device_imie', 'route_id', 'vehicle_id', 'device_last_login', 'latitude', 'longitude', 'altitude', 'altutude_accuracy', 'device_login_attempts', 'is_multiroute', 'access_status');
 
 		//Show for add
 
-		$crud->add_fields('operator_id', 'loginid', 'password', 'device_imie', 'route_id', 'vehicle_id', 'access_status');
+		$crud->add_fields('operator_id', 'loginid', 'password', 'device_imie', 'route_id', 'vehicle_id', 'is_multiroute', 'access_status');
 
 		//Show only for Update
 
-		$crud->edit_fields('operator_id','loginid', 'password', 'device_imie', 'route_id', 'vehicle_id', 'access_status');	
+		$crud->edit_fields('operator_id','loginid', 'password', 'device_imie', 'route_id', 'vehicle_id', 'is_multiroute', 'access_status');	
 
 		$crud->field_type('access_status','dropdown',array('ACTIVE'=>'ACTIVE','INACTIVE'=>'INACTIVE','DELETED'=>'DELETED'));	
+		$crud->field_type('is_multiroute','dropdown',array('YES'=>'YES','NO'=>'NO'));
 
 
 		//Assocoation with operator_id
@@ -226,7 +227,7 @@ class Devices extends Admin_Controller {
 
 			//Mandatory Feilds
 
-			$crud->required_fields('operator_id', 'loginid', 'password', 'device_imie', 'route_id', 'access_status');
+			$crud->required_fields('operator_id', 'loginid', 'password', 'device_imie', 'route_id', 'is_multiroute', 'access_status');
 
 			
 
@@ -240,7 +241,7 @@ class Devices extends Admin_Controller {
 
 			//Mandatory Feilds
 
-			$crud->required_fields('password', 'device_imie', 'route_id', 'access_status');
+			$crud->required_fields('password', 'device_imie', 'route_id', 'is_multiroute', 'access_status');
 
 			
 
