@@ -14,45 +14,46 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 public class LoginActivity extends AppCompatActivity {
     private FIleOperations fIleOperations;
+
+    private  DeviceUuidFactory dvuid;
 
     private EditText etUsername, etPassword;
     private String username, password, latitude = "", longitude = "", last_latitude = "", last_longitude = "", current_latitude = "", current_longitude = "", vehicle_code = "";
@@ -72,18 +73,18 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         session = new SessionHandler(getApplicationContext());
         fIleOperations = new FIleOperations();
 
-        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
         }
 
         //session.loginUser("hpie@hpie.in","hpie@hpie.in", "R-001");
 
-        if(session.isLoggedIn()){
-            if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+        if (session.isLoggedIn()) {
+            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 buildAlertMessageNoGps();
             }
             // Start periodic location logging
@@ -107,16 +108,17 @@ public class LoginActivity extends AppCompatActivity {
                 android.Manifest.permission.ACCESS_FINE_LOCATION
         };
 
-        if(!hasPermissions(this, PERMISSIONS)){
+        if (!hasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         } else {
-            fetchLocation = new FetchLocation(LoginActivity.this,LoginActivity.this);
+            fetchLocation = new FetchLocation(LoginActivity.this, LoginActivity.this);
         }
 
         /**
          * Login button functionality
          */
         login.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
 
@@ -126,7 +128,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 //-------------------------------------------------------------------
                 TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                @SuppressLint("MissingPermission") String IMEINumber = tm.getDeviceId();
+                if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+
+                //String IMEINumber = tm.getDeviceId();
+                dvuid = new DeviceUuidFactory(LoginActivity.this);
+                String IMEINumber = dvuid.getDeviceUuid().toString();
+                //showDialog("IMEINumber : " + IMEINumber);
 
                 DEVICE_IMEI = IMEINumber;
                 session.setIMEI(IMEINumber);
@@ -536,6 +545,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
+
+        String lat = "19.9975";
+        String lng = "73.7898";
+
+        Log.d("myLogs : username : ",  ""+ username);
+        Log.d("myLogs : password : ",  ""+ password);
+        Log.d("myLogs : DEVICE_IMEI : ",  ""+ DEVICE_IMEI);
+        Log.d("myLogs : Lat : ",  ""+ fetchLocation.getLat());
+        Log.d("myLogs : Lonng : ",  ""+ fetchLocation.getLong());
+
+
+
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps();
             return;
@@ -594,7 +615,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         pDialog.dismiss();
-                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),error.toString() + "hiiiii",Toast.LENGTH_LONG).show();
                     }
                 }){
             @Override
@@ -619,16 +640,21 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("myLogs : Device name : ",  ""+ getDeviceName());
                 params.put("android_version",  ""+ getAndroidVersion());
 
+                // params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.getLat());
+               // params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.getLong());
+
                 params.put(Constants.KEY_LATITUDE, ""+ fetchLocation.getLat());
                 params.put(Constants.KEY_LONGITUDE,""+ fetchLocation.getLong());
 
                 //params.put(KEY_EMAIL, email);
                 return params;
             }
+
         };
 
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
     }
 
     /**
