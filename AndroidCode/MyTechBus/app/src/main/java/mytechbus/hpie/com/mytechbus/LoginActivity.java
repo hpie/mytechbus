@@ -132,14 +132,17 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                //String IMEINumber = tm.getDeviceId();
-                dvuid = new DeviceUuidFactory(LoginActivity.this);
-                String IMEINumber = dvuid.getDeviceUuid().toString();
-                //showDialog("IMEINumber : " + IMEINumber);
+                String IMEINumber = tm.getDeviceId();
+                //IMEINumber = null;
+                if(IMEINumber == "" || IMEINumber == null) {
+                    dvuid = new DeviceUuidFactory(LoginActivity.this);
+                    IMEINumber = dvuid.getDeviceUuid().toString();
+                    //showDialog("IMEINumber : " + IMEINumber);
+                }
 
                 DEVICE_IMEI = IMEINumber;
                 session.setIMEI(IMEINumber);
-
+                showDialog("IMEINumber : " + IMEINumber);
                 startStep3();
                 //---------------------------------------------------------------------
                 if (validateInputs()) {
@@ -545,7 +548,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-
+        /*
         String lat = "19.9975";
         String lng = "73.7898";
 
@@ -555,7 +558,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.d("myLogs : Lat : ",  ""+ fetchLocation.getLat());
         Log.d("myLogs : Lonng : ",  ""+ fetchLocation.getLong());
 
-
+        */
 
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps();
